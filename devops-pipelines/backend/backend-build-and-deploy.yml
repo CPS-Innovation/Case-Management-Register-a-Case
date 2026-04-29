@@ -38,7 +38,7 @@ stages:
   
   - template: ../templates/backend-deploy-stages.yml
     parameters:
-      dependsOn: 'Build'        
+      buildStageName: 'Build'        
       environment: 'dev'
       requireValidation: false
       buildArtifact: $(buildArtifact)
@@ -57,7 +57,7 @@ stages:
 
   - template: ../templates/backend-deploy-stages.yml
     parameters:
-      dependsOn: 'Build'
+      buildStageName: 'Build'
       environment: 'staging'
       requireValidation: true
       notifyUsers: $(notifyUsers)
@@ -68,7 +68,7 @@ stages:
 
   # - template: ../templates/backend-deploy-stages.yml
   #   parameters:
-  #     dependsOn: 'Build'
+  #     buildStageName: 'Build'
   #     environment: 'prod'
   #     requireValidation: true
   #     notifyUsers: $(notifyUsers)
