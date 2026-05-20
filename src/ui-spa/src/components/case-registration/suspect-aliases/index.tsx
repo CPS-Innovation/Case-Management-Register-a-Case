@@ -6,7 +6,8 @@ import {
   useCallback,
   useMemo,
 } from "react";
-import { Input, Button, ErrorSummary, BackLink } from "../../govuk";
+import { Input, ErrorSummary, BackLink } from "../../govuk";
+import SaveAndCancel from "../../common/SaveAndCancel";
 import { CaseRegistrationFormContext } from "../../../common/providers/CaseRegistrationProvider";
 import { getPreviousSuspectJourneyRoute } from "../../../common/utils/getSuspectJourneyRoutes";
 import { formatNameUtil } from "../../../common/utils/formatNameUtil";
@@ -214,9 +215,7 @@ const SuspectAliasesPage = () => {
             }}
           />
         </div>
-        <Button type="submit" onClick={() => handleSubmit}>
-          Save and continue
-        </Button>
+        <SaveAndCancel onSave={handleSubmit} />
       </form>
     </div>
   );

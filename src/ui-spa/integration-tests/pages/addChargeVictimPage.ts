@@ -17,6 +17,7 @@ export class AddChargeVictimPage {
     );
     await expect(this.page.locator("h2").nth(0)).toHaveText(name);
     await expect(this.page.locator("h2").nth(1)).toHaveText(charge);
+    await this.verifyCancelLink();
   }
   async verifyAddFirstVictimElements() {
     await expect(
@@ -177,6 +178,18 @@ export class AddChargeVictimPage {
       "href",
       url,
     );
+  }
+  async verifyCancelLink() {
+    await expect(this.page.getByRole("link", { name: "Cancel" })).toBeVisible();
+    await expect(
+      this.page.getByRole("link", { name: "Cancel" }),
+    ).toHaveAttribute(
+      "href",
+      "/case-registration/cancel-case-registration-confirmation",
+    );
+  }
+  async cancelCaseRegistration() {
+    await this.page.getByRole("link", { name: "Cancel" }).click();
   }
   async backLinkClick() {
     await this.page.getByRole("link", { name: "Back" }).click();

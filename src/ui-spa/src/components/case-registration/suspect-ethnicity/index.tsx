@@ -6,7 +6,8 @@ import {
   useCallback,
   useMemo,
 } from "react";
-import { Radios, Button, ErrorSummary, BackLink } from "../../govuk";
+import { Radios, ErrorSummary, BackLink } from "../../govuk";
+import SaveAndCancel from "../../common/SaveAndCancel";
 import { CaseRegistrationFormContext } from "../../../common/providers/CaseRegistrationProvider";
 import { getEthnicities } from "../../../apis/gateway-api";
 import { useQuery } from "@tanstack/react-query";
@@ -226,9 +227,7 @@ const SuspectEthnicityPage = () => {
             }}
           ></Radios>
         </div>
-        <Button type="submit" onClick={() => handleSubmit}>
-          Save and continue
-        </Button>
+        <SaveAndCancel onSave={handleSubmit} />
       </form>
     </div>
   );

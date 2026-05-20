@@ -45,6 +45,7 @@ export class CaseRegistrationSummaryPage {
     await expect(this.page.locator("h1")).toHaveText(
       "Check your answers before creating the case",
     );
+    await this.verifyCancelLink();
   }
 
   async verifyCaseDetailsElements(values: {
@@ -675,7 +676,18 @@ export class CaseRegistrationSummaryPage {
       ).not.toHaveCount(0);
     }
   }
-
+  async verifyCancelLink() {
+    await expect(this.page.getByRole("link", { name: "Cancel" })).toBeVisible();
+    await expect(
+      this.page.getByRole("link", { name: "Cancel" }),
+    ).toHaveAttribute(
+      "href",
+      "/case-registration/cancel-case-registration-confirmation",
+    );
+  }
+  async cancelCaseRegistration() {
+    await this.page.getByRole("link", { name: "Cancel" }).click();
+  }
   async clickCreateCaseButton() {
     const createCaseButton = this.page.locator("button[type='submit']");
     await expect(createCaseButton).toHaveText("Accept and create");

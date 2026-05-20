@@ -6,7 +6,8 @@ import {
   useCallback,
   useMemo,
 } from "react";
-import { Button, ErrorSummary, BackLink, DateInput } from "../../govuk";
+import { ErrorSummary, BackLink, DateInput } from "../../govuk";
+import SaveAndCancel from "../../common/SaveAndCancel";
 import { formatNameUtil } from "../../../common/utils/formatNameUtil";
 import { CaseRegistrationFormContext } from "../../../common/providers/CaseRegistrationProvider";
 import { validateDate } from "../../../common/utils/dateValidation";
@@ -293,9 +294,7 @@ const SuspectDOBPage = () => {
             onChange={setFormValue}
           />
         </div>
-        <Button type="submit" onClick={() => handleSubmit}>
-          Save and continue
-        </Button>
+        <SaveAndCancel onSave={handleSubmit} />
       </form>
     </div>
   );

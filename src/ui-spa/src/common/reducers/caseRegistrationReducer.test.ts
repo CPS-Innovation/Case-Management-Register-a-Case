@@ -459,13 +459,14 @@ describe("caseRegistrationReducer", () => {
         data: {
           offenceSearchText: "New Offence",
           selectedOffence: {
-            id: 10001,
+            cmsId: 10001,
             code: "ABC",
             description: "sample description",
             legislation: "sample legislation",
             effectiveFromDate: "2024-01-01",
             effectiveToDate: "2024-12-31",
             modeOfTrial: "abc",
+            cmsModeOfTrialShortCode: "NYC",
           },
         },
       },
@@ -479,13 +480,14 @@ describe("caseRegistrationReducer", () => {
       chargedWithAdultRadio: "",
       offenceSearchText: "New Offence",
       selectedOffence: {
-        id: 10001,
+        cmsId: 10001,
         code: "ABC",
         description: "sample description",
         legislation: "sample legislation",
         effectiveFromDate: "2024-01-01",
         effectiveToDate: "2024-12-31",
         modeOfTrial: "abc",
+        cmsModeOfTrialShortCode: "NYC",
       },
       offenceFromDate: "",
       offenceToDate: "",
@@ -1193,7 +1195,7 @@ describe("caseRegistrationReducer", () => {
         offencesSearchResults: {
           offences: [
             {
-              id: 10000,
+              cmsId: 10000,
               code: "WC81229",
               description:
                 "Permit to be set trap etc - cause injury to wild bird",
@@ -1202,9 +1204,10 @@ describe("caseRegistrationReducer", () => {
               effectiveFromDate: "1998-03-17T00:00:00",
               effectiveToDate: "1998-04-17T00:00:00",
               modeOfTrial: "abc",
+              cmsModeOfTrialShortCode: "NYC",
             },
             {
-              id: 10002,
+              cmsId: 10002,
               code: "PB92005",
               description: "Attempt to injure a badger",
               legislation:
@@ -1212,6 +1215,7 @@ describe("caseRegistrationReducer", () => {
               effectiveFromDate: "1998-03-17T00:00:00",
               effectiveToDate: null,
               modeOfTrial: "abc",
+              cmsModeOfTrialShortCode: "NYC",
             },
           ],
           total: 2,

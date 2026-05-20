@@ -6,7 +6,8 @@ import {
   useCallback,
   useMemo,
 } from "react";
-import { Input, Radios, Button, ErrorSummary } from "../govuk";
+import { Input, Radios, ErrorSummary } from "../govuk";
+import SaveAndCancel from "../common/SaveAndCancel";
 import { CaseRegistrationFormContext } from "../../common/providers/CaseRegistrationProvider";
 import { type GeneralRadioValue } from "../../common/reducers/caseRegistrationReducer";
 import {
@@ -456,9 +457,7 @@ const CaseRegistrationPage = () => {
             }}
           ></Radios>
         </div>
-        <Button type="submit" onClick={() => handleSubmit}>
-          Save and continue
-        </Button>
+        <SaveAndCancel onSave={handleSubmit} />
       </form>
     </div>
   );

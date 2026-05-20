@@ -6,7 +6,8 @@ import {
   useCallback,
   useMemo,
 } from "react";
-import { Radios, Button, ErrorSummary, BackLink } from "../../govuk";
+import { Radios, ErrorSummary, BackLink } from "../../govuk";
+import SaveAndCancel from "../../common/SaveAndCancel";
 import DateInputNative from "../../common/DateInputNative";
 import { CaseRegistrationFormContext } from "../../../common/providers/CaseRegistrationProvider";
 import { getOffenderTypes } from "../../../apis/gateway-api";
@@ -318,9 +319,7 @@ const SuspectOffenderPage = () => {
             }}
           ></Radios>
         </div>
-        <Button type="submit" onClick={() => handleSubmit}>
-          Save and continue
-        </Button>
+        <SaveAndCancel onSave={handleSubmit} />
       </form>
     </div>
   );

@@ -6,13 +6,8 @@ import {
   useCallback,
   useMemo,
 } from "react";
-import {
-  AutoComplete,
-  Radios,
-  Button,
-  ErrorSummary,
-  BackLink,
-} from "../../govuk";
+import { AutoComplete, Radios, ErrorSummary, BackLink } from "../../govuk";
+import SaveAndCancel from "../../common/SaveAndCancel";
 import DateInputNative from "../../common/DateInputNative";
 import { CaseRegistrationFormContext } from "../../../common/providers/CaseRegistrationProvider";
 import { getSelectedUnit } from "../../../common/utils/getSelectedUnit";
@@ -400,9 +395,7 @@ const FirstHearingPage = () => {
             }}
           ></Radios>
         </div>
-        <Button type="submit" onClick={() => handleSubmit}>
-          Save and continue
-        </Button>
+        <SaveAndCancel onSave={handleSubmit} />
       </form>
     </div>
   );

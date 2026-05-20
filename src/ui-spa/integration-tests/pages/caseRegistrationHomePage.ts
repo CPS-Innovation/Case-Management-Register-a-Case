@@ -20,6 +20,7 @@ export class CaseRegistrationHomePage {
     await expect(this.page.locator("legend").nth(1)).toHaveText(
       "Do you have any suspect details?",
     );
+    await this.verifyCancelLink();
   }
 
   async errorValidations() {
@@ -103,6 +104,13 @@ export class CaseRegistrationHomePage {
     ).not.toBeVisible();
   }
 
+  async verifyCancelCaseRegistration() {
+    await this.page.getByRole("link", { name: "Cancel" }).click();
+    await expect(
+      this.page.getByTestId("case-registration-cancel-confirmation"),
+    ).toBeVisible();
+  }
+
   async addOperationName(name: string) {
     await this.page.getByTestId("operation-name-radio-yes").check();
     await this.page.getByTestId("operation-name-text").fill(name);
@@ -118,6 +126,20 @@ export class CaseRegistrationHomePage {
 
   async addNoSuspect() {
     await this.page.getByTestId("suspect-details-radio-no").check();
+  }
+
+  async verifyCancelLink() {
+    await expect(this.page.getByRole("link", { name: "Cancel" })).toBeVisible();
+    await expect(
+      this.page.getByRole("link", { name: "Cancel" }),
+    ).toHaveAttribute(
+      "href",
+      "/case-registration/cancel-case-registration-confirmation",
+    );
+  }
+
+  async cancelCaseRegistration() {
+    await this.page.getByRole("link", { name: "Cancel" }).click();
   }
 
   async saveAndContinue() {
