@@ -60,8 +60,8 @@ stages:
       buildStageName: 'Build'
       environment: 'staging'
       requireValidation: true
-      notifyUsers: $(notifyUsers)
-      approvers: $(approvers)
+      notifyUsers: $(preprodNotifyUsers)
+      approvers: $(preprodApprovers)
       deployToSlot: true
       slotName: 'stg'
       buildArtifact: $(buildArtifact)
@@ -71,8 +71,8 @@ stages:
   #     buildStageName: 'Build'
   #     environment: 'prod'
   #     requireValidation: true
-  #     notifyUsers: $(notifyUsers)
-  #     approvers: $(approvers)
+  #     notifyUsers: $(prodNotifyUsers)
+  #     approvers: $(prodApprovers)
   #     agentPool: 'CMRC Prod Pool'
   #     azureSubscription: 'Azure Pipeline: CMRC - Prod'
   #     deployToSlot: true
