@@ -46,7 +46,7 @@ export class ChargesSummaryPage {
         offenceDescription: string;
         chargeDetails: {
           dateOfOffence: string;
-          victim: {
+          victim?: {
             name: string;
             properties: string;
           };
@@ -99,9 +99,6 @@ export class ChargesSummaryPage {
           .getByTestId(`charge-${index}-details-button`)
           .locator("summary")
           .click();
-        // await expect(
-        //   suspectChargeSummary.getByTestId(`charge-${index}-details`),
-        // ).toBeVisible();
         await expect(
           suspectChargeSummary
             .getByTestId(`charge-${index}-details`)
@@ -114,20 +111,22 @@ export class ChargesSummaryPage {
             .locator("dd")
             .nth(0),
         ).toHaveText(charge.chargeDetails.dateOfOffence);
-        await expect(
-          suspectChargeSummary
-            .getByTestId(`charge-${index}-details`)
-            .locator("dt")
-            .nth(1),
-        ).toHaveText("Victim");
-        await expect(
-          suspectChargeSummary
-            .getByTestId(`charge-${index}-details`)
-            .locator("dd")
-            .nth(1),
-        ).toHaveText(
-          `${charge.chargeDetails.victim.name}${charge.chargeDetails.victim.properties}`,
-        );
+        if (charge.chargeDetails.victim) {
+          await expect(
+            suspectChargeSummary
+              .getByTestId(`charge-${index}-details`)
+              .locator("dt")
+              .nth(1),
+          ).toHaveText("Victim");
+          await expect(
+            suspectChargeSummary
+              .getByTestId(`charge-${index}-details`)
+              .locator("dd")
+              .nth(1),
+          ).toHaveText(
+            `${charge.chargeDetails.victim.name}${charge.chargeDetails.victim.properties}`,
+          );
+        }
       }),
     );
   }
