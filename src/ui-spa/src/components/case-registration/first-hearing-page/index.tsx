@@ -35,7 +35,6 @@ const FirstHearingPage = () => {
     if (state.formData.navigation.fromCaseSummaryPage) {
       return "/case-registration/case-summary";
     }
-
     return "/case-registration/charges-summary";
   }, [state.formData.navigation.fromCaseSummaryPage]);
 
@@ -272,6 +271,17 @@ const FirstHearingPage = () => {
       dispatch({
         type: "SET_NAVIGATION_DATA",
         payload: { fromCaseSummaryPage: false },
+      });
+      navigate("/case-registration/case-summary");
+      return;
+    }
+    if (
+      state.formData.navigation.changeCaseSuspects ||
+      state.formData.navigation.changeCaseCharges
+    ) {
+      dispatch({
+        type: "SET_NAVIGATION_DATA",
+        payload: { changeCaseSuspects: false, changeCaseCharges: false },
       });
       navigate("/case-registration/case-summary");
       return;

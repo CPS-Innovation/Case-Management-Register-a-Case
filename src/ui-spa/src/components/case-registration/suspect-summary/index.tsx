@@ -84,11 +84,11 @@ const SuspectSummaryPage = () => {
   }, [errorList]);
 
   const previousRoute = useMemo(() => {
-    if (state.formData.navigation.fromCaseSummaryPage) {
+    if (state.formData.navigation.changeCaseSuspects) {
       return "/case-registration/case-summary";
     }
     return "/case-registration/case-details";
-  }, [state.formData.navigation.fromCaseSummaryPage]);
+  }, [state.formData.navigation.changeCaseSuspects]);
 
   const getTitle = useCallback(() => {
     if (state.formData.suspects.length > 1) {
@@ -112,12 +112,14 @@ const SuspectSummaryPage = () => {
       );
       return;
     }
-    if (state.formData.navigation.fromCaseSummaryPage) {
-      dispatch({
-        type: "SET_NAVIGATION_DATA",
-        payload: { fromSuspectSummaryPage: false, fromCaseSummaryPage: false },
-      });
-      navigate("/case-registration/case-summary");
+    if (state.formData.navigation.changeCaseSuspects) {
+      if (state.formData.navigation.fromSuspectSummaryPage) {
+        dispatch({
+          type: "SET_NAVIGATION_DATA",
+          payload: { fromSuspectSummaryPage: false },
+        });
+      }
+      navigate("/case-registration/want-to-add-charges");
       return;
     } else if (state.formData.navigation.fromSuspectSummaryPage) {
       dispatch({
@@ -141,7 +143,7 @@ const SuspectSummaryPage = () => {
     if (previousRoute === "/case-registration/case-summary") {
       dispatch({
         type: "SET_NAVIGATION_DATA",
-        payload: { fromCaseSummaryPage: false, fromSuspectSummaryPage: false },
+        payload: { changeCaseSuspects: false, fromSuspectSummaryPage: false },
       });
     }
 

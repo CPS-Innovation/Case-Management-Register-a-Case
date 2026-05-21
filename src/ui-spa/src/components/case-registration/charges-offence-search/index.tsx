@@ -81,7 +81,7 @@ const ChargesOffenceSearch = () => {
 
   const previousRoute = useMemo(() => {
     if (
-      state.formData.navigation.fromCaseSummaryPage &&
+      state.formData.navigation.changeCaseCharges &&
       !state.formData.navigation.fromChargeSummaryPage
     ) {
       return "/case-registration/case-summary";
@@ -93,7 +93,7 @@ const ChargesOffenceSearch = () => {
     return "/case-registration/add-charge-suspect";
   }, [
     state.formData.suspects,
-    state.formData.navigation.fromCaseSummaryPage,
+    state.formData.navigation.changeCaseCharges,
     state.formData.navigation.fromChargeSummaryPage,
     chargesCount,
   ]);

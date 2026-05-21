@@ -16,6 +16,8 @@ import { WantToAddChargesPage } from "./pages/wantToAddChargesPage";
 import { CaseMonitoringPage } from "./pages/caseMonitoringPage";
 import { CaseAssigneePage } from "./pages/caseAssigneePage";
 import { CaseRegistrationSummaryPage } from "./pages/caseRegistrationSummaryPage";
+import { FirstHearingDetailsPage } from "./pages/firstHearingDetailsPage";
+import { fi } from "zod/locales";
 
 test("Should successfully complete multiple suspect journey", async ({
   page,
@@ -483,6 +485,12 @@ test("Should successfully complete multiple suspect journey", async ({
   ]);
   await suspectSummaryPage.selectAddMoreSuspectNo();
   await suspectSummaryPage.saveAndContinue();
+  await wantToAddChargesPage.verifyUrl();
+  await wantToAddChargesPage.verifyPageElements(
+    "Do you want to add charges for any of the suspects?",
+  );
+  await wantToAddChargesPage.selectAddChargesNo();
+  await wantToAddChargesPage.saveAndContinue();
   await caseRegistrationSummaryPage.verifyUrl();
   await suspectSummaryPage.verifySuspectSummaryRows([
     "POTTER, Harry",
@@ -523,6 +531,12 @@ test("Should successfully complete multiple suspect journey", async ({
   ]);
   await suspectSummaryPage.selectAddMoreSuspectNo();
   await suspectSummaryPage.saveAndContinue();
+  await wantToAddChargesPage.verifyUrl();
+  await wantToAddChargesPage.verifyPageElements(
+    "Do you want to add charges for any of the suspects?",
+  );
+  await wantToAddChargesPage.selectAddChargesNo();
+  await wantToAddChargesPage.saveAndContinue();
   await caseRegistrationSummaryPage.verifyUrl();
   await suspectSummaryPage.verifySuspectSummaryRows([
     "POTTER, Harry",
@@ -588,6 +602,12 @@ test("Should successfully complete multiple suspect journey", async ({
   ]);
   await suspectSummaryPage.selectAddMoreSuspectNo();
   await suspectSummaryPage.saveAndContinue();
+  await wantToAddChargesPage.verifyUrl();
+  await wantToAddChargesPage.verifyPageElements(
+    "Do you want to add charges for any of the suspects?",
+  );
+  await wantToAddChargesPage.selectAddChargesNo();
+  await wantToAddChargesPage.saveAndContinue();
   await caseRegistrationSummaryPage.verifyUrl();
   await suspectSummaryPage.verifySuspectSummaryRows([
     "POTTER, Harry",
@@ -684,6 +704,14 @@ test("Should successfully complete multiple suspect journey", async ({
   );
   await chargesSummaryPage.selectAddMoreChargesNo();
   await chargesSummaryPage.saveAndContinue();
+  const firstHearingDetailsPage = new FirstHearingDetailsPage(page);
+  await firstHearingDetailsPage.verifyUrl();
+  await firstHearingDetailsPage.verifyBackLink(
+    "/case-registration/charges-summary",
+  );
+  await firstHearingDetailsPage.errorValidations();
+  await firstHearingDetailsPage.selectAddFirstHearingDetailsNo();
+  await firstHearingDetailsPage.saveAndContinue();
   await caseRegistrationSummaryPage.verifyUrl();
   await caseRegistrationSummaryPage.verifyAddNewSuspectElements(4);
   await caseRegistrationSummaryPage.verifySuspectSummaryRows([

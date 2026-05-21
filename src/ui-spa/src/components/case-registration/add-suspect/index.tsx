@@ -163,7 +163,7 @@ const AddSuspectPage = () => {
 
   const previousRoute = useMemo(() => {
     if (
-      state.formData.navigation.fromCaseSummaryPage &&
+      state.formData.navigation.changeCaseSuspects &&
       !state.formData.navigation.fromSuspectSummaryPage
     ) {
       return "/case-registration/case-summary";
@@ -174,7 +174,7 @@ const AddSuspectPage = () => {
 
     return "/case-registration/case-details";
   }, [
-    state.formData.navigation.fromCaseSummaryPage,
+    state.formData.navigation.changeCaseSuspects,
     state.formData.navigation.fromSuspectSummaryPage,
   ]);
 
@@ -256,7 +256,7 @@ const AddSuspectPage = () => {
     if (previousRoute === "/case-registration/case-summary") {
       dispatch({
         type: "SET_NAVIGATION_DATA",
-        payload: { fromCaseSummaryPage: false, fromSuspectSummaryPage: false },
+        payload: { changeCaseSuspects: false, fromSuspectSummaryPage: false },
       });
     }
     navigate(previousRoute);

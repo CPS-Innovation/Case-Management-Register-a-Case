@@ -107,6 +107,16 @@ const WantToAddCharges = () => {
     });
     const { wantToAddChargesRadio } = formData;
     if (wantToAddChargesRadio === "no") {
+      if (state.formData.navigation.changeCaseSuspects) {
+        dispatch({
+          type: "SET_NAVIGATION_DATA",
+          payload: {
+            changeCaseSuspects: false,
+          },
+        });
+        navigate("/case-registration/case-summary");
+        return;
+      }
       return navigate("/case-registration/case-monitoring-codes");
     }
     if (wantToAddChargesRadio === "yes" && state.formData.suspects.length > 1) {
