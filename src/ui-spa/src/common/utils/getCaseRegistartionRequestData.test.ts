@@ -43,6 +43,8 @@ describe("getCaseRegistrationRequestData", () => {
         fromSuspectSummaryPage: false,
         changeCaseArea: false,
         changeCaseDetails: false,
+        changeCaseSuspects: false,
+        changeCaseCharges: false,
       },
     };
     const monitoringCodesData: CaseMonitoringCode[] = [
@@ -143,6 +145,8 @@ describe("getCaseRegistrationRequestData", () => {
         fromSuspectSummaryPage: false,
         changeCaseArea: false,
         changeCaseDetails: false,
+        changeCaseSuspects: false,
+        changeCaseCharges: false,
       },
     };
     const monitoringCodesData: CaseMonitoringCode[] = [
@@ -303,6 +307,8 @@ describe("getCaseRegistrationRequestData", () => {
         fromSuspectSummaryPage: true,
         changeCaseArea: false,
         changeCaseDetails: false,
+        changeCaseSuspects: false,
+        changeCaseCharges: false,
       },
     };
 
@@ -602,6 +608,8 @@ describe("getCaseRegistrationRequestData", () => {
         fromSuspectSummaryPage: true,
         changeCaseArea: false,
         changeCaseDetails: false,
+        changeCaseSuspects: false,
+        changeCaseCharges: false,
       },
     };
 
@@ -794,6 +802,8 @@ describe("getCaseRegistrationRequestData", () => {
         fromSuspectSummaryPage: false,
         changeCaseArea: false,
         changeCaseDetails: false,
+        changeCaseSuspects: false,
+        changeCaseCharges: false,
       },
     };
 

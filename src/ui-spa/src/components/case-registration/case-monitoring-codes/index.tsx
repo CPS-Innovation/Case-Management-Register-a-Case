@@ -17,7 +17,7 @@ import { isMonitoringCodeOptional } from "../../../common/utils/isMonitoringCode
 import useChargesCount from "../../../common/hooks/useChargesCount";
 import pageStyles from "./index.module.scss";
 import styles from "../index.module.scss";
-const PRE_CHARGE_DECISION_CODE = "CSEA";
+import { PRE_CHARGE_DECISION_CODE } from "../../../common/constants/general";
 
 const CaseMonitoringCodesPage = () => {
   type ErrorText = {
@@ -185,6 +185,17 @@ const CaseMonitoringCodesPage = () => {
       dispatch({
         type: "SET_NAVIGATION_DATA",
         payload: { fromCaseSummaryPage: false },
+      });
+      navigate("/case-registration/case-summary");
+      return;
+    }
+    if (
+      state.formData.navigation.changeCaseSuspects ||
+      state.formData.navigation.changeCaseCharges
+    ) {
+      dispatch({
+        type: "SET_NAVIGATION_DATA",
+        payload: { changeCaseSuspects: false, changeCaseCharges: false },
       });
       navigate("/case-registration/case-summary");
       return;

@@ -15,6 +15,8 @@ import { getCourtsByUnitId } from "../../../apis/gateway-api";
 import { useQuery } from "@tanstack/react-query";
 import { useNavigate } from "react-router-dom";
 import { isOnOrAfterChargeDates } from "../../../common/utils/chargeDatesUtil";
+import { isMonitoringCodeOptional } from "../../../common/utils/isMonitoringCodeOptional";
+import { PRE_CHARGE_DECISION_CODE } from "../../../common/constants/general";
 import styles from "../index.module.scss";
 const FirstHearingPage = () => {
   type ErrorText = {
@@ -273,6 +275,15 @@ const FirstHearingPage = () => {
         payload: { fromCaseSummaryPage: false },
       });
       navigate("/case-registration/case-summary");
+      return;
+    }
+    if (
+      isMonitoringCodeOptional(state.formData.suspects) &&
+      state.formData.caseMonitoringCodesCheckboxes.includes(
+        PRE_CHARGE_DECISION_CODE,
+      )
+    ) {
+      navigate("/case-registration/case-monitoring-codes");
       return;
     }
     if (

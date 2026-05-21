@@ -17,7 +17,6 @@ import { CaseMonitoringPage } from "./pages/caseMonitoringPage";
 import { CaseAssigneePage } from "./pages/caseAssigneePage";
 import { CaseRegistrationSummaryPage } from "./pages/caseRegistrationSummaryPage";
 import { FirstHearingDetailsPage } from "./pages/firstHearingDetailsPage";
-import { fi } from "zod/locales";
 
 test("Should successfully complete multiple suspect journey", async ({
   page,
