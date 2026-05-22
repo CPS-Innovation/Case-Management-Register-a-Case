@@ -117,7 +117,7 @@ const SuspectSummaryPage = () => {
         payload: { fromChargeSummaryPage: false },
       });
     }
-    if (chargesCount && !state.formData.firstHearingCourtLocationText.id) {
+    if (chargesCount) {
       navigate("/case-registration/first-hearing");
       return;
     }
