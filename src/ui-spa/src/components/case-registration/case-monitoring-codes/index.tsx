@@ -181,21 +181,18 @@ const CaseMonitoringCodesPage = () => {
       type: "SET_FIELDS",
       payload: { data: { ...formData } },
     });
-    if (state.formData.navigation.fromCaseSummaryPage) {
-      dispatch({
-        type: "SET_NAVIGATION_DATA",
-        payload: { fromCaseSummaryPage: false },
-      });
-      navigate("/case-registration/case-summary");
-      return;
-    }
     if (
+      state.formData.navigation.fromCaseSummaryPage ||
       state.formData.navigation.changeCaseSuspects ||
       state.formData.navigation.changeCaseCharges
     ) {
       dispatch({
         type: "SET_NAVIGATION_DATA",
-        payload: { changeCaseSuspects: false, changeCaseCharges: false },
+        payload: {
+          fromCaseSummaryPage: false,
+          changeCaseSuspects: false,
+          changeCaseCharges: false,
+        },
       });
       navigate("/case-registration/case-summary");
       return;
