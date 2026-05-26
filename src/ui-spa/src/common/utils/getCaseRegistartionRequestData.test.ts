@@ -490,7 +490,7 @@ describe("getCaseRegistrationRequestData", () => {
               chargeId: "442a804b-c6d3-44e4-afb2-d98019be5945",
               offenceSearchText: "theft",
               selectedOffence: {
-                id: 10001,
+                cmsId: 10001,
                 code: "WC81229",
                 description:
                   "Permit to be set trap etc - cause injury to wild bird",
@@ -499,6 +499,7 @@ describe("getCaseRegistrationRequestData", () => {
                 effectiveFromDate: "1998-03-17T00:00:00",
                 effectiveToDate: "1998-04-17T00:00:00",
                 modeOfTrial: "abc",
+                cmsModeOfTrialShortCode: "NYC",
               },
               offenceFromDate: "2026-03-02",
               offenceToDate: "2026-03-02",
@@ -512,7 +513,7 @@ describe("getCaseRegistrationRequestData", () => {
               chargeId: "442a804b-c6d3-44e4-afb2-d98019be5945",
               offenceSearchText: "theft",
               selectedOffence: {
-                id: 10001,
+                cmsId: 10001,
                 code: "WC81229",
                 description:
                   "Permit to be set trap etc - cause injury to wild bird",
@@ -521,6 +522,7 @@ describe("getCaseRegistrationRequestData", () => {
                 effectiveFromDate: "1998-03-17T00:00:00",
                 effectiveToDate: "",
                 modeOfTrial: "abc",
+                cmsModeOfTrialShortCode: "NYC",
               },
               offenceFromDate: "2026-03-02",
               offenceToDate: "",
@@ -638,7 +640,7 @@ describe("getCaseRegistrationRequestData", () => {
             {
               dateFrom: "2026-03-02",
               dateTo: "2026-03-02",
-              modeOfTrial: "abc",
+              modeOfTrial: "NYC",
               offenceId: "10001",
               offenceCode: "WC81229",
               offenceDescription:
@@ -649,7 +651,7 @@ describe("getCaseRegistrationRequestData", () => {
             {
               dateFrom: "2026-03-02",
               dateTo: null,
-              modeOfTrial: "abc",
+              modeOfTrial: "NYC",
               offenceId: "10001",
               offenceCode: "WC81229",
               offenceDescription:

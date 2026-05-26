@@ -17,6 +17,7 @@ export class WantToAddChargesPage {
     await expect(this.page.locator("h1")).toHaveText(h1Text);
     await expect(this.page.locator("label").nth(0)).toHaveText("Yes");
     await expect(this.page.locator("label").nth(1)).toHaveText("No");
+    await this.verifyCancelLink();
   }
 
   async errorValidations(multipleSuspects: boolean = false) {
@@ -47,6 +48,18 @@ export class WantToAddChargesPage {
       "href",
       url,
     );
+  }
+  async verifyCancelLink() {
+    await expect(this.page.getByRole("link", { name: "Cancel" })).toBeVisible();
+    await expect(
+      this.page.getByRole("link", { name: "Cancel" }),
+    ).toHaveAttribute(
+      "href",
+      "/case-registration/cancel-case-registration-confirmation",
+    );
+  }
+  async cancelCaseRegistration() {
+    await this.page.getByRole("link", { name: "Cancel" }).click();
   }
   async backLinkClick() {
     await this.page.getByRole("link", { name: "Back" }).click();

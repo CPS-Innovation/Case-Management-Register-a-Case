@@ -6,7 +6,8 @@ import {
   useState,
   useEffect,
 } from "react";
-import { AutoComplete, BackLink, Button, ErrorSummary } from "../../govuk";
+import { AutoComplete, BackLink, ErrorSummary } from "../../govuk";
+import SaveAndCancel from "../../common/SaveAndCancel";
 import { CaseRegistrationFormContext } from "../../../common/providers/CaseRegistrationProvider";
 import { getAreasOrDivisions } from "../../../common/utils/getAreasOrDivisions";
 import { getSelectedUnit } from "../../../common/utils/getSelectedUnit";
@@ -232,11 +233,8 @@ const CaseAreasPage = () => {
             }
           />
         </div>
-        <div className="btnWrapper">
-          <Button type="submit" onClick={() => handleSubmit}>
-            Save and continue
-          </Button>
-        </div>
+
+        <SaveAndCancel onSave={handleSubmit} />
       </form>
     </div>
   );

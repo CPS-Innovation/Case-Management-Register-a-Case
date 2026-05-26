@@ -1,13 +1,14 @@
 import { z } from "zod";
 
 export const offenceSchema = z.object({
-  id: z.number().optional(), //Note: Remove the optional part after the backend returns the id
+  cmsId: z.number(),
   code: z.string(),
   description: z.string(),
   legislation: z.string(),
   effectiveFromDate: z.string(),
   effectiveToDate: z.string().nullable(),
   modeOfTrial: z.string(),
+  cmsModeOfTrialShortCode: z.string(),
 });
 
 export const offencesSchema = z.object({

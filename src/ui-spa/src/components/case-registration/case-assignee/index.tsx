@@ -9,12 +9,12 @@ import {
 import {
   AutoComplete,
   Radios,
-  Button,
   ErrorSummary,
   BackLink,
   Select,
   Input,
 } from "../../govuk";
+import SaveAndCancel from "../../common/SaveAndCancel";
 import { CaseRegistrationFormContext } from "../../../common/providers/CaseRegistrationProvider";
 import { type GeneralRadioValue } from "../../../common/reducers/caseRegistrationReducer";
 import { getSelectedUnit } from "../../../common/utils/getSelectedUnit";
@@ -766,9 +766,7 @@ const CaseAssigneePage = () => {
             }}
           ></Radios>
         </div>
-        <Button type="submit" onClick={() => handleSubmit}>
-          Save and continue
-        </Button>
+        <SaveAndCancel onSave={handleSubmit} />
       </form>
     </div>
   );

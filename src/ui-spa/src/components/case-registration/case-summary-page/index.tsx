@@ -6,7 +6,8 @@ import {
   useCallback,
   useRef,
 } from "react";
-import { Button, BackLink, SummaryList, ErrorSummary } from "../../govuk";
+import { BackLink, SummaryList, ErrorSummary } from "../../govuk";
+import SaveAndCancel from "../../common/SaveAndCancel";
 import { CaseRegistrationFormContext } from "../../../common/providers/CaseRegistrationProvider";
 import {
   getCaseDetailsSummaryListRows,
@@ -262,13 +263,11 @@ const CaseSummaryPage = () => {
           <h2>Working on the case</h2>
           <SummaryList rows={whoseWorkingOnTheCaseSummaryListRows} />
         </div>
-        <Button
-          type="submit"
-          onClick={() => handleSubmit}
+        <SaveAndCancel
+          onSave={handleSubmit}
+          isCaseSummaryPage={true}
           disabled={disableSummaryActions}
-        >
-          Accept and create
-        </Button>
+        />
       </form>
     </div>
   );

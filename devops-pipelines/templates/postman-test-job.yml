@@ -15,8 +15,7 @@ jobs:
 - job: Run_Postman_Tests_with_Newman_${{parameters.environment}}
   variables:
   - group: ${{parameters.projectAcronym}}-backend-config-${{parameters.environment}}
-  - group: ${{parameters.projectAcronym}}-backend-secrets-${{parameters.environment}}
-  - group: ${{parameters.projectAcronym}}-automated-testing
+  - group: ${{parameters.projectAcronym}}-automated-testing-${{parameters.environment}}
   steps:
   - task: UseNode@1
     displayName: 'Use Node.js'

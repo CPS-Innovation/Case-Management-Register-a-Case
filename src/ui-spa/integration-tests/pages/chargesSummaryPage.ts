@@ -21,6 +21,7 @@ export class ChargesSummaryPage {
     await expect(this.page.locator("label").nth(0)).toHaveText("Yes");
     await expect(this.page.locator("label").nth(1)).toHaveText("No");
     await expect(this.page.getByTestId("charges-summary")).toBeVisible();
+    await this.verifyCancelLink();
   }
 
   async errorValidations() {
@@ -45,7 +46,7 @@ export class ChargesSummaryPage {
         offenceDescription: string;
         chargeDetails: {
           dateOfOffence: string;
-          victim: {
+          victim?: {
             name: string;
             properties: string;
           };
@@ -98,9 +99,6 @@ export class ChargesSummaryPage {
           .getByTestId(`charge-${index}-details-button`)
           .locator("summary")
           .click();
-        // await expect(
-        //   suspectChargeSummary.getByTestId(`charge-${index}-details`),
-        // ).toBeVisible();
         await expect(
           suspectChargeSummary
             .getByTestId(`charge-${index}-details`)
@@ -113,20 +111,22 @@ export class ChargesSummaryPage {
             .locator("dd")
             .nth(0),
         ).toHaveText(charge.chargeDetails.dateOfOffence);
-        await expect(
-          suspectChargeSummary
-            .getByTestId(`charge-${index}-details`)
-            .locator("dt")
-            .nth(1),
-        ).toHaveText("Victim");
-        await expect(
-          suspectChargeSummary
-            .getByTestId(`charge-${index}-details`)
-            .locator("dd")
-            .nth(1),
-        ).toHaveText(
-          `${charge.chargeDetails.victim.name}${charge.chargeDetails.victim.properties}`,
-        );
+        if (charge.chargeDetails.victim) {
+          await expect(
+            suspectChargeSummary
+              .getByTestId(`charge-${index}-details`)
+              .locator("dt")
+              .nth(1),
+          ).toHaveText("Victim");
+          await expect(
+            suspectChargeSummary
+              .getByTestId(`charge-${index}-details`)
+              .locator("dd")
+              .nth(1),
+          ).toHaveText(
+            `${charge.chargeDetails.victim.name}${charge.chargeDetails.victim.properties}`,
+          );
+        }
       }),
     );
   }
@@ -170,6 +170,18 @@ export class ChargesSummaryPage {
       "href",
       url,
     );
+  }
+  async verifyCancelLink() {
+    await expect(this.page.getByRole("link", { name: "Cancel" })).toBeVisible();
+    await expect(
+      this.page.getByRole("link", { name: "Cancel" }),
+    ).toHaveAttribute(
+      "href",
+      "/case-registration/cancel-case-registration-confirmation",
+    );
+  }
+  async cancelCaseRegistration() {
+    await this.page.getByRole("link", { name: "Cancel" }).click();
   }
   async backLinkClick() {
     await this.page.getByRole("link", { name: "Back" }).click();

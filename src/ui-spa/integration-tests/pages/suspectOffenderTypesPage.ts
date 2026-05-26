@@ -24,6 +24,7 @@ export class SuspectOffenderTypesPage {
     await expect(this.page.locator("label:visible").nth(2)).toHaveText(
       "Youth offender (YO)",
     );
+    await this.verifyCancelLink();
   }
 
   async verifyPYOElements() {
@@ -80,6 +81,18 @@ export class SuspectOffenderTypesPage {
       "href",
       url,
     );
+  }
+  async verifyCancelLink() {
+    await expect(this.page.getByRole("link", { name: "Cancel" })).toBeVisible();
+    await expect(
+      this.page.getByRole("link", { name: "Cancel" }),
+    ).toHaveAttribute(
+      "href",
+      "/case-registration/cancel-case-registration-confirmation",
+    );
+  }
+  async cancelCaseRegistration() {
+    await this.page.getByRole("link", { name: "Cancel" }).click();
   }
   async backLinkClick() {
     await this.page.getByRole("link", { name: "Back" }).click();

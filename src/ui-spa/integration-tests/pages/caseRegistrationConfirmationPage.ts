@@ -28,6 +28,6 @@ export class CaseRegistrationConfirmationPage {
     ).toBeVisible();
     await expect(
       this.page.getByRole("link", { name: "Return to the home page" }),
-    ).toHaveAttribute("href", "https://home-page-url");
+    ).toHaveAttribute("href", "https://www.gov.uk/");
   }
 }

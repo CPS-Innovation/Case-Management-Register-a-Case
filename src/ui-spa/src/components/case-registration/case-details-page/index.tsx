@@ -6,13 +6,8 @@ import {
   useState,
   useEffect,
 } from "react";
-import {
-  AutoComplete,
-  BackLink,
-  Button,
-  ErrorSummary,
-  Input,
-} from "../../govuk";
+import { AutoComplete, BackLink, ErrorSummary, Input } from "../../govuk";
+import SaveAndCancel from "../../common/SaveAndCancel";
 import { CaseRegistrationFormContext } from "../../../common/providers/CaseRegistrationProvider";
 import { getRegisteringUnits } from "../../../common/utils/getRegisteringUnits";
 import { getWitnessCareUnits } from "../../../common/utils/getWitnessCareUnits";
@@ -622,9 +617,7 @@ const CaseDetailsPage = () => {
             />
           )}
         </div>
-        <Button type="submit" onClick={() => handleSubmit}>
-          Save and continue
-        </Button>
+        <SaveAndCancel onSave={handleSubmit} />
       </form>
     </div>
   );

@@ -989,7 +989,7 @@ describe("gateway-api", () => {
     const mockBody = {
       offences: [
         {
-          id: 10001,
+          cmsId: 10001,
           code: "WC81229",
           description: "Permit to be set trap etc - cause injury to wild bird",
           legislation:
@@ -997,6 +997,7 @@ describe("gateway-api", () => {
           effectiveFromDate: "1998-03-17T00:00:00",
           effectiveToDate: "1998-04-17T00:00:00",
           modeOfTrial: "abc",
+          cmsModeOfTrialShortCode: "NYC",
         },
       ],
       total: 3,

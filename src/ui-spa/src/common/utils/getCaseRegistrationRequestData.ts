@@ -127,10 +127,10 @@ const getSuspectRequestData = (
       surname: alias.lastName,
     })),
     charges: suspect.charges.map((charge) => ({
-      offenceId: `${charge.selectedOffence.id}`,
+      offenceId: `${charge.selectedOffence.cmsId}`,
       offenceCode: charge.selectedOffence.code,
       offenceDescription: charge.selectedOffence.description,
-      modeOfTrial: charge.selectedOffence.modeOfTrial,
+      modeOfTrial: charge.selectedOffence.cmsModeOfTrialShortCode,
       dateFrom: charge.offenceFromDate,
       dateTo: charge.offenceToDate ? charge.offenceToDate : null,
       victimIndexId: charge.victim ? getVictimIndex(charge.victim) : -1,

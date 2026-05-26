@@ -31,30 +31,30 @@ parameters:
   - name: slotName
     type: string
     default: ''
-  - name: dependsOn
+  - name: buildStageName
     type: string
   - name: buildArtifact
     type: string
 
 stages:
-- stage: Approve_Deployment_${{ parameters.environment }}
-  displayName: '${{ parameters.environment }} - Approve Deployment'
-  condition: and(succeeded(), ${{ eq(parameters.requireValidation, true) }})
-  jobs:
-  - template: ./manual-validation-jobs.yml
-    parameters:
-      instructions: 'Please verify the deployment to the lower environment worked as expected before approving deployment to ${{parameters.environment}}.'
-      notifyUsers: ${{ parameters.notifyUsers }}
-      approvers: ${{ parameters.approvers }}
+- ${{ if eq(parameters.requireValidation, true) }}:
+  - stage: Approve_Deployment_${{ parameters.environment }}
+    displayName: '${{ parameters.environment }} - Approve Deployment'
+    jobs:
+    - template: ./manual-validation-jobs.yml
+      parameters:
+        instructions: 'Please verify the deployment to the lower environment worked as expected before approving deployment to ${{parameters.environment}}.'
+        notifyUsers: ${{ parameters.notifyUsers }}
+        approvers: ${{ parameters.approvers }}
 
 - stage:  Deploy_Backend_${{ parameters.environment }}
   displayName: '${{ parameters.environment }} - Deploy Backend'
   ${{ if eq(parameters.requireValidation, true) }}:
     dependsOn: 
-    - ${{ parameters.dependsOn }}
+    - ${{ parameters.buildStageName }}
     - Approve_Deployment_${{ parameters.environment }}
   ${{ else }}:
-    dependsOn: ${{ parameters.dependsOn }}
+    dependsOn: ${{ parameters.buildStageName }}
   variables:
   - template: ./variables/backend-deploy-vars.yml
     parameters: 

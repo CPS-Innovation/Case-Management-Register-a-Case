@@ -14,6 +14,7 @@ import { formatNameUtil } from "../../../common/utils/formatNameUtil";
 import { isChargedWithAdultWarningActive } from "../../../common/utils/isChargedWithAdultWarningActive";
 import { isValidOnOrBeforeDate } from "../../../common/utils/isValidOnOrBeforeDate";
 import { useNavigate, useParams } from "react-router-dom";
+import SaveAndCancel from "../../common/SaveAndCancel";
 import styles from "../index.module.scss";
 import pageStyles from "./index.module.scss";
 
@@ -475,9 +476,7 @@ const AddChargeDetailsPage = () => {
             ></Radios>
           )}
         </div>
-        <Button type="submit" onClick={() => handleSubmit}>
-          Save and continue
-        </Button>
+        <SaveAndCancel onSave={handleSubmit} />
       </form>
     </div>
   );

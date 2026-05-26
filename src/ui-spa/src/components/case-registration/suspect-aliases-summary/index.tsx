@@ -6,13 +6,8 @@ import {
   useCallback,
   useMemo,
 } from "react";
-import {
-  Radios,
-  Button,
-  ErrorSummary,
-  BackLink,
-  SummaryList,
-} from "../../govuk";
+import { Radios, ErrorSummary, BackLink, SummaryList } from "../../govuk";
+import SaveAndCancel from "../../common/SaveAndCancel";
 import { CaseRegistrationFormContext } from "../../../common/providers/CaseRegistrationProvider";
 import {
   getNextSuspectJourneyRoute,
@@ -265,9 +260,7 @@ const SuspectAliasesSummaryPage = () => {
             }}
           ></Radios>
         </div>
-        <Button type="submit" onClick={() => handleSubmit}>
-          Save and continue
-        </Button>
+        <SaveAndCancel onSave={handleSubmit} />
       </form>
     </div>
   );

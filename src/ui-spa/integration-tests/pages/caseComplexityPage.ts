@@ -23,6 +23,7 @@ export class CaseComplexityPage {
     await expect(this.page.locator("label").nth(2)).toHaveText("High");
     await expect(this.page.locator("label").nth(2)).toHaveText("Complex");
     await expect(this.page.getByLabel("Basic")).toBeChecked();
+    await this.verifyCancelLink();
   }
 
   async selectComplexityBasic() {
@@ -46,6 +47,19 @@ export class CaseComplexityPage {
       "href",
       url,
     );
+  }
+
+  async verifyCancelLink() {
+    await expect(this.page.getByRole("link", { name: "Cancel" })).toBeVisible();
+    await expect(
+      this.page.getByRole("link", { name: "Cancel" }),
+    ).toHaveAttribute(
+      "href",
+      "/case-registration/cancel-case-registration-confirmation",
+    );
+  }
+  async cancelCaseRegistration() {
+    await this.page.getByRole("link", { name: "Cancel" }).click();
   }
   async backLinkClick() {
     await this.page.getByRole("link", { name: "Back" }).click();

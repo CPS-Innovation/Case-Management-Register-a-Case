@@ -6,13 +6,14 @@ import {
   useCallback,
   useMemo,
 } from "react";
-import { Checkboxes, Button, ErrorSummary, BackLink } from "../../govuk";
+import { Checkboxes, ErrorSummary, BackLink } from "../../govuk";
+import SaveAndCancel from "../../common/SaveAndCancel";
 import { CaseRegistrationFormContext } from "../../../common/providers/CaseRegistrationProvider";
 import { getCaseMonitoringCodes } from "../../../apis/gateway-api";
 import { useQuery } from "@tanstack/react-query";
 import { useNavigate } from "react-router-dom";
 import { type CaseMonitoringCodes } from "../../../schemas";
-import { getChargesSummaryList } from "../../../common/utils/getChargesSummaryList";
+import { isMonitoringCodeOptional } from "../../../common/utils/isMonitoringCodeOptional";
 import useChargesCount from "../../../common/hooks/useChargesCount";
 import pageStyles from "./index.module.scss";
 import styles from "../index.module.scss";
@@ -51,11 +52,8 @@ const CaseMonitoringCodesPage = () => {
   });
 
   const isOptional = useMemo(() => {
-    const chargesList = getChargesSummaryList(state.formData.suspects);
-    return (
-      chargesList.length > 0 && state.formData.suspectDetailsRadio === "yes"
-    );
-  }, [state.formData.suspectDetailsRadio, state.formData.suspects]);
+    return isMonitoringCodeOptional(state.formData.suspects);
+  }, [state.formData.suspects]);
 
   const [formDataErrors, setFormDataErrors] = useState<FormDataErrors>({});
 
@@ -265,9 +263,7 @@ const CaseMonitoringCodesPage = () => {
             }}
           />
         </div>
-        <Button type="submit" onClick={() => handleSubmit}>
-          Save and continue
-        </Button>
+        <SaveAndCancel onSave={handleSubmit} />
       </form>
     </div>
   );

@@ -27,6 +27,7 @@ export class SuspectDOBPage {
     await expect(
       this.page.getByTestId("suspect-DOB-date").locator("label").nth(2),
     ).toHaveText("Year");
+    await this.verifyCancelLink();
   }
 
   async errorValidations() {
@@ -110,6 +111,18 @@ export class SuspectDOBPage {
       "href",
       url,
     );
+  }
+  async verifyCancelLink() {
+    await expect(this.page.getByRole("link", { name: "Cancel" })).toBeVisible();
+    await expect(
+      this.page.getByRole("link", { name: "Cancel" }),
+    ).toHaveAttribute(
+      "href",
+      "/case-registration/cancel-case-registration-confirmation",
+    );
+  }
+  async cancelCaseRegistration() {
+    await this.page.getByRole("link", { name: "Cancel" }).click();
   }
   async backLinkClick() {
     await this.page.getByRole("link", { name: "Back" }).click();

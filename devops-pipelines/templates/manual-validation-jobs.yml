@@ -29,13 +29,16 @@ jobs:
     name: SetFlag
     displayName: 'Determine if Today is Friday'
 
-- job: Manual_Validation_Weekday
+- job: Manual_Validation
   dependsOn: Set_Flag
-  condition: eq(dependencies.Set_Flag.outputs['SetFlag.isFriday'], 'false')
   pool: server
-  timeoutInMinutes: 1500
+  timeoutInMinutes: 4380
+  variables: 
+    isFriday: $[ eq(dependencies.Set_Flag.outputs['SetFlag.isFriday'], 'true') ]
   steps:
   - task: ManualValidation@1
+    displayName: Request Validation
+    condition: eq(variables.isFriday, 'false')
     timeoutInMinutes: 1440
     inputs:
       notifyUsers: ${{ parameters.notifyUsers }}
@@ -44,13 +47,9 @@ jobs:
       instructions: ${{ parameters.instructions }} 
       onTimeout: 'reject'
 
-- job: Manual_Validation_Friday
-  dependsOn: Set_Flag
-  condition: eq(dependencies.Set_Flag.outputs['SetFlag.isFriday'], 'true')
-  pool: server
-  timeoutInMinutes: 4380
-  steps:
   - task: ManualValidation@1
+    displayName: Request Validation (Friday)
+    condition: eq(variables.isFriday, 'true')
     timeoutInMinutes: 4320
     inputs:
       notifyUsers: ${{ parameters.notifyUsers }}

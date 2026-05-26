@@ -23,6 +23,7 @@ export class CaseAssigneePage {
     await expect(this.page.locator("legend").nth(1)).toHaveText(
       "Do you want to add a police officer or investigator?",
     );
+    await this.verifyCancelLink();
   }
 
   async errorValidations() {
@@ -149,6 +150,18 @@ export class CaseAssigneePage {
       "href",
       url,
     );
+  }
+  async verifyCancelLink() {
+    await expect(this.page.getByRole("link", { name: "Cancel" })).toBeVisible();
+    await expect(
+      this.page.getByRole("link", { name: "Cancel" }),
+    ).toHaveAttribute(
+      "href",
+      "/case-registration/cancel-case-registration-confirmation",
+    );
+  }
+  async cancelCaseRegistration() {
+    await this.page.getByRole("link", { name: "Cancel" }).click();
   }
   async verifyNoBackLink() {
     await expect(

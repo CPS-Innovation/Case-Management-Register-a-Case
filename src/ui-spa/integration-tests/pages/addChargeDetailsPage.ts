@@ -72,6 +72,7 @@ export class AddChargeDetailsPage {
         this.page.getByTestId("charged-with-adult-radio").getByLabel("No"),
       ).toBeVisible();
     }
+    await this.verifyCancelLink();
   }
 
   async errorValidations(isYouthOffender: boolean = false) {
@@ -178,6 +179,18 @@ export class AddChargeDetailsPage {
       "href",
       url,
     );
+  }
+  async verifyCancelLink() {
+    await expect(this.page.getByRole("link", { name: "Cancel" })).toBeVisible();
+    await expect(
+      this.page.getByRole("link", { name: "Cancel" }),
+    ).toHaveAttribute(
+      "href",
+      "/case-registration/cancel-case-registration-confirmation",
+    );
+  }
+  async cancelCaseRegistration() {
+    await this.page.getByRole("link", { name: "Cancel" }).click();
   }
   async backLinkClick() {
     await this.page.getByRole("link", { name: "Back" }).click();
