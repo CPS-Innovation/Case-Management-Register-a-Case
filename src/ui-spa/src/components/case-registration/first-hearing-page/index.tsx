@@ -277,19 +277,20 @@ const FirstHearingPage = () => {
       navigate("/case-registration/case-summary");
       return;
     }
-    if (
-      isMonitoringCodeOptional(state.formData.suspects) &&
-      state.formData.caseMonitoringCodesCheckboxes.includes(
-        PRE_CHARGE_DECISION_CODE,
-      )
-    ) {
-      navigate("/case-registration/case-monitoring-codes");
-      return;
-    }
+
     if (
       state.formData.navigation.changeCaseSuspects ||
       state.formData.navigation.changeCaseCharges
     ) {
+      if (
+        isMonitoringCodeOptional(state.formData.suspects) &&
+        state.formData.caseMonitoringCodesCheckboxes.includes(
+          PRE_CHARGE_DECISION_CODE,
+        )
+      ) {
+        navigate("/case-registration/case-monitoring-codes");
+        return;
+      }
       dispatch({
         type: "SET_NAVIGATION_DATA",
         payload: { changeCaseSuspects: false, changeCaseCharges: false },
