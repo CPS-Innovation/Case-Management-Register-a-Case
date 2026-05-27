@@ -3,7 +3,6 @@ import Footer from "./Footer";
 import Header from "./Header";
 import { useLocation } from "react-router";
 import { SkipLink } from "../components/govuk";
-import styles from "./Layout.module.scss";
 
 export default function RootLayout({
   children,
@@ -28,7 +27,7 @@ export default function RootLayout({
     <div ref={skipLinkSiblingRef} tabIndex={-1}>
       <SkipLink href="#main-content">Skip to main content</SkipLink>
       <Header />
-      <div id="main-content" className={styles.mainContent}>
+      <div id="main-content" className="govuk-width-container">
         {children}
       </div>
       <Footer />

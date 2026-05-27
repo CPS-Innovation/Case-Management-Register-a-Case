@@ -17,10 +17,10 @@ const routeTitles: Record<string, string> = {
   "/suspect-ethnicity": "Suspect Ethnicity",
   "/suspect-religion": "Suspect Religion",
   "/suspect-disability": "Suspect Disability",
-  "/suspect-asn": "Suspect ASN",
-  "/suspect-offender": "Suspect Offender",
   "/suspect-add-aliases": "Suspect Add Aliases",
   "/suspect-aliases-summary": "Suspect Aliases Summary",
+  "/suspect-asn": "Suspect ASN",
+  "/suspect-offender": "Suspect Offender Type",
   "/suspect-summary": "Suspect Summary",
   "/suspect-remove-confirmation": "Suspect Remove Confirmation",
   "/want-to-add-charges": "Want to Add Charges",
@@ -36,6 +36,8 @@ const routeTitles: Record<string, string> = {
   "/change-registering-unit-confirmation":
     "Change Registering Unit Confirmation",
   "/remove-all-suspects-confirmation": "Remove All Suspects Confirmation",
+  "/cancel-case-registration-confirmation":
+    "Cancel Case Registration Confirmation",
 };
 
 const DEFAULT_TITLE = "Home";

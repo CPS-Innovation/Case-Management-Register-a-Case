@@ -1,5 +1,4 @@
 .caseSummaryPage {
-  max-width: 66.66%;
   h2 {
     font-size: 1.5rem;
     margin-top: 0;
@@ -23,6 +22,9 @@
     text-transform: inherit;
     letter-spacing: 0;
     font-weight: normal;
+  }
+  & :global(.govuk-button) {
+    width: fit-content;
   }
 }
 .errorSummaryWrapper {
