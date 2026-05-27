@@ -8,12 +8,14 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Azure.Functions.Worker;
 using Microsoft.Azure.WebJobs.Extensions.OpenApi.Core.Attributes;
+using Microsoft.Extensions.Hosting;
 
 namespace Cps.CaseManagement.Api.Functions.Tactical;
 
-public class CmsLoginDirect(IMdsClientTactical mdsClient)
+public class CmsLoginDirect(IMdsClientTactical mdsClient, IHostEnvironment hostEnvironment)
 {
 	private readonly IMdsClientTactical _mdsClient = mdsClient;
+	private readonly IHostEnvironment _hostEnvironment = hostEnvironment;
 
 	[Function(nameof(CmsLoginDirectGet))]
 	[OpenApiOperation(operationId: nameof(CmsLoginDirectGet), tags: ["CMS", "Authentication"], Description = "Returns the developer CMS login form.")]
@@ -64,20 +66,16 @@ public class CmsLoginDirect(IMdsClientTactical mdsClient)
 		};
 		}
 
-		private static void AppendAuthCookie(HttpRequest req, string cookiesString)
+		private void AppendAuthCookie(HttpRequest req, string cookiesString)
 		{
-		var cookieOptions = req.IsHttps
-		? new CookieOptions
-		{
-			Path = "/api/",
-			HttpOnly = true,
-			Secure = true,
-			SameSite = SameSiteMode.None
-		}
-		: new CookieOptions
+		var useSecureCookie = req.IsHttps || !_hostEnvironment.IsDevelopment();
+
+		var cookieOptions = new CookieOptions
 		{
 			Path = "/api/",
 			HttpOnly = true,
+			Secure = useSecureCookie,
+			SameSite = useSecureCookie ? SameSiteMode.None : SameSiteMode.Lax
 		};
 
 		req.HttpContext.Response.Cookies.Append(HttpHeaderKeys.CmsAuthValues, cookiesString, cookieOptions);
