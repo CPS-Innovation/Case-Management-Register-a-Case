@@ -75,6 +75,7 @@ const CaseRegistrationPage = () => {
   );
 
   const [formDataErrors, setFormDataErrors] = useState<FormDataErrors>({});
+  const [disableBtns, setDisableBtns] = useState<boolean>(false);
 
   const errorSummaryProperties = useCallback(
     (errorKey: keyof FormDataErrors) => {
@@ -281,6 +282,7 @@ const CaseRegistrationPage = () => {
     event.preventDefault();
 
     if (!validateFormData()) return;
+    setDisableBtns(true);
 
     let nextRoute = "/case-registration/areas";
     if (state.formData.navigation.fromCaseSummaryPage) {
@@ -457,7 +459,7 @@ const CaseRegistrationPage = () => {
             }}
           ></Radios>
         </div>
-        <SaveAndCancel onSave={handleSubmit} />
+        <SaveAndCancel onSave={handleSubmit} disabled={disableBtns} />
       </form>
     </div>
   );

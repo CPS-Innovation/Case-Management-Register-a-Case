@@ -99,7 +99,7 @@ const AddChargeDetailsPage = () => {
   }, [state, suspectIndex]);
 
   const [formDataErrors, setFormDataErrors] = useState<FormDataErrors>({});
-
+  const [disableBtns, setDisableBtns] = useState<boolean>(false);
   const errorSummaryProperties = useCallback(
     (errorKey: keyof FormDataErrors) => {
       switch (errorKey) {
@@ -294,6 +294,7 @@ const AddChargeDetailsPage = () => {
     event.preventDefault();
 
     if (!validateFormData()) return;
+    setDisableBtns(true);
 
     dispatch({
       type: "SET_CHARGE_FIELDS",
@@ -476,7 +477,7 @@ const AddChargeDetailsPage = () => {
             ></Radios>
           )}
         </div>
-        <SaveAndCancel onSave={handleSubmit} />
+        <SaveAndCancel onSave={handleSubmit} disabled={disableBtns} />
       </form>
     </div>
   );

@@ -49,7 +49,7 @@ export const setupHandlers = (baseUrl: string, apiMockSource: string) => {
       return HttpResponse.json(results);
     }),
     http.get(`${baseUrl}/api/v1/urns/:urn/exists`, async () => {
-      await delay(RESPONSE_DELAY);
+      await delay(3000);
       return HttpResponse.json(false);
     }),
     http.get(`${baseUrl}/api/v1/courts/:registeringUnitId`, async () => {

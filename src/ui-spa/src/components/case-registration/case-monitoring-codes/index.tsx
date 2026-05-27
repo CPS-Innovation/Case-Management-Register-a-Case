@@ -56,6 +56,7 @@ const CaseMonitoringCodesPage = () => {
   }, [state.formData.suspects]);
 
   const [formDataErrors, setFormDataErrors] = useState<FormDataErrors>({});
+  const [disableBtns, setDisableBtns] = useState<boolean>(false);
 
   const errorSummaryProperties = useCallback(
     (errorKey: keyof FormDataErrors) => {
@@ -177,6 +178,7 @@ const CaseMonitoringCodesPage = () => {
     event.preventDefault();
 
     if (!validateFormData()) return;
+    setDisableBtns(true);
     dispatch({
       type: "SET_FIELDS",
       payload: { data: { ...formData } },
@@ -271,7 +273,7 @@ const CaseMonitoringCodesPage = () => {
             }}
           />
         </div>
-        <SaveAndCancel onSave={handleSubmit} />
+        <SaveAndCancel onSave={handleSubmit} disabled={disableBtns} />
       </form>
     </div>
   );

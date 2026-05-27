@@ -60,6 +60,7 @@ const SuspectAliasesPage = () => {
     );
   }, [state.formData.suspects, suspectIndex]);
   const [formDataErrors, setFormDataErrors] = useState<FormDataErrors>({});
+  const [disableBtns, setDisableBtns] = useState<boolean>(false);
 
   const errorSummaryProperties = useCallback(
     (errorKey: keyof FormDataErrors) => {
@@ -123,6 +124,7 @@ const SuspectAliasesPage = () => {
     event.preventDefault();
 
     if (!validateFormData()) return;
+    setDisableBtns(true);
     const newAliases = [...suspectAliases, alias];
     dispatch({
       type: "SET_SUSPECT_FIELDS",
@@ -215,7 +217,7 @@ const SuspectAliasesPage = () => {
             }}
           />
         </div>
-        <SaveAndCancel onSave={handleSubmit} />
+        <SaveAndCancel onSave={handleSubmit} disabled={disableBtns} />
       </form>
     </div>
   );

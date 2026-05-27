@@ -61,6 +61,7 @@ const AddSuspectPage = () => {
         ?.suspectAdditionalDetailsCheckboxes || [],
   });
 
+  const [disableBtns, setDisableBtns] = useState<boolean>(false);
   const suspectAdditionalDetails: SuspectAdditionalDetailValue[] = useMemo(
     () => [
       "Date of birth",
@@ -225,7 +226,7 @@ const AddSuspectPage = () => {
     event.preventDefault();
 
     if (!validateFormData()) return;
-
+    setDisableBtns(true);
     dispatch({
       type: "SET_SUSPECT_FIELDS",
       payload: { index: suspectIndex, data: formData },
@@ -419,7 +420,7 @@ const AddSuspectPage = () => {
             }}
           ></Radios>
         </div>
-        <SaveAndCancel onSave={handleSubmit} />
+        <SaveAndCancel onSave={handleSubmit} disabled={disableBtns} />
       </form>
     </div>
   );

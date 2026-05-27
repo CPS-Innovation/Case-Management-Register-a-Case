@@ -38,6 +38,7 @@ const CaseAreasPage = () => {
   });
 
   const [formDataErrors, setFormDataErrors] = useState<FormDataErrors>({});
+  const [disableBtns, setDisableBtns] = useState<boolean>(false);
 
   const previousRoute = useMemo(() => {
     if (state.formData.navigation.changeCaseArea) {
@@ -147,6 +148,7 @@ const CaseAreasPage = () => {
     }
 
     if (!validateFormData(areas, inputValue)) return;
+    setDisableBtns(false);
 
     if (
       state.formData.navigation.changeCaseArea &&
@@ -221,7 +223,9 @@ const CaseAreasPage = () => {
           <AutoComplete
             id="area-or-division-text"
             inputClasses={"govuk-input--error"}
-            label={{ children: <h1>What is the division or area?</h1> }}
+            label={{
+              children: <h1 tabIndex={-1}>What is the division or area?</h1>,
+            }}
             source={areaSuggests}
             confirmOnBlur={false}
             onConfirm={handleAreaConfirm}
@@ -234,7 +238,7 @@ const CaseAreasPage = () => {
           />
         </div>
 
-        <SaveAndCancel onSave={handleSubmit} />
+        <SaveAndCancel onSave={handleSubmit} disabled={disableBtns} />
       </form>
     </div>
   );

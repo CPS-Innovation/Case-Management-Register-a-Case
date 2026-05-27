@@ -74,6 +74,7 @@ const FirstHearingPage = () => {
   }, [courtLocationsError]);
 
   const [formDataErrors, setFormDataErrors] = useState<FormDataErrors>({});
+  const [disableBtns, setDisableBtns] = useState<boolean>(false);
 
   const errorSummaryProperties = useCallback(
     (errorKey: keyof FormDataErrors) => {
@@ -252,7 +253,7 @@ const FirstHearingPage = () => {
     }
 
     if (!validateFormData(courtLocations, inputCourtLocationValue)) return;
-
+    setDisableBtns(true);
     dispatch({
       type: "SET_FIELDS",
       payload: {
@@ -417,7 +418,7 @@ const FirstHearingPage = () => {
             }}
           ></Radios>
         </div>
-        <SaveAndCancel onSave={handleSubmit} />
+        <SaveAndCancel onSave={handleSubmit} disabled={disableBtns} />
       </form>
     </div>
   );

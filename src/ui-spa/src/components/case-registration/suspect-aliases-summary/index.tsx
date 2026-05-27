@@ -36,6 +36,7 @@ const SuspectAliasesSummaryPage = () => {
   };
 
   const [addMoreAliasesRadio, setAddMoreAliasesRadio] = useState<string>("");
+  const [disableBtns, setDisableBtns] = useState(false);
   const suspectIndex = useMemo(() => {
     const index = suspectId.replace("suspect-", "");
     return Number.parseInt(index, 10);
@@ -147,6 +148,7 @@ const SuspectAliasesSummaryPage = () => {
     event.preventDefault();
 
     if (!validateFormData()) return;
+    setDisableBtns(true);
 
     if (addMoreAliasesRadio === "yes") {
       return navigate(
@@ -260,7 +262,7 @@ const SuspectAliasesSummaryPage = () => {
             }}
           ></Radios>
         </div>
-        <SaveAndCancel onSave={handleSubmit} />
+        <SaveAndCancel onSave={handleSubmit} disabled={disableBtns} />
       </form>
     </div>
   );

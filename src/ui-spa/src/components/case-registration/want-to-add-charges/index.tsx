@@ -32,6 +32,8 @@ const WantToAddCharges = () => {
 
   const [formDataErrors, setFormDataErrors] = useState<FormDataErrors>({});
 
+  const [disableBtns, setDisableBtns] = useState<boolean>(false);
+
   const errorSummaryProperties = useCallback(
     (errorKey: keyof FormDataErrors) => {
       if (errorKey === "wantToAddChargesRadio") {
@@ -97,6 +99,7 @@ const WantToAddCharges = () => {
     event.preventDefault();
 
     if (!validateFormData()) return;
+    setDisableBtns(true);
     dispatch({
       type: "SET_FIELDS",
       payload: {
@@ -194,7 +197,7 @@ const WantToAddCharges = () => {
             }}
           ></Radios>
         </div>
-        <SaveAndCancel onSave={handleSubmit} />
+        <SaveAndCancel onSave={handleSubmit} disabled={disableBtns} />
       </form>
     </div>
   );

@@ -59,6 +59,7 @@ const CaseDetailsPage = () => {
     },
   });
   const [formDataErrors, setFormDataErrors] = useState<FormDataErrors>({});
+  const [disableBtns, setDisableBtns] = useState<boolean>(false);
 
   const previousRoute = useMemo(() => {
     if (state.formData.navigation.changeCaseDetails) {
@@ -389,6 +390,7 @@ const CaseDetailsPage = () => {
     }
     if (!validateFormData(registeringUnitInputValue, witnessCareUnitInputValue))
       return;
+    setDisableBtns(true);
     const { data } = await refetchValidateUrn();
     if (data) {
       setFormDataErrors((prev) => ({
@@ -400,6 +402,7 @@ const CaseDetailsPage = () => {
           errorIds: ["urn-unique-reference-text"],
         },
       }));
+      setDisableBtns(false);
       return;
     }
     if (
@@ -617,7 +620,7 @@ const CaseDetailsPage = () => {
             />
           )}
         </div>
-        <SaveAndCancel onSave={handleSubmit} />
+        <SaveAndCancel onSave={handleSubmit} disabled={disableBtns} />
       </form>
     </div>
   );

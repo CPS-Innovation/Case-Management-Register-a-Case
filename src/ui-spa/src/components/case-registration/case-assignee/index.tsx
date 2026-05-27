@@ -85,7 +85,7 @@ const CaseAssigneePage = () => {
     caseInvestigatorShoulderNumberText:
       state.formData.caseInvestigatorShoulderNumberText || "",
   });
-
+  const [disableBtns, setDisableBtns] = useState<boolean>(false);
   const registeringUnitId = useMemo(() => {
     return state.formData.registeringUnitText?.id;
   }, [state.formData.registeringUnitText]);
@@ -485,6 +485,7 @@ const CaseAssigneePage = () => {
       !validateFormData(prosecutors, inputProsecutorValue, inputCaseworkerValue)
     )
       return;
+    setDisableBtns(true);
 
     dispatch({
       type: "SET_FIELDS",
@@ -766,7 +767,7 @@ const CaseAssigneePage = () => {
             }}
           ></Radios>
         </div>
-        <SaveAndCancel onSave={handleSubmit} />
+        <SaveAndCancel onSave={handleSubmit} disabled={disableBtns} />
       </form>
     </div>
   );

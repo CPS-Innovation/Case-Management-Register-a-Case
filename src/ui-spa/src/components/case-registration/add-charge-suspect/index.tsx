@@ -26,6 +26,7 @@ const AddChargeSuspectPage = () => {
   const [addChargeSuspectRadio, setAddChargeSuspectRadio] = useState<{
     suspectId: string;
   }>({ suspectId: "" });
+  const [disableBtns, setDisableBtns] = useState(false);
 
   const errorSummaryRef = useRef<HTMLInputElement>(null);
   const { state } = useContext(CaseRegistrationFormContext);
@@ -128,6 +129,7 @@ const AddChargeSuspectPage = () => {
     event.preventDefault();
 
     if (!validateFormData()) return;
+    setDisableBtns(true);
     const { suspects } = state.formData;
     const suspectId = !suspects.length ? 0 : suspects.length;
 
@@ -185,7 +187,7 @@ const AddChargeSuspectPage = () => {
             }}
           ></Radios>
         </div>
-        <SaveAndCancel onSave={handleSubmit} />
+        <SaveAndCancel onSave={handleSubmit} disabled={disableBtns} />
       </form>
     </div>
   );

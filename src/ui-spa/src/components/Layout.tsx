@@ -28,7 +28,9 @@ export default function RootLayout({
     <div ref={skipLinkSiblingRef} tabIndex={-1}>
       <SkipLink href="#main-content">Skip to main content</SkipLink>
       <Header />
-      <div className={styles.mainContent}>{children}</div>
+      <div id="main-content" className={styles.mainContent}>
+        {children}
+      </div>
       <Footer />
     </div>
   );

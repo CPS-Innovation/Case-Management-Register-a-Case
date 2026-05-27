@@ -31,6 +31,7 @@ const SuspectSummaryPage = () => {
   const [addMoreChargesRadio, setAddMoreChargesRadio] = useState<string>("");
 
   const [formDataErrors, setFormDataErrors] = useState<FormDataErrors>({});
+  const [disableBtns, setDisableBtns] = useState<boolean>(false);
 
   const errorSummaryProperties = useCallback(
     (errorKey: keyof FormDataErrors) => {
@@ -102,6 +103,7 @@ const SuspectSummaryPage = () => {
     event.preventDefault();
 
     if (!validateFormData()) return;
+    setDisableBtns(true);
 
     if (addMoreChargesRadio === "yes") {
       dispatch({
@@ -218,7 +220,7 @@ const SuspectSummaryPage = () => {
             }}
           ></Radios>
         </div>
-        <SaveAndCancel onSave={handleSubmit} />
+        <SaveAndCancel onSave={handleSubmit} disabled={disableBtns} />
       </form>
     </div>
   );
