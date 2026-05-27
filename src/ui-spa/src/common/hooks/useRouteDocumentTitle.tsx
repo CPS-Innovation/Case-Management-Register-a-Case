@@ -44,9 +44,8 @@ export const useRouteDocumentTitle = (): { title: string } => {
   const { pathname } = useLocation();
   const [title, setTitle] = useState<string>("");
   useEffect(() => {
-    const normalized = pathname === "/" ? "/" : pathname.replace(/\/+$/, "");
-    const lastSlashIndex = normalized.lastIndexOf("/");
-    const lastSegment = normalized.substring(lastSlashIndex);
+    const lastSlashIndex = pathname.lastIndexOf("/");
+    const lastSegment = pathname.substring(lastSlashIndex);
     const title = `${routeTitles[lastSegment] ?? DEFAULT_TITLE} - Case Registration`;
     document.title = title;
     setTitle(title);
