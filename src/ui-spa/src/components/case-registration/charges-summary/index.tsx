@@ -80,12 +80,12 @@ const SuspectSummaryPage = () => {
     return errorSummary;
   }, [formDataErrors, errorSummaryProperties]);
   const previousRoute = useMemo(() => {
-    if (state.formData.navigation.fromCaseSummaryPage) {
+    if (state.formData.navigation.changeCaseCharges) {
       return "/case-registration/case-summary";
     }
 
     return "/case-registration/suspect-summary";
-  }, [state.formData.navigation.fromCaseSummaryPage]);
+  }, [state.formData.navigation.changeCaseCharges]);
 
   useEffect(() => {
     if (errorList.length) errorSummaryRef.current?.focus();
@@ -117,12 +117,19 @@ const SuspectSummaryPage = () => {
         payload: { fromChargeSummaryPage: false },
       });
     }
-    if (state.formData.navigation.fromCaseSummaryPage) {
-      navigate("/case-registration/case-summary");
-      return;
-    }
     if (chargesCount) {
       navigate("/case-registration/first-hearing");
+      return;
+    }
+    if (
+      state.formData.navigation.changeCaseSuspects ||
+      state.formData.navigation.changeCaseCharges
+    ) {
+      dispatch({
+        type: "SET_NAVIGATION_DATA",
+        payload: { changeCaseSuspects: false, changeCaseCharges: false },
+      });
+      navigate("/case-registration/case-summary");
       return;
     }
     navigate("/case-registration/case-monitoring-codes");
@@ -133,7 +140,7 @@ const SuspectSummaryPage = () => {
     if (previousRoute === "/case-registration/case-summary") {
       dispatch({
         type: "SET_NAVIGATION_DATA",
-        payload: { fromCaseSummaryPage: false, fromChargeSummaryPage: false },
+        payload: { changeCaseCharges: false, fromChargeSummaryPage: false },
       });
     }
 

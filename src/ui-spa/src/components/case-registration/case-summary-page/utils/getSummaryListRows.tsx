@@ -42,7 +42,7 @@ export const getCaseDetailsSummaryListRows = (
     event.preventDefault();
     dispatch({
       type: "SET_NAVIGATION_DATA",
-      payload: { fromCaseSummaryPage: true },
+      payload: { changeCaseSuspects: true },
     });
     navigate(url);
   };

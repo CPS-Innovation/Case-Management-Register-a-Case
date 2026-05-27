@@ -15,6 +15,8 @@ import { getCourtsByUnitId } from "../../../apis/gateway-api";
 import { useQuery } from "@tanstack/react-query";
 import { useNavigate } from "react-router-dom";
 import { isOnOrAfterChargeDates } from "../../../common/utils/chargeDatesUtil";
+import { isMonitoringCodeOptional } from "../../../common/utils/isMonitoringCodeOptional";
+import { PRE_CHARGE_DECISION_CODE } from "../../../common/constants/general";
 import styles from "../index.module.scss";
 const FirstHearingPage = () => {
   type ErrorText = {
@@ -35,7 +37,6 @@ const FirstHearingPage = () => {
     if (state.formData.navigation.fromCaseSummaryPage) {
       return "/case-registration/case-summary";
     }
-
     return "/case-registration/charges-summary";
   }, [state.formData.navigation.fromCaseSummaryPage]);
 
@@ -272,6 +273,27 @@ const FirstHearingPage = () => {
       dispatch({
         type: "SET_NAVIGATION_DATA",
         payload: { fromCaseSummaryPage: false },
+      });
+      navigate("/case-registration/case-summary");
+      return;
+    }
+
+    if (
+      state.formData.navigation.changeCaseSuspects ||
+      state.formData.navigation.changeCaseCharges
+    ) {
+      if (
+        isMonitoringCodeOptional(state.formData.suspects) &&
+        state.formData.caseMonitoringCodesCheckboxes.includes(
+          PRE_CHARGE_DECISION_CODE,
+        )
+      ) {
+        navigate("/case-registration/case-monitoring-codes");
+        return;
+      }
+      dispatch({
+        type: "SET_NAVIGATION_DATA",
+        payload: { changeCaseSuspects: false, changeCaseCharges: false },
       });
       navigate("/case-registration/case-summary");
       return;

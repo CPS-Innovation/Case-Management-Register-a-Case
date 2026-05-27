@@ -1,2 +1,3 @@
 export const DEFAULT_COMPLEXITY_DESCRIPTION = "Basic";
 export const DEFAULT_VICTIM_ADDITIONAL_DETAIL_VALUE = "Witness";
+export const PRE_CHARGE_DECISION_CODE = "CSEA";

@@ -136,6 +136,8 @@ describe("caseRegistrationReducer", () => {
           fromSuspectSummaryPage: false,
           changeCaseArea: false,
           changeCaseDetails: false,
+          changeCaseSuspects: false,
+          changeCaseCharges: false,
         },
       },
       apiData: apiData,

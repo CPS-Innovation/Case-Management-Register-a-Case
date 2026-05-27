@@ -107,13 +107,28 @@ const WantToAddCharges = () => {
     });
     const { wantToAddChargesRadio } = formData;
     if (wantToAddChargesRadio === "no") {
+      if (
+        state.formData.navigation.changeCaseSuspects ||
+        state.formData.navigation.changeCaseCharges
+      ) {
+        dispatch({
+          type: "SET_NAVIGATION_DATA",
+          payload: {
+            changeCaseSuspects: false,
+            changeCaseCharges: false,
+          },
+        });
+        navigate("/case-registration/case-summary");
+        return;
+      }
       return navigate("/case-registration/case-monitoring-codes");
     }
     if (wantToAddChargesRadio === "yes" && state.formData.suspects.length > 1) {
       return navigate("/case-registration/add-charge-suspect");
     }
+    const chargeIndex = state.formData.suspects[0].charges.length;
     return navigate(
-      `/case-registration/suspect-0/charge-0/charges-offence-search`,
+      `/case-registration/suspect-0/charge-${chargeIndex}/charges-offence-search`,
     );
   };
 

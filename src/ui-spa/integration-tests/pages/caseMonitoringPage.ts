@@ -22,6 +22,18 @@ export class CaseMonitoringPage {
     await this.verifyCancelLink();
   }
 
+  async verifyPreChargeCheckboxDisabled() {
+    await expect(
+      this.page.getByRole("checkbox", { name: "pre-charge decision" }),
+    ).toBeDisabled();
+  }
+
+  async verifyPreChargeCheckboxNotDisabled() {
+    await expect(
+      this.page.getByRole("checkbox", { name: "pre-charge decision" }),
+    ).not.toBeDisabled();
+  }
+
   async verifyPreChargeCheckboxChecked() {
     await expect(
       this.page.getByRole("checkbox", { name: "pre-charge decision" }),
@@ -42,6 +54,9 @@ export class CaseMonitoringPage {
 
   async selectMonitoringCode(name: string) {
     await this.page.getByRole("checkbox", { name: name }).check();
+  }
+  async deSelectMonitoringCode(name: string) {
+    await this.page.getByRole("checkbox", { name: name }).uncheck();
   }
 
   async verifyErrorSummaryClear() {

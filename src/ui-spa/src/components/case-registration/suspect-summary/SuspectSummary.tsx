@@ -30,7 +30,7 @@ const SuspectSummary: React.FC<SuspectSummaryProps> = ({
     event.preventDefault();
     dispatch({
       type: "SET_NAVIGATION_DATA",
-      payload: { fromCaseSummaryPage: true },
+      payload: { changeCaseCharges: true },
     });
     navigate(url);
   };
@@ -78,7 +78,7 @@ const SuspectSummary: React.FC<SuspectSummaryProps> = ({
       if (isCaseSummaryPage) {
         dispatch({
           type: "SET_NAVIGATION_DATA",
-          payload: { fromCaseSummaryPage: true },
+          payload: { changeCaseSuspects: true },
         });
       } else {
         dispatch({

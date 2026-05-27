@@ -141,6 +141,8 @@ export type CaseRegistrationFormData = {
     fromSuspectSummaryPage: boolean;
     changeCaseArea: boolean;
     changeCaseDetails: boolean;
+    changeCaseSuspects: boolean;
+    changeCaseCharges: boolean;
   };
 };
 
@@ -240,6 +242,8 @@ export const initialState: CaseRegistrationState = {
       fromSuspectSummaryPage: false,
       changeCaseArea: false,
       changeCaseDetails: false,
+      changeCaseSuspects: false,
+      changeCaseCharges: false,
     },
   },
 
@@ -468,6 +472,8 @@ export type CaseRegistrationActions =
         fromSuspectSummaryPage?: boolean;
         changeCaseArea?: boolean;
         changeCaseDetails?: boolean;
+        changeCaseSuspects?: boolean;
+        changeCaseCharges?: boolean;
       };
     }
   | {
