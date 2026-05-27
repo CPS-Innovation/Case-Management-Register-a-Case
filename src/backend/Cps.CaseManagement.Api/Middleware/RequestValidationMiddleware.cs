@@ -12,14 +12,14 @@ namespace Cps.CaseManagement.Api.Middleware;
 
 public sealed partial class RequestValidationMiddleware(IAuthorizationValidator authorizationValidator) : IFunctionsWorkerMiddleware
 {
-    private readonly string[] _unauthenticatedRoutes = ["/api/status", "/api/swagger/ui", "/api/swagger.json", "/api/v1/init"];
+    private readonly string[] _unauthenticatedRoutes = ["/api/status", "/api/tactical/login", "/api/swagger/ui", "/api/swagger.json", "/api/v1/init"];
 
     public async Task Invoke(FunctionContext context, FunctionExecutionDelegate next)
     {
         var httpRequestData = await context.GetHttpRequestDataAsync() ?? throw new ArgumentNullException(nameof(context), "Context does not contains HttpRequestData");
 
         // Only block Swagger in production
-        if (SwaggerRouteHelper.IsProduction && SwaggerRouteHelper.IsSwaggerRoute(httpRequestData.Url.AbsolutePath))
+        if (RouteBlockerHelper.IsProduction && RouteBlockerHelper.IsBlockedRoute(httpRequestData.Url.AbsolutePath))
         {
             var response = httpRequestData.CreateResponse(HttpStatusCode.NotFound);
             await response.WriteStringAsync("Not Found");

@@ -14,6 +14,7 @@ using Cps.CaseManagement.Api.Services;
 using Cps.CaseManagement.Api.Validators;
 using Cps.CaseManagement.Infrastructure.Extensions;
 using Cps.CaseManagement.MdsClient.Extensions;
+using Cps.CaseManagement.MdsClient.Tactical.Extensions;
 
 using var loggerFactory = LoggerFactory.Create(configure => configure.AddConsole());
 var logger = loggerFactory.CreateLogger("Configuration");
@@ -73,6 +74,7 @@ var host = new HostBuilder()
 
         services.AddTelemetryServices();
         services.AddMdsClient(configuration);
+        services.AddMdsClientTactical();
         services.AddSingleton<IMdsMapper, MdsMapper>();
         services.AddScoped<IMdsService, MdsService>();
         services.AddScoped<IInitService, InitService>();
