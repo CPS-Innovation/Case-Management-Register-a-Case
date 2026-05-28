@@ -186,8 +186,8 @@ const SuspectSummaryPage = () => {
                 children: (
                   <span className="govuk-!-font-weight-bold">
                     {chargesCount
-                      ? `Do you need to add another charge?`
-                      : `Do you need to add a charge?`}
+                      ? `Do you need to add another charge for any suspect?`
+                      : `Do you need to add a charge for any suspect?`}
                   </span>
                 ),
               },
