@@ -1,17 +1,17 @@
 import React, { useEffect, useRef } from "react";
-import { useLocation } from "react-router";
+import { useLocation } from "react-router-dom";
 import { useRouteDocumentTitle } from "../../common/hooks/useRouteDocumentTitle";
 
 const TitleAnnouncer: React.FC = () => {
   const titleRef = useRef<HTMLParagraphElement>(null);
-  const { pathname } = useLocation();
+  const location = useLocation();
 
   const { title } = useRouteDocumentTitle();
   useEffect(() => {
     if (titleRef.current) {
       titleRef.current?.focus();
     }
-  }, [pathname]);
+  }, [location.pathname]);
 
   return (
     <p
