@@ -1,34 +1,31 @@
 import { MsalProvider } from "@azure/msal-react";
-import React, { type FC, useEffect, useState } from "react";
+import React, { type FC, useEffect, useState, useRef } from "react";
 import { msalInstance } from "./msalInstance";
 import PrivateBetaAuthorisation from "./PrivateBetaAuthorisation";
 
 export const Auth: FC<{ children: React.ReactNode }> = ({ children }) => {
-  const [isLoggedIn, setIsLoggedIn] = useState<boolean>();
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const redirecting = useRef(false); // ensures only one redirect per mount/session
 
   useEffect(() => {
     (async () => {
       await msalInstance.initialize();
-      // required so that when we are coming back from a redirect, that process is complete
-      //  before we do any more auth interactions (otherwise an error is thrown)
-      await msalInstance.handleRedirectPromise();
 
-      const [account] = msalInstance.getAllAccounts();
+      const redirectResult = await msalInstance.handleRedirectPromise();
+
+      if (redirectResult?.account) {
+        msalInstance.setActiveAccount(redirectResult.account);
+      }
+
+      const account =
+        msalInstance.getActiveAccount() ?? msalInstance.getAllAccounts()[0];
 
       if (!account) {
-        try {
-          await msalInstance.loginRedirect({
-            scopes: ["User.Read"],
-          });
-          return;
-          // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        } catch (err: any) {
-          if (err?.errorCode !== "interaction_in_progress") {
-            // When we redirect an "interaction_in_progress" error is thrown.
-            //  Let's suppress this error, but not any other types
-            throw err;
-          }
+        if (!redirecting.current) {
+          redirecting.current = true; // prevent multiple redirects in dev
+          await msalInstance.loginRedirect({ scopes: ["User.Read"] });
         }
+        return;
       }
 
       setIsLoggedIn(true);
@@ -41,7 +38,5 @@ export const Auth: FC<{ children: React.ReactNode }> = ({ children }) => {
         {children}
       </PrivateBetaAuthorisation>
     </MsalProvider>
-  ) : (
-    <></>
-  );
+  ) : null;
 };
