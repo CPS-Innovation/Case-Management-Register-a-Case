@@ -7,20 +7,30 @@
     margin-bottom: 16px;
     background-color: #b1b4b6;
   }
-  .dateRangeSeparator {
-    margin: 0 1.875rem 2.3rem 1.875rem;
-  }
   .dateInputsWrapper {
     display: flex;
     gap: 16px;
-    align-items: flex-end;
+    flex-direction: column;
+    align-items: flex-start;
     margin-top: 0.625rem;
+
+    @media (min-width: 40.0625em) {
+      flex-direction: row;
+      align-items: flex-end;
+    }
 
     .dateInput {
       width: 240px;
     }
     & :global(.govuk-error-message) {
       max-width: 15.625rem;
+    }
+    & :global(.govuk-button) {
+      margin-bottom: 0;
+      width: fit-content;
+    }
+    & :global(.govuk-form-group) {
+      margin-bottom: 0;
     }
   }
 }
