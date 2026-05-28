@@ -8,14 +8,14 @@
   height: 1px;
   width: 100%;
   margin-top: 0;
-  margin-bottom: 16px;
+  margin-bottom: 1rem;
   background-color: #b1b4b6;
 }
 
 .resultsPerPageSelectWrapper {
   & :global(.govuk-form-group) {
     display: flex;
-    gap: 10px;
+    gap: 0.625rem;
     align-items: center;
   }
 }
