@@ -3,6 +3,7 @@ import Footer from "./Footer";
 import Header from "./Header";
 import { useLocation } from "react-router";
 import { SkipLink } from "../components/govuk";
+import TitleAnnouncer from "../components/common/TitleAnnouncer";
 
 export default function RootLayout({
   children,
@@ -26,8 +27,13 @@ export default function RootLayout({
   return (
     <div ref={skipLinkSiblingRef} tabIndex={-1}>
       <SkipLink href="#main-content">Skip to main content</SkipLink>
+      <TitleAnnouncer />
       <Header />
-      <div id="main-content" className="govuk-width-container">
+      <div
+        id="main-content"
+        data-testid="main-content"
+        className="govuk-width-container"
+      >
         {children}
       </div>
       <Footer />

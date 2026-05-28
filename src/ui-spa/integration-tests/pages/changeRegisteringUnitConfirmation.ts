@@ -17,12 +17,14 @@ export class ChangeRegisteringUnitConfirmationPage {
     await expect(this.page.locator("h1")).toHaveText(
       "Changing the registering unit means you must update other case details",
     );
-    await expect(this.page.locator("p").nth(0)).toHaveText(
+    await expect(
+      this.page.getByTestId("main-content").locator("p").nth(0),
+    ).toHaveText(
       "If you change the registering unit, you will need to review and update other case details. This is because some information is linked to the registering unit.",
     );
-    await expect(this.page.locator("p").nth(1)).toHaveText(
-      "You will need to check and update:",
-    );
+    await expect(
+      this.page.getByTestId("main-content").locator("p").nth(1),
+    ).toHaveText("You will need to check and update:");
 
     if (firstHearing) {
       await expect(this.page.locator("li").nth(0)).toHaveText(
@@ -36,11 +38,13 @@ export class ChangeRegisteringUnitConfirmationPage {
         "who is working on the case",
       );
     }
-    await expect(this.page.locator("p").nth(1)).toHaveText(
-      "You will need to check and update:",
-    );
+    await expect(
+      this.page.getByTestId("main-content").locator("p").nth(1),
+    ).toHaveText("You will need to check and update:");
 
-    await expect(this.page.locator("p").nth(2)).toHaveText(
+    await expect(
+      this.page.getByTestId("main-content").locator("p").nth(2),
+    ).toHaveText(
       "You can continue to change the registering unit now, or cancel to keep the current registering unit.",
     );
     await expect(

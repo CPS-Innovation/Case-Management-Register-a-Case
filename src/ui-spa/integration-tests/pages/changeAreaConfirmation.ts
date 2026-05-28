@@ -17,9 +17,9 @@ export class ChangeAreaConfirmationPage {
     await expect(this.page.locator("h1")).toHaveText(
       "Changing the area means you must update other case details",
     );
-    await expect(this.page.locator("p").nth(1)).toHaveText(
-      "You will need to check and update:",
-    );
+    await expect(
+      this.page.getByTestId("main-content").locator("p").nth(1),
+    ).toHaveText("You will need to check and update:");
     await expect(this.page.locator("li").nth(0)).toHaveText(
       "the registering unit",
     );
@@ -36,11 +36,13 @@ export class ChangeAreaConfirmationPage {
         "who is working on the case",
       );
     }
-    await expect(this.page.locator("p").nth(1)).toHaveText(
-      "You will need to check and update:",
-    );
+    await expect(
+      this.page.getByTestId("main-content").locator("p").nth(1),
+    ).toHaveText("You will need to check and update:");
 
-    await expect(this.page.locator("p").nth(2)).toHaveText(
+    await expect(
+      this.page.getByTestId("main-content").locator("p").nth(2),
+    ).toHaveText(
       "You can continue to change the area now, or cancel to keep the current area.",
     );
     await expect(
