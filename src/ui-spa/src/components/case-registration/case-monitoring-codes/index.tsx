@@ -15,9 +15,10 @@ import { useNavigate } from "react-router-dom";
 import { type CaseMonitoringCodes } from "../../../schemas";
 import { isMonitoringCodeOptional } from "../../../common/utils/isMonitoringCodeOptional";
 import useChargesCount from "../../../common/hooks/useChargesCount";
+import useErrorSummaryList from "../../../common/hooks/useErrorSummaryList";
+import { PRE_CHARGE_DECISION_CODE } from "../../../common/constants/general";
 import pageStyles from "./index.module.scss";
 import styles from "../index.module.scss";
-import { PRE_CHARGE_DECISION_CODE } from "../../../common/constants/general";
 
 const CaseMonitoringCodesPage = () => {
   type ErrorText = {
@@ -71,6 +72,11 @@ const CaseMonitoringCodesPage = () => {
     },
     [formDataErrors],
   );
+  const errorList = useErrorSummaryList(
+    formDataErrors,
+    errorSummaryProperties,
+    errorSummaryRef,
+  );
 
   const caseMonitoringCodes = useMemo(() => {
     if (state.apiData.caseMonitoringCodes) {
@@ -80,19 +86,6 @@ const CaseMonitoringCodesPage = () => {
     }
     return [] as CaseMonitoringCodes;
   }, [state.apiData.caseMonitoringCodes]);
-
-  const errorList = useMemo(() => {
-    const validErrorKeys = Object.keys(formDataErrors).filter(
-      (errorKey) => formDataErrors[errorKey as keyof FormDataErrors],
-    );
-
-    const errorSummary = validErrorKeys.map((errorKey, index) => ({
-      reactListKey: `${index}`,
-      ...errorSummaryProperties(errorKey as keyof FormDataErrors)!,
-    }));
-
-    return errorSummary;
-  }, [formDataErrors, errorSummaryProperties]);
 
   const previousRoute = useMemo(() => {
     if (state.formData.navigation.fromCaseSummaryPage) {
@@ -114,10 +107,6 @@ const CaseMonitoringCodesPage = () => {
   useEffect(() => {
     if (caseMonitoringCodesError) throw caseMonitoringCodesError;
   }, [caseMonitoringCodesError]);
-
-  useEffect(() => {
-    if (errorList.length) errorSummaryRef.current?.focus();
-  }, [errorList]);
 
   useEffect(() => {
     if (!isCaseMonitoringCodesLoading && caseMonitoringCodesData) {

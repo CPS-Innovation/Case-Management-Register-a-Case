@@ -1,17 +1,11 @@
-import {
-  useRef,
-  useEffect,
-  useState,
-  useContext,
-  useCallback,
-  useMemo,
-} from "react";
+import { useRef, useState, useContext, useCallback, useMemo } from "react";
 import { Input, ErrorSummary, BackLink } from "../../govuk";
 import SaveAndCancel from "../../common/SaveAndCancel";
 import { CaseRegistrationFormContext } from "../../../common/providers/CaseRegistrationProvider";
 import { getPreviousSuspectJourneyRoute } from "../../../common/utils/getSuspectJourneyRoutes";
 import { formatNameUtil } from "../../../common/utils/formatNameUtil";
 import { sanitizeNameText } from "../../../common/utils/sanitizeNameText";
+import useErrorSummaryList from "../../../common/hooks/useErrorSummaryList";
 import { useNavigate, useParams } from "react-router-dom";
 import styles from "../index.module.scss";
 import pageStyles from "./index.module.scss";
@@ -75,6 +69,11 @@ const SuspectAliasesPage = () => {
     },
     [formDataErrors],
   );
+  const errorList = useErrorSummaryList(
+    formDataErrors,
+    errorSummaryProperties,
+    errorSummaryRef,
+  );
 
   const validateFormData = () => {
     const errors: FormDataErrors = {};
@@ -92,23 +91,6 @@ const SuspectAliasesPage = () => {
     setFormDataErrors(errors);
     return isValid;
   };
-
-  const errorList = useMemo(() => {
-    const validErrorKeys = Object.keys(formDataErrors).filter(
-      (errorKey) => formDataErrors[errorKey as keyof FormDataErrors],
-    );
-
-    const errorSummary = validErrorKeys.map((errorKey, index) => ({
-      reactListKey: `${index}`,
-      ...errorSummaryProperties(errorKey as keyof FormDataErrors)!,
-    }));
-
-    return errorSummary;
-  }, [formDataErrors, errorSummaryProperties]);
-
-  useEffect(() => {
-    if (errorList.length) errorSummaryRef.current?.focus();
-  }, [errorList]);
 
   const setFormValue = (fieldName: "firstName" | "lastName", value: string) => {
     if (fieldName === "firstName" || fieldName === "lastName") {

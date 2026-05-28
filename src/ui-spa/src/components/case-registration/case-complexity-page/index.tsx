@@ -11,6 +11,7 @@ import SaveAndCancel from "../../common/SaveAndCancel";
 import { CaseRegistrationFormContext } from "../../../common/providers/CaseRegistrationProvider";
 import { getCaseComplexities } from "../../../apis/gateway-api";
 import { useQuery } from "@tanstack/react-query";
+import useErrorSummaryList from "../../../common/hooks/useErrorSummaryList";
 import { useNavigate } from "react-router-dom";
 import styles from "../index.module.scss";
 
@@ -65,6 +66,11 @@ const CaseComplexityPage = () => {
     },
     [formDataErrors],
   );
+  const errorList = useErrorSummaryList(
+    formDataErrors,
+    errorSummaryProperties,
+    errorSummaryRef,
+  );
 
   const validateFormData = () => {
     const errors: FormDataErrors = {};
@@ -90,26 +96,9 @@ const CaseComplexityPage = () => {
     return [] as { shortCode: number; description: string }[];
   }, [state.apiData.caseComplexities]);
 
-  const errorList = useMemo(() => {
-    const validErrorKeys = Object.keys(formDataErrors).filter(
-      (errorKey) => formDataErrors[errorKey as keyof FormDataErrors],
-    );
-
-    const errorSummary = validErrorKeys.map((errorKey, index) => ({
-      reactListKey: `${index}`,
-      ...errorSummaryProperties(errorKey as keyof FormDataErrors)!,
-    }));
-
-    return errorSummary;
-  }, [formDataErrors, errorSummaryProperties]);
-
   useEffect(() => {
     if (caseComplexitiesError) throw caseComplexitiesError;
   }, [caseComplexitiesError]);
-
-  useEffect(() => {
-    if (errorList.length) errorSummaryRef.current?.focus();
-  }, [errorList]);
 
   useEffect(() => {
     if (!isCaseComplexitiesLoading && caseComplexitiesData) {

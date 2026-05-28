@@ -1,17 +1,11 @@
-import {
-  useRef,
-  useEffect,
-  useState,
-  useContext,
-  useCallback,
-  useMemo,
-} from "react";
+import { useRef, useState, useContext, useCallback, useMemo } from "react";
 import { Radios, ErrorSummary, BackLink } from "../../govuk";
 import SaveAndCancel from "../../common/SaveAndCancel";
 import { CaseRegistrationFormContext } from "../../../common/providers/CaseRegistrationProvider";
 import { useNavigate } from "react-router-dom";
 import SuspectSummary from "./SuspectSummary";
 import useChargesCount from "../../../common/hooks/useChargesCount";
+import useErrorSummaryList from "../../../common/hooks/useErrorSummaryList";
 import styles from "../index.module.scss";
 import pageStyles from "./index.module.scss";
 
@@ -47,7 +41,11 @@ const SuspectSummaryPage = () => {
     },
     [formDataErrors],
   );
-
+  const errorList = useErrorSummaryList(
+    formDataErrors,
+    errorSummaryProperties,
+    errorSummaryRef,
+  );
   const validateFormData = () => {
     const errors: FormDataErrors = {};
 
@@ -67,23 +65,6 @@ const SuspectSummaryPage = () => {
     setFormDataErrors(errors);
     return isValid;
   };
-
-  const errorList = useMemo(() => {
-    const validErrorKeys = Object.keys(formDataErrors).filter(
-      (errorKey) => formDataErrors[errorKey as keyof FormDataErrors],
-    );
-
-    const errorSummary = validErrorKeys.map((errorKey, index) => ({
-      reactListKey: `${index}`,
-      ...errorSummaryProperties(errorKey as keyof FormDataErrors)!,
-    }));
-
-    return errorSummary;
-  }, [formDataErrors, errorSummaryProperties]);
-
-  useEffect(() => {
-    if (errorList.length) errorSummaryRef.current?.focus();
-  }, [errorList]);
 
   const previousRoute = useMemo(() => {
     if (state.formData.navigation.changeCaseSuspects) {

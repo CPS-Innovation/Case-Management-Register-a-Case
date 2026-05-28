@@ -20,6 +20,7 @@ import { useQuery } from "@tanstack/react-query";
 import { Link, useParams, useNavigate } from "react-router-dom";
 import { formatNameUtil } from "../../../common/utils/formatNameUtil";
 import useChargesCount from "../../../common/hooks/useChargesCount";
+import useErrorSummaryList from "../../../common/hooks/useErrorSummaryList";
 import { format } from "date-fns";
 import styles from "../index.module.scss";
 import pageStyles from "./index.module.scss";
@@ -114,6 +115,11 @@ const ChargesOffenceSearch = () => {
     },
     [formDataErrors],
   );
+  const errorList = useErrorSummaryList(
+    formDataErrors,
+    errorSummaryProperties,
+    errorSummaryRef,
+  );
 
   const validateFormData = () => {
     const errors: FormDataErrors = {};
@@ -131,18 +137,6 @@ const ChargesOffenceSearch = () => {
     setFormDataErrors(errors);
     return isValid;
   };
-  const errorList = useMemo(() => {
-    const validErrorKeys = Object.keys(formDataErrors).filter(
-      (errorKey) => formDataErrors[errorKey as keyof FormDataErrors],
-    );
-
-    const errorSummary = validErrorKeys.map((errorKey, index) => ({
-      reactListKey: `${index}`,
-      ...errorSummaryProperties(errorKey as keyof FormDataErrors)!,
-    }));
-
-    return errorSummary;
-  }, [formDataErrors, errorSummaryProperties]);
 
   const suspectName = useMemo(() => {
     const {
@@ -154,10 +148,6 @@ const ChargesOffenceSearch = () => {
       ? suspectCompanyNameText
       : formatNameUtil(suspectFirstNameText, suspectLastNameText);
   }, [state.formData.suspects, suspectIndex]);
-
-  useEffect(() => {
-    if (errorList.length) errorSummaryRef.current?.focus();
-  }, [errorList]);
 
   useEffect(() => {
     if (resultsPerPage && searchText) {

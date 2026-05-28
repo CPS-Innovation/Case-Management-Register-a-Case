@@ -17,6 +17,7 @@ import { useNavigate } from "react-router-dom";
 import { isOnOrAfterChargeDates } from "../../../common/utils/chargeDatesUtil";
 import { isMonitoringCodeOptional } from "../../../common/utils/isMonitoringCodeOptional";
 import { PRE_CHARGE_DECISION_CODE } from "../../../common/constants/general";
+import useErrorSummaryList from "../../../common/hooks/useErrorSummaryList";
 import styles from "../index.module.scss";
 const FirstHearingPage = () => {
   type ErrorText = {
@@ -104,6 +105,11 @@ const FirstHearingPage = () => {
     },
     [formDataErrors],
   );
+  const errorList = useErrorSummaryList(
+    formDataErrors,
+    errorSummaryProperties,
+    errorSummaryRef,
+  );
 
   const validateFormData = (
     courtLocations: { id: number; description: string }[],
@@ -183,23 +189,6 @@ const FirstHearingPage = () => {
       .map((r) => r.description);
     populateResults(filteredResults);
   };
-
-  const errorList = useMemo(() => {
-    const validErrorKeys = Object.keys(formDataErrors).filter(
-      (errorKey) => formDataErrors[errorKey as keyof FormDataErrors],
-    );
-
-    const errorSummary = validErrorKeys.map((errorKey, index) => ({
-      reactListKey: `${index}`,
-      ...errorSummaryProperties(errorKey as keyof FormDataErrors)!,
-    }));
-
-    return errorSummary;
-  }, [formDataErrors, errorSummaryProperties]);
-
-  useEffect(() => {
-    if (errorList.length) errorSummaryRef.current?.focus();
-  }, [errorList]);
 
   useEffect(() => {
     if (!isCourtLocationsLoading && courtLocationsData) {

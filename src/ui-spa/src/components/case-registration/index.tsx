@@ -1,11 +1,4 @@
-import {
-  useRef,
-  useEffect,
-  useState,
-  useContext,
-  useCallback,
-  useMemo,
-} from "react";
+import { useRef, useEffect, useState, useContext, useCallback } from "react";
 import { Input, Radios, ErrorSummary } from "../govuk";
 import SaveAndCancel from "../common/SaveAndCancel";
 import { CaseRegistrationFormContext } from "../../common/providers/CaseRegistrationProvider";
@@ -19,6 +12,7 @@ import { useQuery } from "@tanstack/react-query";
 import { useIsAreaSensitive } from "../../common/hooks/useIsAreaSensitive";
 import { sanitizeOperationNameText } from "../../common/utils/sanitizeOperationNameText";
 import { DEFAULT_COMPLEXITY_DESCRIPTION } from "../../common/constants/general";
+import useErrorSummaryList from "../../common/hooks/useErrorSummaryList";
 import { useNavigate } from "react-router-dom";
 import styles from "./index.module.scss";
 
@@ -98,16 +92,17 @@ const CaseRegistrationPage = () => {
             href: "#operation-name-text",
             "data-testid": "operation-name-text-link",
           };
-        case "genericError":
-          return {
-            children: formDataErrors[errorKey]?.errorSummaryText,
-            "data-testid": "generic-error-text",
-          };
         default:
           return null;
       }
     },
     [formDataErrors],
+  );
+
+  const errorList = useErrorSummaryList(
+    formDataErrors,
+    errorSummaryProperties,
+    errorSummaryRef,
   );
 
   const validateFormData = () => {
@@ -169,19 +164,6 @@ const CaseRegistrationPage = () => {
     return isValid;
   };
 
-  const errorList = useMemo(() => {
-    const validErrorKeys = Object.keys(formDataErrors).filter(
-      (errorKey) => formDataErrors[errorKey as keyof FormDataErrors],
-    );
-
-    const errorSummary = validErrorKeys.map((errorKey, index) => ({
-      reactListKey: `${index}`,
-      ...errorSummaryProperties(errorKey as keyof FormDataErrors)!,
-    }));
-
-    return errorSummary;
-  }, [formDataErrors, errorSummaryProperties]);
-
   useEffect(() => {
     if (areaDataError) throw areaDataError;
   }, [areaDataError]);
@@ -193,10 +175,6 @@ const CaseRegistrationPage = () => {
   useEffect(() => {
     if (caseComplexitiesError) throw caseComplexitiesError;
   }, [caseComplexitiesError]);
-
-  useEffect(() => {
-    if (errorList.length) errorSummaryRef.current?.focus();
-  }, [errorList]);
 
   useEffect(() => {
     if (areasData && !state.apiData.areasAndRegisteringUnits) {

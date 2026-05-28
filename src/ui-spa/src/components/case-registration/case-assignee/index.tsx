@@ -27,6 +27,7 @@ import {
   getPoliceUnits,
 } from "../../../apis/gateway-api";
 import { useQuery } from "@tanstack/react-query";
+import useErrorSummaryList from "../../../common/hooks/useErrorSummaryList";
 import { useNavigate } from "react-router-dom";
 import pageStyles from "./index.module.scss";
 import styles from "../index.module.scss";
@@ -184,6 +185,11 @@ const CaseAssigneePage = () => {
     },
     [formDataErrors],
   );
+  const errorList = useErrorSummaryList(
+    formDataErrors,
+    errorSummaryProperties,
+    errorSummaryRef,
+  );
 
   const validateFormData = (
     prosecutors: { id: number; description: string }[],
@@ -326,23 +332,6 @@ const CaseAssigneePage = () => {
       .map((r) => r.description);
     populateResults(filteredResults);
   };
-
-  const errorList = useMemo(() => {
-    const validErrorKeys = Object.keys(formDataErrors).filter(
-      (errorKey) => formDataErrors[errorKey as keyof FormDataErrors],
-    );
-
-    const errorSummary = validErrorKeys.map((errorKey, index) => ({
-      reactListKey: `${index}`,
-      ...errorSummaryProperties(errorKey as keyof FormDataErrors)!,
-    }));
-
-    return errorSummary;
-  }, [formDataErrors, errorSummaryProperties]);
-
-  useEffect(() => {
-    if (errorList.length) errorSummaryRef.current?.focus();
-  }, [errorList]);
 
   useEffect(() => {
     if (!isCaseProsecutorsLoading && caseProsecutorsData) {

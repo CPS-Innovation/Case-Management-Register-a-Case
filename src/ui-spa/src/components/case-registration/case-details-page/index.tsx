@@ -15,6 +15,7 @@ import { useIsAreaSensitive } from "../../../common/hooks/useIsAreaSensitive";
 import { getSelectedUnit } from "../../../common/utils/getSelectedUnit";
 import { useQuery } from "@tanstack/react-query";
 import { validateUrn } from "../../../apis/gateway-api";
+import useErrorSummaryList from "../../../common/hooks/useErrorSummaryList";
 import { useNavigate } from "react-router-dom";
 import styles from "../index.module.scss";
 import pageStyles from "./index.module.scss";
@@ -106,26 +107,15 @@ const CaseDetailsPage = () => {
     },
     [formDataErrors],
   );
-  const errorList = useMemo(() => {
-    const validErrorKeys = Object.keys(formDataErrors).filter(
-      (errorKey) => formDataErrors[errorKey as keyof FormDataErrors],
-    );
-
-    const errorSummary = validErrorKeys.map((errorKey, index) => ({
-      reactListKey: `${index}`,
-      ...errorSummaryProperties(errorKey as keyof FormDataErrors)!,
-    }));
-
-    return errorSummary;
-  }, [formDataErrors, errorSummaryProperties]);
+  const errorList = useErrorSummaryList(
+    formDataErrors,
+    errorSummaryProperties,
+    errorSummaryRef,
+  );
 
   useEffect(() => {
     if (validateUrnError) throw validateUrnError;
   }, [validateUrnError]);
-
-  useEffect(() => {
-    if (errorList.length) errorSummaryRef.current?.focus();
-  }, [errorList]);
 
   const registeringUnits = useMemo(() => {
     if (state.apiData.areasAndRegisteringUnits) {

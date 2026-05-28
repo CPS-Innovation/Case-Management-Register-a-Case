@@ -1,11 +1,4 @@
-import {
-  useRef,
-  useEffect,
-  useState,
-  useContext,
-  useCallback,
-  useMemo,
-} from "react";
+import { useRef, useState, useContext, useCallback, useMemo } from "react";
 import { ErrorSummary, BackLink, DateInput } from "../../govuk";
 import SaveAndCancel from "../../common/SaveAndCancel";
 import { formatNameUtil } from "../../../common/utils/formatNameUtil";
@@ -16,6 +9,7 @@ import {
   getPreviousSuspectJourneyRoute,
 } from "../../../common/utils/getSuspectJourneyRoutes";
 import { dobValidationConstants } from "../../../common/constants/dobValidationConstants";
+import useErrorSummaryList from "../../../common/hooks/useErrorSummaryList";
 import { useNavigate, useParams } from "react-router-dom";
 import styles from "../index.module.scss";
 
@@ -66,6 +60,7 @@ const SuspectDOBPage = () => {
     if (formDataErrors.suspectDOBDateError?.inputErrorFields.includes("day")) {
       return {
         href: "#suspect-DOB-day-text",
+        children: formDataErrors.suspectDOBDateError?.errorSummaryText,
         "data-testid": "suspect-DOB-day-text-link",
       };
     }
@@ -74,16 +69,24 @@ const SuspectDOBPage = () => {
     ) {
       return {
         href: "#suspect-DOB-month-text",
+        children: formDataErrors.suspectDOBDateError?.errorSummaryText,
         "data-testid": "suspect-DOB-month-text-link",
       };
     }
     if (formDataErrors.suspectDOBDateError?.inputErrorFields.includes("year")) {
       return {
         href: "#suspect-DOB-year-text",
+        children: formDataErrors.suspectDOBDateError?.errorSummaryText,
         "data-testid": "suspect-DOB-year-text-link",
       };
     }
+    return null;
   }, [formDataErrors]);
+  const errorList = useErrorSummaryList(
+    formDataErrors,
+    errorSummaryProperties,
+    errorSummaryRef,
+  );
 
   const validateFormData = () => {
     const {
@@ -140,24 +143,6 @@ const SuspectDOBPage = () => {
     });
     return false;
   };
-
-  const errorList = useMemo(() => {
-    const validErrorKeys = Object.keys(formDataErrors).filter(
-      (errorKey) => formDataErrors[errorKey as keyof FormDataErrors],
-    );
-
-    const errorSummary = validErrorKeys.map((key) => ({
-      reactListKey: `${key}`,
-      children: formDataErrors.suspectDOBDateError?.errorSummaryText,
-      ...errorSummaryProperties()!,
-    }));
-
-    return errorSummary;
-  }, [formDataErrors, errorSummaryProperties]);
-
-  useEffect(() => {
-    if (errorList.length) errorSummaryRef.current?.focus();
-  }, [errorList]);
 
   const setFormValue = (event: React.ChangeEvent<HTMLInputElement>) => {
     let field:
