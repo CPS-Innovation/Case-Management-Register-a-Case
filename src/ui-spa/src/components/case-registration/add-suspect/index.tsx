@@ -169,7 +169,10 @@ const AddSuspectPage = () => {
     ) {
       return "/case-registration/case-summary";
     }
-    if (state.formData.navigation.fromSuspectSummaryPage) {
+    if (
+      state.formData.navigation.fromSuspectSummaryPage ||
+      state.formData.suspects.length > 0
+    ) {
       return "/case-registration/suspect-summary";
     }
 
@@ -177,6 +180,7 @@ const AddSuspectPage = () => {
   }, [
     state.formData.navigation.changeCaseSuspects,
     state.formData.navigation.fromSuspectSummaryPage,
+    state.formData.suspects.length,
   ]);
 
   const setFormValue = (
