@@ -159,13 +159,17 @@ public class InitTests
         var redirectResult = Assert.IsType<RedirectResult>(result);
         Assert.Equal(_redirectUrl, redirectResult.Url);
 
+        var isCiBuild = string.Equals(Environment.GetEnvironmentVariable("CI"), "true", StringComparison.OrdinalIgnoreCase)
+                        || string.Equals(Environment.GetEnvironmentVariable("TF_BUILD"), "True", StringComparison.OrdinalIgnoreCase);
+
         cookiesMock.Verify(
             c => c.Append(
                 HttpHeaderKeys.CmsAuthValues,
                 It.Is<string>(value => !string.IsNullOrEmpty(value)),
                 It.Is<CookieOptions>(options =>
                     options.HttpOnly &&
-                    !options.Secure &&
+                    options.Secure == isCiBuild &&
+                    (!isCiBuild || options.SameSite == SameSiteMode.None) &&
                     options.Path == "/api/")),
             Times.Once);
     }

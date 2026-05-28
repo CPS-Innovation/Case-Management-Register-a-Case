@@ -6,14 +6,17 @@ using Cps.CaseManagement.MdsClient.Exceptions;
 using Cps.CaseManagement.MdsClient.Factories;
 using Cps.CaseManagement.MdsClient.Models.Args;
 using Cps.CaseManagement.MdsClient.Models.Entities;
-using Microsoft.Extensions.Logging;
+using Cps.CaseManagement.MdsClient.Tactical.Client;
+using Cps.CaseManagement.MdsClient.Tactical.Factories;
+using Cps.CaseManagement.MdsClient.Tactical.Models.Response;
 
 public class MdsClient(HttpClient httpClient,
-    IMdsRequestFactory mdsRequestFactory, ILogger<MdsClient> logger) : IMdsClient
+    IMdsRequestFactory mdsRequestFactory, 
+    IMdsRequestFactoryTactical mdsRequestFactoryTactical) : IMdsClient, IMdsClientTactical
 {
     private readonly HttpClient _httpClient = httpClient;
     private readonly IMdsRequestFactory _mdsRequestFactory = mdsRequestFactory;
-    private readonly ILogger<MdsClient> _logger = logger;
+    private readonly IMdsRequestFactoryTactical _mdsRequestFactoryTactical = mdsRequestFactoryTactical;
 
     public async Task<IEnumerable<TitleEntity>> GetTitlesAsync(MdsBaseArgDto arg)
     {
@@ -124,6 +127,12 @@ public class MdsClient(HttpClient httpClient,
     {
         var request = _mdsRequestFactory.CreateSearchOffencesRequest(arg);
         return await CallMds<OffencesEntity>(request);
+    }
+
+    public async Task<AuthenticationResponse> AuthenticateAsync(string username, string password)
+    {
+        var response = await CallMds<AuthenticationResponse>(_mdsRequestFactoryTactical.CreateAuthenticateRequest(username, password));
+        return response;
     }
 
     private async Task<T> CallMds<T>(HttpRequestMessage request)

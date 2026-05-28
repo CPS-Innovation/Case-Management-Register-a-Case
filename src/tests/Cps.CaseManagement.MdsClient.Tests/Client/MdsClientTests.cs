@@ -7,9 +7,9 @@ using Cps.CaseManagement.MdsClient.Exceptions;
 using Cps.CaseManagement.MdsClient.Factories;
 using Cps.CaseManagement.MdsClient.Models.Args;
 using Cps.CaseManagement.MdsClient.Models.Entities;
+using Cps.CaseManagement.MdsClient.Tactical.Factories;
 using Moq;
 using Moq.Protected;
-using Microsoft.Extensions.Logging;
 using System.Text;
 
 namespace Cps.CaseManagement.MdsClient.Tests.Client;
@@ -18,9 +18,9 @@ public class MdsClientTests
 {
     private readonly Fixture _fixture;
     private readonly Mock<IMdsRequestFactory> _mdsRequestFactoryMock;
+    private readonly Mock<IMdsRequestFactoryTactical> _mdsRequestFactoryTacticalMock;
     private readonly Mock<HttpMessageHandler> _httpMessageHandlerMock;
     private readonly HttpClient _httpClient;
-    private readonly Mock<ILogger<MdsClient.Client.MdsClient>> _loggerMock;
     private readonly MdsClient.Client.MdsClient _client;
     private readonly MdsBaseArgDto _mdsBaseArgDto;
     private readonly MdsUnitIdArg _mdsUnitIdArg;
@@ -33,19 +33,19 @@ public class MdsClientTests
         _fixture.Customize(new AutoMoqCustomization());
 
         _mdsRequestFactoryMock = new Mock<IMdsRequestFactory>();
+        _mdsRequestFactoryTacticalMock = new Mock<IMdsRequestFactoryTactical>();
         _httpMessageHandlerMock = new Mock<HttpMessageHandler>();
 
         _httpClient = new HttpClient(_httpMessageHandlerMock.Object)
         {
             BaseAddress = new Uri(TestUrl)
         };
-        _loggerMock = new Mock<ILogger<MdsClient.Client.MdsClient>>();
 
         _mdsBaseArgDto = _fixture.Create<MdsBaseArgDto>();
         _mdsUnitIdArg = _fixture.Create<MdsUnitIdArg>();
 
 
-        _client = new MdsClient.Client.MdsClient(_httpClient, _mdsRequestFactoryMock.Object, _loggerMock.Object);
+        _client = new MdsClient.Client.MdsClient(_httpClient, _mdsRequestFactoryMock.Object, _mdsRequestFactoryTacticalMock.Object);
     }
 
     [Fact]

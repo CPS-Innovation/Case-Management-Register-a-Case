@@ -64,20 +64,31 @@ public class Init(ILogger<Init> logger, IInitService initService)
     {
         string cookieValue = new AuthenticationContext(cc, ct, DateTime.UtcNow.AddHours(1)).ToString();
 
-        var cookieOptions = req.IsHttps
-        ? new CookieOptions
+        var cookieOptions = CreateAuthCookieOptions(req.IsHttps);
+
+        req.HttpContext.Response.Cookies.Append(HttpHeaderKeys.CmsAuthValues, cookieValue, cookieOptions);
+    }
+
+    private static CookieOptions CreateAuthCookieOptions(bool isHttps)
+    {
+#if LOCAL_HTTP_DEV
+        if (!isHttps)
+        {
+            return new CookieOptions
+            {
+                Path = "/api/",
+                HttpOnly = true,
+            };
+        }
+#endif
+        _ = isHttps;
+
+        return new CookieOptions
         {
             Path = "/api/",
             HttpOnly = true,
             Secure = true,
             SameSite = SameSiteMode.None
-        }
-        : new CookieOptions
-        {
-            Path = "/api/",
-            HttpOnly = true,
         };
-
-        req.HttpContext.Response.Cookies.Append(HttpHeaderKeys.CmsAuthValues, cookieValue, cookieOptions);
     }
 }

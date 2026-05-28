@@ -6,6 +6,12 @@
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
   </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)' == 'Debug' and '$(CI)' != 'true' and '$(TF_BUILD)' != 'True'">
+    <LocalHttpDev>true</LocalHttpDev>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(LocalHttpDev)' == 'true'">
+    <DefineConstants>$(DefineConstants);LOCAL_HTTP_DEV</DefineConstants>
+  </PropertyGroup>
   <ItemGroup>
     <FrameworkReference Include="Microsoft.AspNetCore.App" />
     <PackageReference Include="Ardalis.SmartEnum" Version="8.2.0" />
