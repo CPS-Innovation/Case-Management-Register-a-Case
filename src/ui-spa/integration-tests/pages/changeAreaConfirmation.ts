@@ -14,6 +14,9 @@ export class ChangeAreaConfirmationPage {
   }
 
   async verifyPageElements(firstHearing: boolean) {
+    await expect(this.page).toHaveTitle(
+      /Change Area Confirmation - Register A Case/,
+    );
     await expect(this.page.locator("h1")).toHaveText(
       "Changing the area means you must update other case details",
     );

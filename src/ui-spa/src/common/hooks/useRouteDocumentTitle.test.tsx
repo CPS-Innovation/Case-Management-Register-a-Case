@@ -23,7 +23,7 @@ test("uses last segment to find matching route title", () => {
     ),
   );
 
-  const expected = "Suspect Ethnicity - Case Registration";
+  const expected = "Suspect Ethnicity - Register A Case";
   expect(document.title).toBe(expected);
   expect(screen.getByTestId("hook-title").textContent).toBe(expected);
 });
@@ -37,7 +37,7 @@ test("matches full path when last segment is the page ", () => {
     ),
   );
 
-  const expected = "Add Charge Details - Case Registration";
+  const expected = "Add Charge Details - Register A Case";
   expect(document.title).toBe(expected);
   expect(screen.getByTestId("hook-title").textContent).toBe(expected);
 });
@@ -51,7 +51,7 @@ test("falls back to default title when no match", () => {
     ),
   );
 
-  const expected = "Home - Case Registration";
+  const expected = "Home - Register A Case";
   expect(document.title).toBe(expected);
   expect(screen.getByTestId("hook-title").textContent).toBe(expected);
 });

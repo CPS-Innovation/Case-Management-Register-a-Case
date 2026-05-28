@@ -12,6 +12,7 @@ export class SuspectDisabilityPage {
   }
 
   async verifyPageElements(name: string) {
+    await expect(this.page).toHaveTitle(/Suspect Disability - Register A Case/);
     await expect(this.page.locator("h1")).toHaveText(
       `Does ${name} have a disability?`,
     );

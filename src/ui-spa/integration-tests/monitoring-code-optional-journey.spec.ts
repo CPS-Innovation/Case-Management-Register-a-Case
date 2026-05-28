@@ -18,7 +18,6 @@ test("Monitoring code is optional if all the suspects have charges", async ({
   page,
 }) => {
   await page.goto("http://localhost:5173");
-  // await expect(page).toHaveTitle(/Case Management Register a Case/);
   const caseRegistrationHomePage = new CaseRegistrationHomePage(page);
   await caseRegistrationHomePage.addOperationName("thunderstruck");
   await caseRegistrationHomePage.addSuspect();
@@ -247,7 +246,6 @@ test("Monitoring code is not optional if at least one of the suspects has no cha
   page,
 }) => {
   await page.goto("http://localhost:5173");
-  // await expect(page).toHaveTitle(/Case Management Register a Case/);
   const caseRegistrationHomePage = new CaseRegistrationHomePage(page);
   await caseRegistrationHomePage.addOperationName("thunderstruck");
   await caseRegistrationHomePage.addSuspect();

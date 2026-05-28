@@ -20,6 +20,9 @@ export class SuspectRemoveConfirmationPage {
     const cancelLinkHref = fromCaseSummaryPage
       ? "/case-registration/case-summary"
       : "/case-registration/suspect-summary";
+    await expect(this.page).toHaveTitle(
+      /Suspect Remove Confirmation - Register A Case/,
+    );
     await expect(this.page.locator("h1")).toHaveText(
       `Are you sure you want to remove ${suspectName}?`,
     );

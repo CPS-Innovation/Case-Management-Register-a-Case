@@ -13,6 +13,7 @@ export class CaseRegistrationHomePage {
   }
 
   async verifyPageElements() {
+    await expect(this.page).toHaveTitle(/Home - Register A Case/);
     await expect(this.page.locator("h1")).toHaveText("Register a case");
     await expect(this.page.locator("legend").first()).toHaveText(
       "Do you have an operation name?",

@@ -14,6 +14,9 @@ export class ChangeRegisteringUnitConfirmationPage {
   }
 
   async verifyPageElements(firstHearing: boolean) {
+    await expect(this.page).toHaveTitle(
+      /Change Registering Unit Confirmation - Register A Case/,
+    );
     await expect(this.page.locator("h1")).toHaveText(
       "Changing the registering unit means you must update other case details",
     );

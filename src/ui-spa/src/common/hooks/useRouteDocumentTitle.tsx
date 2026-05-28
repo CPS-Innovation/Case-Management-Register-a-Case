@@ -5,7 +5,7 @@ const routeTitles: Record<string, string> = {
   "/case-registration": "Home",
   "/areas": "Case Areas",
   "/case-details": "Case Details",
-  "/first-hearing": "First Hearing",
+  "/first-hearing": "First Hearing Details",
   "/case-complexity": "Case Complexity",
   "/case-monitoring-codes": "Case Monitoring Codes",
   "/case-assignee": "Case Assignee",
@@ -23,7 +23,7 @@ const routeTitles: Record<string, string> = {
   "/suspect-offender": "Suspect Offender Type",
   "/suspect-summary": "Suspect Summary",
   "/suspect-remove-confirmation": "Suspect Remove Confirmation",
-  "/want-to-add-charges": "Want to Add Charges",
+  "/want-to-add-charges": "Want To Add Charges",
   "/add-charge-suspect": "Add Charge Suspect",
   "/charges-offence-search": "Charges Offence Search",
   "/add-charge-details": "Add Charge Details",
@@ -48,7 +48,7 @@ export const useRouteDocumentTitle = (): { title: string } => {
   useEffect(() => {
     const lastSlashIndex = pathname.lastIndexOf("/");
     const lastSegment = pathname.substring(lastSlashIndex);
-    const title = `${routeTitles[lastSegment] ?? DEFAULT_TITLE} - Case Registration`;
+    const title = `${routeTitles[lastSegment] ?? DEFAULT_TITLE} - Register A Case`;
     document.title = title;
     setTitle(title);
   }, [pathname]);

@@ -14,6 +14,9 @@ export class CaseMonitoringPage {
   }
 
   async verifyPageElements(count: number) {
+    await expect(this.page).toHaveTitle(
+      /Case Monitoring Codes - Register A Case/,
+    );
     await expect(this.page.locator("h1")).toHaveText("Add monitoring codes");
     await expect(this.page.locator("input[type='checkbox']")).toHaveCount(
       count,

@@ -12,6 +12,7 @@ export class SuspectGenderPage {
   }
 
   async verifyPageElements(name: string) {
+    await expect(this.page).toHaveTitle(/Suspect Gender - Register A Case/);
     await expect(this.page.locator("h1")).toHaveText(
       `What is ${name}'s gender?`,
     );

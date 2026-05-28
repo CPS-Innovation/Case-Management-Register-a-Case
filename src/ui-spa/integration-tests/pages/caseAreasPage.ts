@@ -13,6 +13,7 @@ export class CaseAreasPage {
   }
 
   async verifyPageElements() {
+    await expect(this.page).toHaveTitle(/Case Areas - Register A Case/);
     await expect(this.page.locator("label").first()).toHaveText(
       "What is the division or area?",
     );

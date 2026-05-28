@@ -14,6 +14,7 @@ export class CaseComplexityPage {
   }
 
   async verifyPageElements() {
+    await expect(this.page).toHaveTitle(/Case Complexity - Register A Case/);
     await expect(this.page.locator("h1")).toHaveText(
       "What is POTTER, Harry's religion?",
     );

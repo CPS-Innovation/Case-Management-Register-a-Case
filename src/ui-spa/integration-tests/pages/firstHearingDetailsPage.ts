@@ -14,6 +14,9 @@ export class FirstHearingDetailsPage {
   }
 
   async verifyPageElements() {
+    await expect(this.page).toHaveTitle(
+      /First Hearing Details - Register A Case/,
+    );
     await expect(this.page.locator("h1")).toHaveText(
       "Do you have details of the first hearing?",
     );

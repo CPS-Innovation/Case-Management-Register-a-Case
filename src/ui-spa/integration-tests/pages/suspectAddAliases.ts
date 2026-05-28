@@ -12,6 +12,9 @@ export class SuspectAliasesPage {
   }
 
   async verifyPageElements() {
+    await expect(this.page).toHaveTitle(
+      /Suspect Add Aliases - Register A Case/,
+    );
     await expect(this.page.locator("h1")).toHaveText(
       "What alias does POTTER, Harry use?",
     );

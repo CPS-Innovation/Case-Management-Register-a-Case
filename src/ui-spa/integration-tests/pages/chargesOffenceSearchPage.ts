@@ -21,6 +21,9 @@ export class ChargesOffenceSearchPagePage {
     await this.page.getByRole("link", { name: "Back" }).click();
   }
   async verifyPageElements(suspectName: string) {
+    await expect(this.page).toHaveTitle(
+      /Charges Offence Search - Register A Case/,
+    );
     await expect(this.page.locator("h1")).toHaveText(
       `Add a charge for ${suspectName}`,
     );

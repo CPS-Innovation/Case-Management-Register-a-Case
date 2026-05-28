@@ -14,6 +14,9 @@ export class CaseRegistrationConfirmationPage {
   }
 
   async verifyPageElements(urn: string) {
+    await expect(this.page).toHaveTitle(
+      /Case Registration Confirmation - Register A Case/,
+    );
     await expect(this.page.locator("h1")).toHaveText(
       "Case registered successfully",
     );

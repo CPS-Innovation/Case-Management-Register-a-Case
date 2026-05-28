@@ -42,6 +42,7 @@ export class CaseRegistrationSummaryPage {
   }
 
   async verifyPageElements() {
+    await expect(this.page).toHaveTitle(/Case Summary - Register A Case/);
     await expect(this.page.locator("h1")).toHaveText(
       "Check your answers before creating the case",
     );

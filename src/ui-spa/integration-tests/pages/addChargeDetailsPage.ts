@@ -16,6 +16,7 @@ export class AddChargeDetailsPage {
     charge: string,
     isYouthOffender: boolean = false,
   ) {
+    await expect(this.page).toHaveTitle(/Add Charge Details - Register A Case/);
     await expect(this.page.locator("h1")).toHaveText("Add charges");
     await expect(this.page.locator("h2").nth(0)).toHaveText(name);
     await expect(this.page.locator("h2").nth(1)).toHaveText(charge);

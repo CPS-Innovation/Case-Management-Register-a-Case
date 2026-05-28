@@ -14,6 +14,7 @@ export class ChargesSummaryPage {
   }
 
   async verifyPageElements(h1Text: string) {
+    await expect(this.page).toHaveTitle(/Charges Summary - Register A Case/);
     await expect(this.page.locator("h1")).toHaveText(h1Text);
     await expect(this.page.locator("legend").nth(0)).toHaveText(
       "Do you need to add another charge for any suspect?",

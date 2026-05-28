@@ -12,6 +12,9 @@ export class SuspectOffenderTypesPage {
   }
 
   async verifyBasePageElements() {
+    await expect(this.page).toHaveTitle(
+      /Suspect Offender Type - Register A Case/,
+    );
     await expect(this.page.locator("h1")).toHaveText(
       "What type of offender is POTTER, Harry?",
     );
