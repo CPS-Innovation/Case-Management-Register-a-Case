@@ -4,6 +4,7 @@ import Header from "./Header";
 import { useLocation } from "react-router";
 import { SkipLink } from "../components/govuk";
 import TitleAnnouncer from "../components/common/TitleAnnouncer";
+import styles from "./Layout.module.scss";
 
 export default function RootLayout({
   children,
@@ -32,7 +33,7 @@ export default function RootLayout({
       <div
         id="main-content"
         data-testid="main-content"
-        className="govuk-width-container"
+        className={`govuk-width-container ${styles.mainContent}`}
       >
         {children}
       </div>
