@@ -9,7 +9,7 @@ import useErrorSummaryList from "../../../common/hooks/useErrorSummaryList";
 import styles from "../index.module.scss";
 import pageStyles from "./index.module.scss";
 
-const SuspectSummaryPage = () => {
+const ChargesSummaryPage = () => {
   type ErrorText = {
     errorSummaryText: string;
     inputErrorText?: string;
@@ -209,4 +209,4 @@ const SuspectSummaryPage = () => {
   );
 };
 
-export default SuspectSummaryPage;
+export default ChargesSummaryPage;
