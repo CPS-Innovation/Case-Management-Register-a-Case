@@ -13,12 +13,12 @@ export const Auth: FC<{ children: React.ReactNode }> = ({ children }) => {
 
       const redirectResult = await msalInstance.handleRedirectPromise();
 
-      if (redirectResult?.account) {
-        msalInstance.setActiveAccount(redirectResult.account);
-      }
-
       const account =
-        msalInstance.getActiveAccount() ?? msalInstance.getAllAccounts()[0];
+        redirectResult?.account ?? msalInstance.getAllAccounts()?.[0];
+
+      if (account) {
+        msalInstance.setActiveAccount(account);
+      }
 
       if (!account) {
         if (!redirecting.current) {
