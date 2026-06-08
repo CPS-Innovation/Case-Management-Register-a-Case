@@ -309,6 +309,13 @@ src/ui-spa/playwright/.cache/
 src/ui-spa/playwright/.auth/
 src/ui-spa/integration-test-results.xml
 
+# Playwright e2e (src/ui-spa/e2e-tests)
+src/ui-spa/e2e-tests/.auth/
+src/ui-spa/e2e-tests/playwright-report/
+src/ui-spa/e2e-tests/test-results/
+src/ui-spa/e2e-tests/e2e-test-results.xml
+src/ui-spa/e2e-tests/.env.e2e.local
+
 # Vite
 ui-spa/.vite/deps/
 

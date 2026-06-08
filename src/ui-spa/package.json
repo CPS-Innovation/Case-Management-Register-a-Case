@@ -16,7 +16,11 @@
     "integration:test:ci": "tsc -b && vite build --mode playwright && cross-env CI=true npx playwright test",
     "integration:report": "npx playwright show-report ./playwright-report",
     "integration:coverage": "rimraf coverage/.nyc_output && cross-env ISTANBUL_COVERAGE=1 npm run integration:test:ci",
-    "integration:coverage:cobertura": "npm run integration:coverage && npx nyc report -t coverage/.nyc_output -r cobertura --report-dir coverage/integration"
+    "integration:coverage:cobertura": "npm run integration:coverage && npx nyc report -t coverage/.nyc_output -r cobertura --report-dir coverage/integration",
+    "e2e:test": "npx playwright test --config=e2e-tests/playwright.e2e.config.ts",
+    "e2e:test:ci": "cross-env CI=true npx playwright test --config=e2e-tests/playwright.e2e.config.ts",
+    "e2e:test:ui": "npx playwright test --config=e2e-tests/playwright.e2e.config.ts --ui",
+    "e2e:report": "npx playwright show-report ./e2e-tests/playwright-report"
   },
   "dependencies": {
     "@azure/msal-browser": "^4.4.0",
