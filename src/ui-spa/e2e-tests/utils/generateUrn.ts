@@ -1,3 +1,5 @@
+import { randomInt } from "node:crypto";
+
 export interface UrnParts {
   policeForce: string;
   policeUnit: string;
@@ -13,7 +15,7 @@ export const generateUniqueUrn = (
 ): UrnParts => {
   const workerIndex = Number(process.env.TEST_WORKER_INDEX ?? "0") % 10;
   const uniqueReference = String(
-    workerIndex * 10000 + Math.floor(Math.random() * 10000),
+    workerIndex * 10000 + randomInt(10000),
   ).padStart(5, "0");
   return {
     policeForce,
