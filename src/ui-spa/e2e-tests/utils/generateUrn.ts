@@ -13,9 +13,9 @@ export const generateUniqueUrn = (
   policeUnit = "21",
   year = "26",
 ): UrnParts => {
-  const workerIndex = Number(process.env.TEST_WORKER_INDEX ?? "0") % 10;
+  const workerIndex = Number(process.env.TEST_WORKER_INDEX ?? "0");
   const uniqueReference = String(
-    workerIndex * 10000 + randomInt(10000),
+    (Date.now() + workerIndex * 13 + randomInt(100000)) % 100000,
   ).padStart(5, "0");
   return {
     policeForce,

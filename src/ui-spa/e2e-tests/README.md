@@ -85,8 +85,14 @@ silently via the saved SSO cookies.
 ## Test data
 
 Each run creates **real cases** in the dev environment. Every test generates a
-unique URN (`utils/generateUrn.ts`, clock + randomness) so parallel runs do not
-clash. There is no automatic cleanup; cases are isolated by URN.
+URN (`utils/generateUrn.ts`) whose 5-digit reference combines the clock, the
+Playwright worker index and a CSPRNG value, so parallel workers and successive
+runs are very unlikely to clash. There is no automatic cleanup; cases are
+isolated by URN. Note the reference space is bounded (5 digits, the CMS URN
+format), so over a long-lived shared environment a generated URN could still
+collide with an existing case — a duplicate-URN retry/cleanup step is a possible
+future hardening (and the planned URN-duplicate-validation scenario will cover
+the error path explicitly).
 
 ## Structure
 
