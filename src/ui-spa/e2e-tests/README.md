@@ -35,7 +35,8 @@ Required (no defaults — the suite throws if any are unset):
 | `E2E_AAD_PASSWORD`   | Entra/Azure AD password                            |
 
 The URLs are required deliberately so a run can't silently target the wrong
-environment; starting values for dev are in `.env.e2e.local.example`.
+environment; set them for your target environment in `.env.e2e.local`
+(see `.env.e2e.local.example` for the template).
 
 
 ## Running
