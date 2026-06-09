@@ -17,12 +17,9 @@ const required = (name: string): string => {
   return value;
 };
 
-export const FRONTEND_URL =
-  process.env.E2E_FRONTEND_URL ??
-  "https://cmrc-app-ui-spa-dev.azurewebsites.net";
+export const FRONTEND_URL = required("E2E_FRONTEND_URL");
 
-export const API_BASE_URL =
-  process.env.E2E_API_BASE_URL ?? "https://fa-cmrc-api-dev.azurewebsites.net";
+export const API_BASE_URL = required("E2E_API_BASE_URL");
 
 export const getCmsCredentials = () => ({
   username: required("E2E_CMS_USERNAME"),

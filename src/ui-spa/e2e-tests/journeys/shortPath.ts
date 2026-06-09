@@ -7,12 +7,15 @@ import {
 } from "./steps";
 
 export interface ShortPathOptions {
-  operationName?: string;
+  // Required: the no-suspect short path is only valid with an operation name.
+  // Omitting it would select No for both operation name and suspect details,
+  // which the UI correctly rejects.
+  operationName: string;
 }
 
 export async function completeShortPath(
   page: Page,
-  { operationName }: ShortPathOptions = {},
+  { operationName }: ShortPathOptions,
 ): Promise<void> {
   const urn = generateUniqueUrn();
 

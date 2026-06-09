@@ -2,15 +2,12 @@
 
 Playwright end-to-end suite that drives the **deployed dev SPA** against the
 **real backend** (gateway API + MDS). Unlike `integration-tests/`, nothing is
-mocked here — no `playwright-msw`, no stubbed APIs — so breakages in the gateway
-API, request/response contracts, validators, mappers or the MDS wiring are
-caught from the browser side.
+mocked here — no `playwright-msw`, no stubbed APIs
 
-- Frontend under test: `https://cmrc-app-ui-spa-dev.azurewebsites.net`
-- Gateway API: `https://fa-cmrc-api-dev.azurewebsites.net`
+- Frontend under test and gateway API: set via `E2E_FRONTEND_URL` /
+  `E2E_API_BASE_URL` (see `.env.e2e.local.example` for starting values).
 - Browser: Chromium only
 
-The existing `integration-tests/` suite is untouched and still runs as before.
 
 ## Prerequisites
 
@@ -26,29 +23,20 @@ Secrets are read from `e2e-tests/.env.e2e.local` (gitignored). Copy
 `e2e-tests/.env.e2e.local.example` to `e2e-tests/.env.e2e.local` and fill it in
 (PowerShell: `Copy-Item e2e-tests/.env.e2e.local.example e2e-tests/.env.e2e.local`).
 
-Required:
+Required (no defaults — the suite throws if any are unset):
 
 | Variable             | Purpose                                            |
 | -------------------- | -------------------------------------------------- |
+| `E2E_FRONTEND_URL`   | SPA under test (e.g. the dev SPA)                  |
+| `E2E_API_BASE_URL`   | Gateway API base URL (e.g. the dev API)            |
 | `E2E_CMS_USERNAME`   | CMS user for the tactical login (authenticates API)|
 | `E2E_CMS_PASSWORD`   | CMS password                                       |
 | `E2E_AAD_USERNAME`   | Entra/Azure AD UPN (email) for the SPA sign-in     |
 | `E2E_AAD_PASSWORD`   | Entra/Azure AD password                            |
 
-The AAD account must have dev access and **no enforced MFA / interactive
-conditional access**, otherwise the unattended sign-in will stall.
+The URLs are required deliberately so a run can't silently target the wrong
+environment; starting values for dev are in `.env.e2e.local.example`.
 
-Optional overrides default to sensible values in `config.ts` / `journeys/steps.ts`,
-so the suite runs with only the credentials above. Set any of these in
-`e2e-tests/.env.e2e.local` (or the process environment) to override:
-
-`E2E_FRONTEND_URL`, `E2E_API_BASE_URL`, `E2E_AREA`, `E2E_REGISTERING_UNIT`,
-`E2E_WITNESS_CARE_UNIT`, `E2E_OPERATION_NAME`, `E2E_PROSECUTOR`,
-`E2E_CASEWORKER`, `E2E_INVESTIGATOR_FIRST_NAME`, `E2E_INVESTIGATOR_LAST_NAME`,
-`E2E_INVESTIGATOR_SHOULDER_NUMBER`.
-
-Prosecutor and caseworker are picked from the live API response for the
-registering unit when not overridden (the MSW defaults are not real dev data).
 
 ## Running
 
@@ -85,14 +73,10 @@ silently via the saved SSO cookies.
 ## Test data
 
 Each run creates **real cases** in the dev environment. Every test generates a
-URN (`utils/generateUrn.ts`) whose 5-digit reference combines the clock, the
-Playwright worker index and a CSPRNG value, so parallel workers and successive
-runs are very unlikely to clash. There is no automatic cleanup; cases are
-isolated by URN. Note the reference space is bounded (5 digits, the CMS URN
-format), so over a long-lived shared environment a generated URN could still
-collide with an existing case — a duplicate-URN retry/cleanup step is a possible
-future hardening (and the planned URN-duplicate-validation scenario will cover
-the error path explicitly).
+URN (`utils/generateUrn.ts`) whose 5-digit reference combines a millisecond
+timestamp (`Date.now()`), the Playwright worker index and a CSPRNG value, so
+parallel workers and successive runs are very unlikely to clash. There is no
+automatic cleanup; cases are isolated by URN.
 
 ## Structure
 
@@ -107,15 +91,3 @@ e2e-tests/
                              suspectNoCharges)
   *.spec.ts                  the scenarios
 ```
-
-Page Object Models are reused from `../integration-tests/pages`. Because those
-hardcode `http://localhost:5173` in `verifyUrl()`, the e2e suite asserts the
-current step with the origin-agnostic `utils/expectStep.ts` instead.
-
-## Known defect
-
-The pure short path with **no operation name and no suspect** is currently
-blocked by an SPA defect: selecting "No" for "Do you have an operation name?"
-with no suspect does not register in the form (the radio shows selected but Save
-reports an error). Scenario 1 covers the no-operation-name path **with a
-suspect**, which sidesteps the defect. Track the SPA fix separately.
