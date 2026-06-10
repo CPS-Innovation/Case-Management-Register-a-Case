@@ -30,7 +30,7 @@ const SuspectDisabilityPage = () => {
     return Number.parseInt(index, 10);
   }, [suspectId]);
 
-  const [formData, setFormData] = useState<{
+  const [disabilityFormData, setDisabilityFormData] = useState<{
     suspectDisabilityRadio?: GeneralRadioValue;
   }>({
     suspectDisabilityRadio:
@@ -64,7 +64,7 @@ const SuspectDisabilityPage = () => {
     useErrorSummaryList(formDataErrors, errorSummaryProperties);
   const validateFormData = () => {
     const errors: FormDataErrors = {};
-    const { suspectDisabilityRadio = "" } = formData;
+    const { suspectDisabilityRadio = "" } = disabilityFormData;
 
     if (!suspectDisabilityRadio) {
       errors.suspectDisabilityRadio = {
@@ -80,8 +80,8 @@ const SuspectDisabilityPage = () => {
   };
 
   const setFormValue = (value: string) => {
-    setFormData({
-      ...formData,
+    setDisabilityFormData({
+      ...disabilityFormData,
       suspectDisabilityRadio: value as GeneralRadioValue,
     });
   };
@@ -95,7 +95,7 @@ const SuspectDisabilityPage = () => {
       type: "SET_SUSPECT_FIELDS",
       payload: {
         index: suspectIndex,
-        data: formData,
+        data: disabilityFormData,
       },
     });
 
@@ -155,7 +155,7 @@ const SuspectDisabilityPage = () => {
                 "data-testid": `suspect-disability-radio-no`,
               },
             ]}
-            value={formData.suspectDisabilityRadio}
+            value={disabilityFormData.suspectDisabilityRadio}
             onChange={(value) => {
               if (value) setFormValue(value);
             }}

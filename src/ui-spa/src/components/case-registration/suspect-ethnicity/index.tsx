@@ -31,7 +31,7 @@ const SuspectEthnicityPage = () => {
     return Number.parseInt(index, 10);
   }, [suspectId]);
 
-  const [formData, setFormData] = useState<{
+  const [ethnicityFormData, setEthnicityFormData] = useState<{
     suspectEthnicityRadio: { shortCode: string; description: string };
   }>({
     suspectEthnicityRadio: state.formData.suspects[suspectIndex]
@@ -85,7 +85,7 @@ const SuspectEthnicityPage = () => {
   const validateFormData = () => {
     const errors: FormDataErrors = {};
     const { suspectEthnicityRadio = { shortCode: null, description: "" } } =
-      formData;
+      ethnicityFormData;
 
     if (!suspectEthnicityRadio.shortCode) {
       errors.suspectEthnicityRadio = {
@@ -126,8 +126,8 @@ const SuspectEthnicityPage = () => {
       (ethnicity) => ethnicity.shortCode === value,
     );
     if (selectedEthnicity) {
-      setFormData({
-        ...formData,
+      setEthnicityFormData({
+        ...ethnicityFormData,
         suspectEthnicityRadio: selectedEthnicity,
       });
     }
@@ -143,7 +143,7 @@ const SuspectEthnicityPage = () => {
       type: "SET_SUSPECT_FIELDS",
       payload: {
         index: suspectIndex,
-        data: formData,
+        data: ethnicityFormData,
       },
     });
 
@@ -185,7 +185,7 @@ const SuspectEthnicityPage = () => {
                 : undefined
             }
             items={ethnicityItems}
-            value={formData.suspectEthnicityRadio.shortCode || ""}
+            value={ethnicityFormData.suspectEthnicityRadio.shortCode || ""}
             onChange={(value) => {
               if (value) setFormValue(value);
             }}

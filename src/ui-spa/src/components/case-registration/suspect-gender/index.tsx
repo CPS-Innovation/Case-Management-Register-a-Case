@@ -31,7 +31,7 @@ const SuspectGenderPage = () => {
     return Number.parseInt(index, 10);
   }, [suspectId]);
 
-  const [formData, setFormData] = useState<{
+  const [genderData, setGenderData] = useState<{
     suspectGenderRadio: { shortCode: string; description: string };
   }>({
     suspectGenderRadio: state.formData.suspects[suspectIndex]
@@ -84,7 +84,7 @@ const SuspectGenderPage = () => {
   const validateFormData = () => {
     const errors: FormDataErrors = {};
     const { suspectGenderRadio = { shortCode: null, description: "" } } =
-      formData;
+      genderData;
 
     if (!suspectGenderRadio.shortCode) {
       errors.suspectGenderRadio = {
@@ -130,8 +130,8 @@ const SuspectGenderPage = () => {
       (gender) => gender.shortCode === value,
     );
     if (selectedGender) {
-      setFormData({
-        ...formData,
+      setGenderData({
+        ...genderData,
         suspectGenderRadio: selectedGender,
       });
     }
@@ -147,7 +147,7 @@ const SuspectGenderPage = () => {
       type: "SET_SUSPECT_FIELDS",
       payload: {
         index: suspectIndex,
-        data: formData,
+        data: genderData,
       },
     });
 
@@ -191,7 +191,7 @@ const SuspectGenderPage = () => {
                 : undefined
             }
             items={genderItems}
-            value={formData.suspectGenderRadio.shortCode || ""}
+            value={genderData.suspectGenderRadio.shortCode || ""}
             onChange={(value) => {
               if (value) setFormValue(value);
             }}
