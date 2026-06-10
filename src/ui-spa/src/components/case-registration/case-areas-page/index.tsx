@@ -1,4 +1,4 @@
-import { useContext, useMemo, useRef, useCallback, useState } from "react";
+import { useContext, useMemo, useCallback, useState } from "react";
 import { AutoComplete, BackLink, ErrorSummary } from "../../govuk";
 import SaveAndCancel from "../../common/SaveAndCancel";
 import { CaseRegistrationFormContext } from "../../../common/providers/CaseRegistrationProvider";
@@ -18,7 +18,7 @@ const CaseAreasPage = () => {
   type FormDataErrors = {
     areaOrDivisionText?: ErrorText;
   };
-  const errorSummaryRef = useRef<HTMLInputElement>(null);
+
   const { state, dispatch } = useContext(CaseRegistrationFormContext);
   const navigate = useNavigate();
 
@@ -32,7 +32,6 @@ const CaseAreasPage = () => {
   });
 
   const [formDataErrors, setFormDataErrors] = useState<FormDataErrors>({});
-  const [disableBtns, setDisableBtns] = useState<boolean>(false);
 
   const previousRoute = useMemo(() => {
     if (state.formData.navigation.changeCaseArea) {
@@ -55,11 +54,8 @@ const CaseAreasPage = () => {
     },
     [formDataErrors],
   );
-  const errorList = useErrorSummaryList(
-    formDataErrors,
-    errorSummaryProperties,
-    errorSummaryRef,
-  );
+  const { errorSummaryRef, errorList, disableBtns, setDisableBtns } =
+    useErrorSummaryList(formDataErrors, errorSummaryProperties);
 
   const areas = useMemo(() => {
     if (state.apiData.areasAndRegisteringUnits) {

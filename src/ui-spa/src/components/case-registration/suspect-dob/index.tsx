@@ -1,4 +1,4 @@
-import { useRef, useState, useContext, useCallback, useMemo } from "react";
+import { useState, useContext, useCallback, useMemo } from "react";
 import { ErrorSummary, BackLink, DateInput } from "../../govuk";
 import SaveAndCancel from "../../common/SaveAndCancel";
 import { formatNameUtil } from "../../../common/utils/formatNameUtil";
@@ -21,7 +21,7 @@ const SuspectDOBPage = () => {
   type FormDataErrors = {
     suspectDOBDateError?: ErrorText;
   };
-  const errorSummaryRef = useRef<HTMLInputElement>(null);
+
   const { state, dispatch } = useContext(CaseRegistrationFormContext);
   const navigate = useNavigate();
   const { suspectId } = useParams<{ suspectId: string }>() as {
@@ -54,7 +54,6 @@ const SuspectDOBPage = () => {
     );
   }, [state.formData.suspects, suspectIndex]);
   const [formDataErrors, setFormDataErrors] = useState<FormDataErrors>({});
-  const [disableBtns, setDisableBtns] = useState<boolean>(false);
 
   const errorSummaryProperties = useCallback(() => {
     if (formDataErrors.suspectDOBDateError?.inputErrorFields.includes("day")) {
@@ -82,11 +81,8 @@ const SuspectDOBPage = () => {
     }
     return null;
   }, [formDataErrors]);
-  const errorList = useErrorSummaryList(
-    formDataErrors,
-    errorSummaryProperties,
-    errorSummaryRef,
-  );
+  const { errorSummaryRef, errorList, disableBtns, setDisableBtns } =
+    useErrorSummaryList(formDataErrors, errorSummaryProperties);
 
   const validateFormData = () => {
     const {

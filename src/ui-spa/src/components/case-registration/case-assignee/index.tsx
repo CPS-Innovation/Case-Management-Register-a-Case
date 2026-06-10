@@ -1,11 +1,4 @@
-import {
-  useRef,
-  useEffect,
-  useState,
-  useContext,
-  useCallback,
-  useMemo,
-} from "react";
+import { useEffect, useState, useContext, useCallback, useMemo } from "react";
 import {
   AutoComplete,
   Radios,
@@ -46,7 +39,7 @@ const CaseAssigneePage = () => {
     caseInvestigatorTitleSelect?: ErrorText;
     caseInvestigatorLastNameText?: ErrorText;
   };
-  const errorSummaryRef = useRef<HTMLInputElement>(null);
+
   const { state, dispatch } = useContext(CaseRegistrationFormContext);
   const navigate = useNavigate();
   const [formData, setFormData] = useState<{
@@ -86,7 +79,7 @@ const CaseAssigneePage = () => {
     caseInvestigatorShoulderNumberText:
       state.formData.caseInvestigatorShoulderNumberText || "",
   });
-  const [disableBtns, setDisableBtns] = useState<boolean>(false);
+
   const registeringUnitId = useMemo(() => {
     return state.formData.registeringUnitText?.id;
   }, [state.formData.registeringUnitText]);
@@ -185,11 +178,8 @@ const CaseAssigneePage = () => {
     },
     [formDataErrors],
   );
-  const errorList = useErrorSummaryList(
-    formDataErrors,
-    errorSummaryProperties,
-    errorSummaryRef,
-  );
+  const { errorSummaryRef, errorList, disableBtns, setDisableBtns } =
+    useErrorSummaryList(formDataErrors, errorSummaryProperties);
 
   const validateFormData = (
     prosecutors: { id: number; description: string }[],

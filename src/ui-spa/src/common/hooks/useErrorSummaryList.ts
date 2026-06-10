@@ -1,6 +1,6 @@
-import { useEffect, useMemo } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 
-export default function useErrorSummaryList<
+const useErrorSummaryList = <
   T extends Record<string, Record<string, string | boolean | string[]>>,
 >(
   formDataErrors: T,
@@ -9,8 +9,19 @@ export default function useErrorSummaryList<
     href: string;
     "data-testid": string;
   } | null,
-  errorSummaryRef?: React.RefObject<HTMLElement | null>,
-) {
+): {
+  errorSummaryRef: React.RefObject<HTMLDivElement | null>;
+  disableBtns: boolean;
+  setDisableBtns: React.Dispatch<React.SetStateAction<boolean>>;
+  errorList: {
+    children: React.ReactNode;
+    href: string;
+    "data-testid": string;
+    reactListKey: string;
+  }[];
+} => {
+  const errorSummaryRef = useRef<HTMLDivElement | null>(null);
+  const [disableBtns, setDisableBtns] = useState(false);
   const errorList = useMemo(() => {
     const validErrorKeys = Object.keys(formDataErrors).filter(
       (errorKey) =>
@@ -33,5 +44,12 @@ export default function useErrorSummaryList<
       errorSummaryRef?.current?.focus();
   }, [errorList, errorSummaryRef]);
 
-  return errorList;
-}
+  return {
+    errorSummaryRef,
+    errorList,
+    disableBtns,
+    setDisableBtns,
+  };
+};
+
+export default useErrorSummaryList;

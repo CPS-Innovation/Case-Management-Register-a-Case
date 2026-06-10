@@ -1,11 +1,4 @@
-import {
-  useRef,
-  useEffect,
-  useState,
-  useContext,
-  useCallback,
-  useMemo,
-} from "react";
+import { useEffect, useState, useContext, useCallback, useMemo } from "react";
 import { Checkboxes, ErrorSummary, BackLink } from "../../govuk";
 import SaveAndCancel from "../../common/SaveAndCancel";
 import { CaseRegistrationFormContext } from "../../../common/providers/CaseRegistrationProvider";
@@ -29,7 +22,7 @@ const CaseMonitoringCodesPage = () => {
   type FormDataErrors = {
     caseMonitoringCodesCheckboxes?: ErrorText;
   };
-  const errorSummaryRef = useRef<HTMLInputElement>(null);
+
   const { state, dispatch } = useContext(CaseRegistrationFormContext);
   const navigate = useNavigate();
   const { chargesCount } = useChargesCount(state.formData.suspects);
@@ -57,7 +50,6 @@ const CaseMonitoringCodesPage = () => {
   }, [state.formData.suspects]);
 
   const [formDataErrors, setFormDataErrors] = useState<FormDataErrors>({});
-  const [disableBtns, setDisableBtns] = useState<boolean>(false);
 
   const errorSummaryProperties = useCallback(
     (errorKey: keyof FormDataErrors) => {
@@ -72,11 +64,8 @@ const CaseMonitoringCodesPage = () => {
     },
     [formDataErrors],
   );
-  const errorList = useErrorSummaryList(
-    formDataErrors,
-    errorSummaryProperties,
-    errorSummaryRef,
-  );
+  const { errorSummaryRef, errorList, disableBtns, setDisableBtns } =
+    useErrorSummaryList(formDataErrors, errorSummaryProperties);
 
   const caseMonitoringCodes = useMemo(() => {
     if (state.apiData.caseMonitoringCodes) {

@@ -1,11 +1,4 @@
-import {
-  useContext,
-  useMemo,
-  useRef,
-  useCallback,
-  useState,
-  useEffect,
-} from "react";
+import { useContext, useMemo, useCallback, useState, useEffect } from "react";
 import { AutoComplete, BackLink, ErrorSummary, Input } from "../../govuk";
 import SaveAndCancel from "../../common/SaveAndCancel";
 import { CaseRegistrationFormContext } from "../../../common/providers/CaseRegistrationProvider";
@@ -33,7 +26,6 @@ const CaseDetailsPage = () => {
     witnessCareUnitErrorText?: ErrorText;
   };
 
-  const errorSummaryRef = useRef<HTMLInputElement>(null);
   const { state, dispatch } = useContext(CaseRegistrationFormContext);
   const navigate = useNavigate();
   const isAreaSensitive = useIsAreaSensitive();
@@ -60,7 +52,6 @@ const CaseDetailsPage = () => {
     },
   });
   const [formDataErrors, setFormDataErrors] = useState<FormDataErrors>({});
-  const [disableBtns, setDisableBtns] = useState<boolean>(false);
 
   const previousRoute = useMemo(() => {
     if (state.formData.navigation.changeCaseDetails) {
@@ -107,11 +98,8 @@ const CaseDetailsPage = () => {
     },
     [formDataErrors],
   );
-  const errorList = useErrorSummaryList(
-    formDataErrors,
-    errorSummaryProperties,
-    errorSummaryRef,
-  );
+  const { errorSummaryRef, errorList, disableBtns, setDisableBtns } =
+    useErrorSummaryList(formDataErrors, errorSummaryProperties);
 
   useEffect(() => {
     if (validateUrnError) throw validateUrnError;

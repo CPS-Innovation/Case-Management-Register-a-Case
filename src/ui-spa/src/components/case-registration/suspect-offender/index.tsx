@@ -1,11 +1,4 @@
-import {
-  useRef,
-  useEffect,
-  useState,
-  useContext,
-  useCallback,
-  useMemo,
-} from "react";
+import { useEffect, useState, useContext, useCallback, useMemo } from "react";
 import { Radios, ErrorSummary, BackLink } from "../../govuk";
 import SaveAndCancel from "../../common/SaveAndCancel";
 import DateInputNative from "../../common/DateInputNative";
@@ -32,7 +25,7 @@ const SuspectOffenderPage = () => {
     suspectOffenderTypesRadio?: ErrorText;
     suspectArrestDate?: ErrorText;
   };
-  const errorSummaryRef = useRef<HTMLInputElement>(null);
+
   const { state, dispatch } = useContext(CaseRegistrationFormContext);
   const navigate = useNavigate();
   const { suspectId } = useParams<{ suspectId: string }>() as {
@@ -84,7 +77,6 @@ const SuspectOffenderPage = () => {
   }, [state.formData.suspects, suspectIndex]);
 
   const [formDataErrors, setFormDataErrors] = useState<FormDataErrors>({});
-  const [disableBtns, setDisableBtns] = useState<boolean>(false);
 
   const errorSummaryProperties = useCallback(
     (errorKey: keyof FormDataErrors) => {
@@ -108,11 +100,8 @@ const SuspectOffenderPage = () => {
     },
     [formDataErrors],
   );
-  const errorList = useErrorSummaryList(
-    formDataErrors,
-    errorSummaryProperties,
-    errorSummaryRef,
-  );
+  const { errorSummaryRef, errorList, disableBtns, setDisableBtns } =
+    useErrorSummaryList(formDataErrors, errorSummaryProperties);
   const validateFormData = () => {
     const errors: FormDataErrors = {};
     const {

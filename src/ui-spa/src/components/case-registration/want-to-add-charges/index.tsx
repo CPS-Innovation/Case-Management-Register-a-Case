@@ -1,4 +1,4 @@
-import { useRef, useState, useContext, useCallback } from "react";
+import { useState, useContext, useCallback } from "react";
 import { Radios, ErrorSummary, BackLink } from "../../govuk";
 import SaveAndCancel from "../../common/SaveAndCancel";
 import { CaseRegistrationFormContext } from "../../../common/providers/CaseRegistrationProvider";
@@ -15,7 +15,7 @@ const WantToAddCharges = () => {
   type FormDataErrors = {
     wantToAddChargesRadio?: ErrorText;
   };
-  const errorSummaryRef = useRef<HTMLInputElement>(null);
+
   const { state, dispatch } = useContext(CaseRegistrationFormContext);
   const navigate = useNavigate();
   const [formData, setFormData] = useState<{
@@ -25,8 +25,6 @@ const WantToAddCharges = () => {
   });
 
   const [formDataErrors, setFormDataErrors] = useState<FormDataErrors>({});
-
-  const [disableBtns, setDisableBtns] = useState<boolean>(false);
 
   const errorSummaryProperties = useCallback(
     (errorKey: keyof FormDataErrors) => {
@@ -42,11 +40,8 @@ const WantToAddCharges = () => {
     },
     [formDataErrors],
   );
-  const errorList = useErrorSummaryList(
-    formDataErrors,
-    errorSummaryProperties,
-    errorSummaryRef,
-  );
+  const { errorSummaryRef, errorList, disableBtns, setDisableBtns } =
+    useErrorSummaryList(formDataErrors, errorSummaryProperties);
   const validateFormData = () => {
     let isValid = true;
     const errors: FormDataErrors = {};

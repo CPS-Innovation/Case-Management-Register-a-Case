@@ -1,4 +1,4 @@
-import { useRef, useState, useContext, useCallback, useMemo } from "react";
+import { useState, useContext, useCallback, useMemo } from "react";
 import { Radios, ErrorSummary, BackLink, SummaryList } from "../../govuk";
 import SaveAndCancel from "../../common/SaveAndCancel";
 import { CaseRegistrationFormContext } from "../../../common/providers/CaseRegistrationProvider";
@@ -20,7 +20,7 @@ const SuspectAliasesSummaryPage = () => {
   type FormDataErrors = {
     addMoreAliasesRadio?: ErrorText;
   };
-  const errorSummaryRef = useRef<HTMLInputElement>(null);
+
   const { state, dispatch } = useContext(CaseRegistrationFormContext);
   const navigate = useNavigate();
   const { suspectId } = useParams<{
@@ -30,7 +30,6 @@ const SuspectAliasesSummaryPage = () => {
   };
 
   const [addMoreAliasesRadio, setAddMoreAliasesRadio] = useState<string>("");
-  const [disableBtns, setDisableBtns] = useState(false);
   const suspectIndex = useMemo(() => {
     const index = suspectId.replace("suspect-", "");
     return Number.parseInt(index, 10);
@@ -59,11 +58,8 @@ const SuspectAliasesSummaryPage = () => {
     },
     [formDataErrors],
   );
-  const errorList = useErrorSummaryList(
-    formDataErrors,
-    errorSummaryProperties,
-    errorSummaryRef,
-  );
+  const { errorSummaryRef, errorList, disableBtns, setDisableBtns } =
+    useErrorSummaryList(formDataErrors, errorSummaryProperties);
 
   const validateFormData = () => {
     const errors: FormDataErrors = {};

@@ -1,4 +1,4 @@
-import { useRef, useState, useContext, useCallback, useMemo } from "react";
+import { useState, useContext, useCallback, useMemo } from "react";
 import { Input, ErrorSummary, BackLink } from "../../govuk";
 import SaveAndCancel from "../../common/SaveAndCancel";
 import { CaseRegistrationFormContext } from "../../../common/providers/CaseRegistrationProvider";
@@ -19,7 +19,7 @@ const SuspectASNPage = () => {
   type FormDataErrors = {
     suspectASNText?: ErrorText;
   };
-  const errorSummaryRef = useRef<HTMLInputElement>(null);
+
   const { state, dispatch } = useContext(CaseRegistrationFormContext);
   const navigate = useNavigate();
   const { suspectId } = useParams<{ suspectId: string }>() as {
@@ -46,7 +46,6 @@ const SuspectASNPage = () => {
   }, [state.formData.suspects, suspectIndex]);
 
   const [formDataErrors, setFormDataErrors] = useState<FormDataErrors>({});
-  const [disableBtns, setDisableBtns] = useState<boolean>(false);
 
   const errorSummaryProperties = useCallback(
     (errorKey: keyof FormDataErrors) => {
@@ -62,11 +61,8 @@ const SuspectASNPage = () => {
     },
     [formDataErrors],
   );
-  const errorList = useErrorSummaryList(
-    formDataErrors,
-    errorSummaryProperties,
-    errorSummaryRef,
-  );
+  const { errorSummaryRef, errorList, disableBtns, setDisableBtns } =
+    useErrorSummaryList(formDataErrors, errorSummaryProperties);
   const validateFormData = () => {
     const errors: FormDataErrors = {};
     const { suspectASNText = "" } = formData;

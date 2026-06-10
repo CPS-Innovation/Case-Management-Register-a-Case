@@ -1,11 +1,4 @@
-import {
-  useRef,
-  useEffect,
-  useState,
-  useContext,
-  useCallback,
-  useMemo,
-} from "react";
+import { useEffect, useState, useContext, useCallback, useMemo } from "react";
 import { AutoComplete, Radios, ErrorSummary, BackLink } from "../../govuk";
 import SaveAndCancel from "../../common/SaveAndCancel";
 import DateInputNative from "../../common/DateInputNative";
@@ -30,7 +23,7 @@ const FirstHearingPage = () => {
     firstHearingCourtLocationText?: ErrorText;
     firstHearingDateText?: ErrorText;
   };
-  const errorSummaryRef = useRef<HTMLInputElement>(null);
+
   const { state, dispatch } = useContext(CaseRegistrationFormContext);
   const navigate = useNavigate();
 
@@ -75,7 +68,6 @@ const FirstHearingPage = () => {
   }, [courtLocationsError]);
 
   const [formDataErrors, setFormDataErrors] = useState<FormDataErrors>({});
-  const [disableBtns, setDisableBtns] = useState<boolean>(false);
 
   const errorSummaryProperties = useCallback(
     (errorKey: keyof FormDataErrors) => {
@@ -105,11 +97,8 @@ const FirstHearingPage = () => {
     },
     [formDataErrors],
   );
-  const errorList = useErrorSummaryList(
-    formDataErrors,
-    errorSummaryProperties,
-    errorSummaryRef,
-  );
+  const { errorSummaryRef, errorList, disableBtns, setDisableBtns } =
+    useErrorSummaryList(formDataErrors, errorSummaryProperties);
 
   const validateFormData = (
     courtLocations: { id: number; description: string }[],
