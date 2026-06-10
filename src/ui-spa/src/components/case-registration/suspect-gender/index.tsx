@@ -6,9 +6,8 @@ import { getGenders } from "../../../apis/gateway-api";
 import { useQuery } from "@tanstack/react-query";
 import { formatNameUtil } from "../../../common/utils/formatNameUtil";
 import { useNavigate, useParams } from "react-router-dom";
-import { getNextSuspectJourneyRoute } from "../../../common/utils/getSuspectJourneyRoutes";
 import useErrorSummaryList from "../../../common/hooks/useErrorSummaryList";
-import usePreviousSuspectRoute from "../../../common/hooks/usePreviousSuspectRoute";
+import useGetSuspectRoute from "../../../common/hooks/useGetSuspectRoute";
 import styles from "../index.module.scss";
 
 const SuspectGenderPage = () => {
@@ -56,10 +55,11 @@ const SuspectGenderPage = () => {
     if (gendersError) throw gendersError;
   }, [gendersError]);
 
-  const previousRoute = usePreviousSuspectRoute(
+  const { previousRoute, nextRoute } = useGetSuspectRoute(
     "suspect-gender",
     state.formData.suspects[suspectIndex].suspectAdditionalDetailsCheckboxes,
     suspectIndex,
+    state.formData.suspects[suspectIndex].suspectAliases.length > 0,
   );
 
   const [formDataErrors, setFormDataErrors] = useState<FormDataErrors>({});
@@ -150,12 +150,6 @@ const SuspectGenderPage = () => {
       },
     });
 
-    const nextRoute = getNextSuspectJourneyRoute(
-      "suspect-gender",
-      state.formData.suspects[suspectIndex].suspectAdditionalDetailsCheckboxes,
-      suspectIndex,
-      state.formData.suspects[suspectIndex].suspectAliases.length > 0,
-    );
     return navigate(nextRoute);
   };
 

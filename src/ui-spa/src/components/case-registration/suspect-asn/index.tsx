@@ -3,10 +3,9 @@ import { Input, ErrorSummary, BackLink } from "../../govuk";
 import SaveAndCancel from "../../common/SaveAndCancel";
 import { CaseRegistrationFormContext } from "../../../common/providers/CaseRegistrationProvider";
 import { useNavigate, useParams } from "react-router-dom";
-import { getNextSuspectJourneyRoute } from "../../../common/utils/getSuspectJourneyRoutes";
 import { sanitizeASNText } from "../../../common/utils/sanitizeASNText";
 import useErrorSummaryList from "../../../common/hooks/useErrorSummaryList";
-import usePreviousSuspectRoute from "../../../common/hooks/usePreviousSuspectRoute";
+import useGetSuspectRoute from "../../../common/hooks/useGetSuspectRoute";
 import styles from "../index.module.scss";
 
 const SuspectASNPage = () => {
@@ -35,10 +34,11 @@ const SuspectASNPage = () => {
     suspectASNText: state.formData.suspects[suspectIndex].suspectASNText || "",
   });
 
-  const previousRoute = usePreviousSuspectRoute(
+  const { previousRoute, nextRoute } = useGetSuspectRoute(
     "suspect-asn",
     state.formData.suspects[suspectIndex].suspectAdditionalDetailsCheckboxes,
     suspectIndex,
+    state.formData.suspects[suspectIndex].suspectAliases.length > 0,
   );
 
   const [formDataErrors, setFormDataErrors] = useState<FormDataErrors>({});
@@ -94,12 +94,6 @@ const SuspectASNPage = () => {
       },
     });
 
-    const nextRoute = getNextSuspectJourneyRoute(
-      "suspect-asn",
-      state.formData.suspects[suspectIndex].suspectAdditionalDetailsCheckboxes,
-      suspectIndex,
-      state.formData.suspects[suspectIndex].suspectAliases.length > 0,
-    );
     return navigate(nextRoute);
   };
 

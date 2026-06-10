@@ -6,9 +6,8 @@ import { getReligions } from "../../../apis/gateway-api";
 import { useQuery } from "@tanstack/react-query";
 import { useNavigate, useParams } from "react-router-dom";
 import { formatNameUtil } from "../../../common/utils/formatNameUtil";
-import { getNextSuspectJourneyRoute } from "../../../common/utils/getSuspectJourneyRoutes";
 import useErrorSummaryList from "../../../common/hooks/useErrorSummaryList";
-import usePreviousSuspectRoute from "../../../common/hooks/usePreviousSuspectRoute";
+import useGetSuspectRoute from "../../../common/hooks/useGetSuspectRoute";
 import styles from "../index.module.scss";
 
 const SuspectReligionPage = () => {
@@ -56,10 +55,11 @@ const SuspectReligionPage = () => {
     if (religionsError) throw religionsError;
   }, [religionsError]);
 
-  const previousRoute = usePreviousSuspectRoute(
+  const { previousRoute, nextRoute } = useGetSuspectRoute(
     "suspect-religion",
     state.formData.suspects[suspectIndex].suspectAdditionalDetailsCheckboxes,
     suspectIndex,
+    state.formData.suspects[suspectIndex].suspectAliases.length > 0,
   );
 
   const [formDataErrors, setFormDataErrors] = useState<FormDataErrors>({});
@@ -145,12 +145,6 @@ const SuspectReligionPage = () => {
       },
     });
 
-    const nextRoute = getNextSuspectJourneyRoute(
-      "suspect-religion",
-      state.formData.suspects[suspectIndex].suspectAdditionalDetailsCheckboxes,
-      suspectIndex,
-      state.formData.suspects[suspectIndex].suspectAliases.length > 0,
-    );
     return navigate(nextRoute);
   };
 

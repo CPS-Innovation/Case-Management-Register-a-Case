@@ -5,10 +5,9 @@ import { CaseRegistrationFormContext } from "../../../common/providers/CaseRegis
 import { getEthnicities } from "../../../apis/gateway-api";
 import { useQuery } from "@tanstack/react-query";
 import { useNavigate, useParams } from "react-router-dom";
-import { getNextSuspectJourneyRoute } from "../../../common/utils/getSuspectJourneyRoutes";
 import { formatNameUtil } from "../../../common/utils/formatNameUtil";
 import useErrorSummaryList from "../../../common/hooks/useErrorSummaryList";
-import usePreviousSuspectRoute from "../../../common/hooks/usePreviousSuspectRoute";
+import useGetSuspectRoute from "../../../common/hooks/useGetSuspectRoute";
 import styles from "../index.module.scss";
 
 const SuspectEthnicityPage = () => {
@@ -56,10 +55,11 @@ const SuspectEthnicityPage = () => {
     if (ethnicityError) throw ethnicityError;
   }, [ethnicityError]);
 
-  const previousRoute = usePreviousSuspectRoute(
+  const { previousRoute, nextRoute } = useGetSuspectRoute(
     "suspect-ethnicity",
     state.formData.suspects[suspectIndex].suspectAdditionalDetailsCheckboxes,
     suspectIndex,
+    state.formData.suspects[suspectIndex].suspectAliases.length > 0,
   );
 
   const [formDataErrors, setFormDataErrors] = useState<FormDataErrors>({});
@@ -146,12 +146,6 @@ const SuspectEthnicityPage = () => {
       },
     });
 
-    const nextRoute = getNextSuspectJourneyRoute(
-      "suspect-ethnicity",
-      state.formData.suspects[suspectIndex].suspectAdditionalDetailsCheckboxes,
-      suspectIndex,
-      state.formData.suspects[suspectIndex].suspectAliases.length > 0,
-    );
     return navigate(nextRoute);
   };
 

@@ -5,9 +5,8 @@ import { CaseRegistrationFormContext } from "../../../common/providers/CaseRegis
 import { type GeneralRadioValue } from "../../../common/reducers/caseRegistrationReducer";
 import { formatNameUtil } from "../../../common/utils/formatNameUtil";
 import { useNavigate, useParams } from "react-router-dom";
-import { getNextSuspectJourneyRoute } from "../../../common/utils/getSuspectJourneyRoutes";
 import useErrorSummaryList from "../../../common/hooks/useErrorSummaryList";
-import usePreviousSuspectRoute from "../../../common/hooks/usePreviousSuspectRoute";
+import useGetSuspectRoute from "../../../common/hooks/useGetSuspectRoute";
 import styles from "../index.module.scss";
 
 const SuspectDisabilityPage = () => {
@@ -37,10 +36,11 @@ const SuspectDisabilityPage = () => {
       state.formData.suspects[suspectIndex].suspectDisabilityRadio || "",
   });
 
-  const previousRoute = usePreviousSuspectRoute(
+  const { previousRoute, nextRoute } = useGetSuspectRoute(
     "suspect-disability",
     state.formData.suspects[suspectIndex].suspectAdditionalDetailsCheckboxes,
     suspectIndex,
+    state.formData.suspects[suspectIndex].suspectAliases.length > 0,
   );
 
   const [formDataErrors, setFormDataErrors] = useState<FormDataErrors>({});
@@ -98,12 +98,6 @@ const SuspectDisabilityPage = () => {
       },
     });
 
-    const nextRoute = getNextSuspectJourneyRoute(
-      "suspect-disability",
-      state.formData.suspects[suspectIndex].suspectAdditionalDetailsCheckboxes,
-      suspectIndex,
-      state.formData.suspects[suspectIndex].suspectAliases.length > 0,
-    );
     return navigate(nextRoute);
   };
 
