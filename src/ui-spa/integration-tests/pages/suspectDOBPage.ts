@@ -36,7 +36,7 @@ export class SuspectDOBPage {
   async errorValidations() {
     await this.saveAndContinue();
     await expect(
-      this.page.getByTestId("add-suspect-error-summary"),
+      this.page.getByTestId("suspect-dob-error-summary"),
     ).toBeVisible();
     await expect(this.page.getByTestId("suspect-DOB-day-text-link")).toHaveText(
       "Enter the date of birth",
@@ -46,14 +46,14 @@ export class SuspectDOBPage {
     await this.addDOBDay("32");
     await this.saveAndContinue();
     await expect(
-      this.page.getByTestId("add-suspect-error-summary"),
+      this.page.getByTestId("suspect-dob-error-summary"),
     ).toBeVisible();
     await expect(this.page.getByTestId("suspect-DOB-day-text-link")).toHaveText(
       "Date of birth must be a valid date",
     );
     await this.saveAndContinue();
     await expect(
-      this.page.getByTestId("add-suspect-error-summary"),
+      this.page.getByTestId("suspect-dob-error-summary"),
     ).toBeVisible();
     await expect(this.page.getByTestId("suspect-DOB-day-text-link")).toHaveText(
       "Date of birth must be a valid date",
@@ -63,7 +63,7 @@ export class SuspectDOBPage {
     await this.addDOBDay("3");
     await this.saveAndContinue();
     await expect(
-      this.page.getByTestId("add-suspect-error-summary"),
+      this.page.getByTestId("suspect-dob-error-summary"),
     ).toBeVisible();
     await expect(
       this.page.getByTestId("suspect-DOB-month-text-link"),
@@ -74,7 +74,7 @@ export class SuspectDOBPage {
     await this.addDOBMonth("13");
     await this.saveAndContinue();
     await expect(
-      this.page.getByTestId("add-suspect-error-summary"),
+      this.page.getByTestId("suspect-dob-error-summary"),
     ).toBeVisible();
     await expect(
       this.page.getByTestId("suspect-DOB-month-text-link"),
@@ -82,7 +82,7 @@ export class SuspectDOBPage {
     await this.addDOBMonth("11");
     await this.saveAndContinue();
     await expect(
-      this.page.getByTestId("add-suspect-error-summary"),
+      this.page.getByTestId("suspect-dob-error-summary"),
     ).toBeVisible();
     await expect(
       this.page.getByTestId("suspect-DOB-year-text-link"),
@@ -92,7 +92,7 @@ export class SuspectDOBPage {
     await this.addDOBYear("20");
     await this.saveAndContinue();
     await expect(
-      this.page.getByTestId("add-suspect-error-summary"),
+      this.page.getByTestId("suspect-dob-error-summary"),
     ).toBeVisible();
     await expect(
       this.page.getByTestId("suspect-DOB-year-text-link"),
