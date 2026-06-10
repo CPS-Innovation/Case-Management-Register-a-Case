@@ -1,10 +1,11 @@
 import { useState, useContext, useCallback, useMemo } from "react";
-import { Radios, ErrorSummary, BackLink, SummaryList } from "../../govuk";
+import { Radios, BackLink, SummaryList } from "../../govuk";
 import SaveAndCancel from "../../common/SaveAndCancel";
 import { CaseRegistrationFormContext } from "../../../common/providers/CaseRegistrationProvider";
 import { formatNameUtil } from "../../../common/utils/formatNameUtil";
 import useErrorSummaryList from "../../../common/hooks/useErrorSummaryList";
 import useGetSuspectRoute from "../../../common/hooks/useGetSuspectRoute";
+import ErrorSummaryWrapper from "../../common/ErrorSummaryWrapper";
 import { useNavigate, useParams } from "react-router-dom";
 import styles from "../index.module.scss";
 import pageStyles from "./index.module.scss";
@@ -143,19 +144,12 @@ const SuspectAliasesSummaryPage = () => {
   return (
     <div className={pageStyles.caseSuspectAliasesSummaryPage}>
       <BackLink to={previousRoute}>Back</BackLink>
-      {!!errorList.length && (
-        <div
-          ref={errorSummaryRef}
-          tabIndex={-1}
-          className={styles.errorSummaryWrapper}
-        >
-          <ErrorSummary
-            data-testid={"suspect-aliases-summary-error-summary"}
-            errorList={errorList}
-            titleChildren="There is a problem"
-          />
-        </div>
-      )}
+
+      <ErrorSummaryWrapper
+        errorList={errorList}
+        errorSummaryRef={errorSummaryRef}
+        dataTestId={"suspect-aliases-summary-error-summary"}
+      />
       <form onSubmit={handleSubmit}>
         <h1>
           {`Aliases for ${formatNameUtil(suspectFirstNameText, suspectLastNameText)}`}

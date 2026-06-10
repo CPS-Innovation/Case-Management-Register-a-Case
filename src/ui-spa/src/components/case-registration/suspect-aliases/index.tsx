@@ -1,5 +1,5 @@
 import { useState, useContext, useCallback, useMemo } from "react";
-import { Input, ErrorSummary, BackLink } from "../../govuk";
+import { Input, BackLink } from "../../govuk";
 import SaveAndCancel from "../../common/SaveAndCancel";
 import { CaseRegistrationFormContext } from "../../../common/providers/CaseRegistrationProvider";
 import { getPreviousSuspectJourneyRoute } from "../../../common/utils/getSuspectJourneyRoutes";
@@ -7,6 +7,7 @@ import { formatNameUtil } from "../../../common/utils/formatNameUtil";
 import { sanitizeNameText } from "../../../common/utils/sanitizeNameText";
 import useErrorSummaryList from "../../../common/hooks/useErrorSummaryList";
 import { useNavigate, useParams } from "react-router-dom";
+import ErrorSummaryWrapper from "../../common/ErrorSummaryWrapper";
 import styles from "../index.module.scss";
 import pageStyles from "./index.module.scss";
 
@@ -129,19 +130,12 @@ const SuspectAliasesPage = () => {
   return (
     <div className={pageStyles.caseSuspectAliasesPage}>
       <BackLink to={previousRoute}>Back</BackLink>
-      {!!errorList.length && (
-        <div
-          ref={errorSummaryRef}
-          tabIndex={-1}
-          className={styles.errorSummaryWrapper}
-        >
-          <ErrorSummary
-            data-testid={"suspect-aliases-error-summary"}
-            errorList={errorList}
-            titleChildren="There is a problem"
-          />
-        </div>
-      )}
+
+      <ErrorSummaryWrapper
+        errorList={errorList}
+        errorSummaryRef={errorSummaryRef}
+        dataTestId={"suspect-aliases-error-summary"}
+      />
       <form onSubmit={handleSubmit}>
         <div className={pageStyles.headingWrapper}>
           <h1>

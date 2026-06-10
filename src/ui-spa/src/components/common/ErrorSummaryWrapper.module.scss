@@ -1,0 +1,7 @@
+.errorSummaryWrapper {
+  margin-top: 1rem;
+  max-width: 30rem;
+  &:focus {
+    outline: 0.2rem solid #ffdd00;
+  }
+}
