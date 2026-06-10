@@ -29,7 +29,7 @@ const SuspectASNPage = () => {
     return Number.parseInt(index, 10);
   }, [suspectId]);
 
-  const [formData, setFormData] = useState<{
+  const [asnFormData, setAsnFormData] = useState<{
     suspectASNText: string;
   }>({
     suspectASNText: state.formData.suspects[suspectIndex].suspectASNText || "",
@@ -42,13 +42,15 @@ const SuspectASNPage = () => {
     state.formData.suspects[suspectIndex].suspectAliases.length > 0,
   );
 
-  const [formDataErrors, setFormDataErrors] = useState<FormDataErrors>({});
+  const [asnFormDataErrors, setAsnFormDataErrors] = useState<FormDataErrors>(
+    {},
+  );
 
   const errorSummaryProperties = useCallback(
     (errorKey: keyof FormDataErrors) => {
       if (errorKey === "suspectASNText") {
         return {
-          children: formDataErrors[errorKey]?.errorSummaryText,
+          children: asnFormDataErrors[errorKey]?.errorSummaryText,
           href: "#suspect-asn-text",
           "data-testid": "suspect-asn-text-link",
         };
@@ -56,13 +58,13 @@ const SuspectASNPage = () => {
 
       return null;
     },
-    [formDataErrors],
+    [asnFormDataErrors],
   );
   const { errorSummaryRef, errorList, disableBtns, setDisableBtns } =
-    useErrorSummaryList(formDataErrors, errorSummaryProperties);
+    useErrorSummaryList(asnFormDataErrors, errorSummaryProperties);
   const validateFormData = () => {
     const errors: FormDataErrors = {};
-    const { suspectASNText = "" } = formData;
+    const { suspectASNText = "" } = asnFormData;
     if (!suspectASNText) {
       errors.suspectASNText = {
         errorSummaryText: "Enter the Arrest Summons Number (ASN)",
@@ -72,13 +74,13 @@ const SuspectASNPage = () => {
 
     const isValid = !Object.entries(errors).filter(([, value]) => value).length;
 
-    setFormDataErrors(errors);
+    setAsnFormDataErrors(errors);
     return isValid;
   };
 
   const setFormValue = (value: string) => {
     value = sanitizeASNText(value);
-    setFormData({ ...formData, suspectASNText: value });
+    setAsnFormData({ ...asnFormData, suspectASNText: value });
   };
 
   const handleSubmit = (event: React.FormEvent) => {
@@ -91,7 +93,7 @@ const SuspectASNPage = () => {
       type: "SET_SUSPECT_FIELDS",
       payload: {
         index: suspectIndex,
-        data: formData,
+        data: asnFormData,
       },
     });
 
@@ -114,9 +116,10 @@ const SuspectASNPage = () => {
             id="suspect-asn-text"
             data-testid="suspect-asn-text"
             errorMessage={
-              formDataErrors["suspectASNText"]
+              asnFormDataErrors["suspectASNText"]
                 ? {
-                    children: formDataErrors["suspectASNText"].inputErrorText,
+                    children:
+                      asnFormDataErrors["suspectASNText"].inputErrorText,
                   }
                 : undefined
             }
@@ -125,7 +128,7 @@ const SuspectASNPage = () => {
               children: <h1>What is the Arrest Summons Number (ASN)?</h1>,
             }}
             type="text"
-            value={formData.suspectASNText}
+            value={asnFormData.suspectASNText}
             onChange={setFormValue}
           />
         </div>

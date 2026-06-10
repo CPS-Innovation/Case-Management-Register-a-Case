@@ -44,13 +44,14 @@ const SuspectDisabilityPage = () => {
     state.formData.suspects[suspectIndex].suspectAliases.length > 0,
   );
 
-  const [formDataErrors, setFormDataErrors] = useState<FormDataErrors>({});
+  const [disabilityFormDataErrors, setDisabilityFormDataErrors] =
+    useState<FormDataErrors>({});
 
   const errorSummaryProperties = useCallback(
     (errorKey: keyof FormDataErrors) => {
       if (errorKey === "suspectDisabilityRadio") {
         return {
-          children: formDataErrors[errorKey]?.errorSummaryText,
+          children: disabilityFormDataErrors[errorKey]?.errorSummaryText,
           href: "#suspect-disability-radio-yes",
           "data-testid": "suspect-disability-radio-link",
         };
@@ -58,10 +59,10 @@ const SuspectDisabilityPage = () => {
 
       return null;
     },
-    [formDataErrors],
+    [disabilityFormDataErrors],
   );
   const { errorSummaryRef, errorList, disableBtns, setDisableBtns } =
-    useErrorSummaryList(formDataErrors, errorSummaryProperties);
+    useErrorSummaryList(disabilityFormDataErrors, errorSummaryProperties);
   const validateFormData = () => {
     const errors: FormDataErrors = {};
     const { suspectDisabilityRadio = "" } = disabilityFormData;
@@ -75,7 +76,7 @@ const SuspectDisabilityPage = () => {
 
     const isValid = !Object.entries(errors).filter(([, value]) => value).length;
 
-    setFormDataErrors(errors);
+    setDisabilityFormDataErrors(errors);
     return isValid;
   };
 
@@ -134,10 +135,11 @@ const SuspectDisabilityPage = () => {
               },
             }}
             errorMessage={
-              formDataErrors["suspectDisabilityRadio"]
+              disabilityFormDataErrors["suspectDisabilityRadio"]
                 ? {
                     children:
-                      formDataErrors["suspectDisabilityRadio"].inputErrorText,
+                      disabilityFormDataErrors["suspectDisabilityRadio"]
+                        .inputErrorText,
                   }
                 : undefined
             }

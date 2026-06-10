@@ -63,13 +63,14 @@ const SuspectGenderPage = () => {
     state.formData.suspects[suspectIndex].suspectAliases.length > 0,
   );
 
-  const [formDataErrors, setFormDataErrors] = useState<FormDataErrors>({});
+  const [genderFormDataErrors, setGenderFormDataErrors] =
+    useState<FormDataErrors>({});
 
   const errorSummaryProperties = useCallback(
     (errorKey: keyof FormDataErrors) => {
       if (errorKey === "suspectGenderRadio") {
         return {
-          children: formDataErrors[errorKey]?.errorSummaryText,
+          children: genderFormDataErrors[errorKey]?.errorSummaryText,
           href: "#suspect-gender-radio-0",
           "data-testid": "suspect-gender-radio-link",
         };
@@ -77,10 +78,10 @@ const SuspectGenderPage = () => {
 
       return null;
     },
-    [formDataErrors],
+    [genderFormDataErrors],
   );
   const { errorSummaryRef, errorList, disableBtns, setDisableBtns } =
-    useErrorSummaryList(formDataErrors, errorSummaryProperties);
+    useErrorSummaryList(genderFormDataErrors, errorSummaryProperties);
   const validateFormData = () => {
     const errors: FormDataErrors = {};
     const { suspectGenderRadio = { shortCode: null, description: "" } } =
@@ -95,7 +96,7 @@ const SuspectGenderPage = () => {
 
     const isValid = !Object.entries(errors).filter(([, value]) => value).length;
 
-    setFormDataErrors(errors);
+    setGenderFormDataErrors(errors);
     return isValid;
   };
 
@@ -183,10 +184,10 @@ const SuspectGenderPage = () => {
               },
             }}
             errorMessage={
-              formDataErrors["suspectGenderRadio"]
+              genderFormDataErrors["suspectGenderRadio"]
                 ? {
                     children:
-                      formDataErrors["suspectGenderRadio"].inputErrorText,
+                      genderFormDataErrors["suspectGenderRadio"].inputErrorText,
                   }
                 : undefined
             }
