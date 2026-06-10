@@ -63,13 +63,14 @@ const SuspectEthnicityPage = () => {
     state.formData.suspects[suspectIndex].suspectAliases.length > 0,
   );
 
-  const [formDataErrors, setFormDataErrors] = useState<FormDataErrors>({});
+  const [ethnicityFormDataErrors, setEthnicityFormDataErrors] =
+    useState<FormDataErrors>({});
 
   const errorSummaryProperties = useCallback(
     (errorKey: keyof FormDataErrors) => {
       if (errorKey === "suspectEthnicityRadio") {
         return {
-          children: formDataErrors[errorKey]?.errorSummaryText,
+          children: ethnicityFormDataErrors[errorKey]?.errorSummaryText,
           href: "#suspect-ethnicity-radio-0",
           "data-testid": "suspect-ethnicity-radio-link",
         };
@@ -77,10 +78,10 @@ const SuspectEthnicityPage = () => {
 
       return null;
     },
-    [formDataErrors],
+    [ethnicityFormDataErrors],
   );
   const { errorSummaryRef, errorList, disableBtns, setDisableBtns } =
-    useErrorSummaryList(formDataErrors, errorSummaryProperties);
+    useErrorSummaryList(ethnicityFormDataErrors, errorSummaryProperties);
 
   const validateFormData = () => {
     const errors: FormDataErrors = {};
@@ -96,7 +97,7 @@ const SuspectEthnicityPage = () => {
 
     const isValid = !Object.entries(errors).filter(([, value]) => value).length;
 
-    setFormDataErrors(errors);
+    setEthnicityFormDataErrors(errors);
     return isValid;
   };
 
@@ -177,10 +178,11 @@ const SuspectEthnicityPage = () => {
               },
             }}
             errorMessage={
-              formDataErrors["suspectEthnicityRadio"]
+              ethnicityFormDataErrors["suspectEthnicityRadio"]
                 ? {
                     children:
-                      formDataErrors["suspectEthnicityRadio"].inputErrorText,
+                      ethnicityFormDataErrors["suspectEthnicityRadio"]
+                        .inputErrorText,
                   }
                 : undefined
             }
