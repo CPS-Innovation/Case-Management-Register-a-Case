@@ -132,7 +132,7 @@ const SuspectReligionPage = () => {
     }
   };
 
-  const handleSubmit = (event: React.FormEvent) => {
+  const handleSubmitReligion = (event: React.FormEvent) => {
     event.preventDefault();
 
     if (!validateFormData()) return;
@@ -171,7 +171,7 @@ const SuspectReligionPage = () => {
           />
         </div>
       )}
-      <form onSubmit={handleSubmit}>
+      <form onSubmit={handleSubmitReligion}>
         <div className={styles.inputWrapper}>
           <Radios
             fieldset={{
@@ -199,7 +199,7 @@ const SuspectReligionPage = () => {
             }}
           ></Radios>
         </div>
-        <SaveAndCancel onSave={handleSubmit} disabled={disableBtns} />
+        <SaveAndCancel onSave={handleSubmitReligion} disabled={disableBtns} />
       </form>
     </div>
   );
