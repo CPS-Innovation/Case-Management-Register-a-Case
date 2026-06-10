@@ -1,5 +1,5 @@
 import { useState, useContext, useCallback, useMemo } from "react";
-import { ErrorSummary, BackLink, DateInput } from "../../govuk";
+import { BackLink, DateInput } from "../../govuk";
 import SaveAndCancel from "../../common/SaveAndCancel";
 import { formatNameUtil } from "../../../common/utils/formatNameUtil";
 import { CaseRegistrationFormContext } from "../../../common/providers/CaseRegistrationProvider";
@@ -7,6 +7,7 @@ import { validateDate } from "../../../common/utils/dateValidation";
 import { dobValidationConstants } from "../../../common/constants/dobValidationConstants";
 import useErrorSummaryList from "../../../common/hooks/useErrorSummaryList";
 import useGetSuspectRoute from "../../../common/hooks/useGetSuspectRoute";
+import ErrorSummaryWrapper from "../../common/ErrorSummaryWrapper";
 import { useNavigate, useParams } from "react-router-dom";
 import styles from "../index.module.scss";
 
@@ -187,19 +188,12 @@ const SuspectDOBPage = () => {
   return (
     <div>
       <BackLink to={previousRoute}>Back</BackLink>
-      {!!errorList.length && (
-        <div
-          ref={errorSummaryRef}
-          tabIndex={-1}
-          className={styles.errorSummaryWrapper}
-        >
-          <ErrorSummary
-            data-testid={"add-suspect-error-summary"}
-            errorList={errorList}
-            titleChildren="There is a problem"
-          />
-        </div>
-      )}
+
+      <ErrorSummaryWrapper
+        errorList={errorList}
+        errorSummaryRef={errorSummaryRef}
+        dataTestId="suspect-dob-error-summary"
+      />
       <form onSubmit={handleSubmit}>
         <div className={styles.inputWrapper}>
           <DateInput

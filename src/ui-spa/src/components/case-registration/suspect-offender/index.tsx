@@ -1,5 +1,5 @@
 import { useEffect, useState, useContext, useCallback, useMemo } from "react";
-import { Radios, ErrorSummary, BackLink } from "../../govuk";
+import { Radios, BackLink } from "../../govuk";
 import SaveAndCancel from "../../common/SaveAndCancel";
 import DateInputNative from "../../common/DateInputNative";
 import { CaseRegistrationFormContext } from "../../../common/providers/CaseRegistrationProvider";
@@ -11,6 +11,7 @@ import { isValidOnOrBeforeDate } from "../../../common/utils/isValidOnOrBeforeDa
 import { isChargedWithAdultWarningActive } from "../../../common/utils/isChargedWithAdultWarningActive";
 import useErrorSummaryList from "../../../common/hooks/useErrorSummaryList";
 import useGetSuspectRoute from "../../../common/hooks/useGetSuspectRoute";
+import ErrorSummaryWrapper from "../../common/ErrorSummaryWrapper";
 import styles from "../index.module.scss";
 
 const SuspectOffenderPage = () => {
@@ -248,19 +249,12 @@ const SuspectOffenderPage = () => {
   return (
     <div>
       <BackLink to={previousRoute}>Back</BackLink>
-      {!!errorList.length && (
-        <div
-          ref={errorSummaryRef}
-          tabIndex={-1}
-          className={styles.errorSummaryWrapper}
-        >
-          <ErrorSummary
-            data-testid={"suspect-offender-types-error-summary"}
-            errorList={errorList}
-            titleChildren="There is a problem"
-          />
-        </div>
-      )}
+
+      <ErrorSummaryWrapper
+        errorList={errorList}
+        errorSummaryRef={errorSummaryRef}
+        dataTestId="suspect-offender-types-error-summary"
+      />
       <form onSubmit={handleSubmit}>
         <div className={styles.inputWrapper}>
           <Radios

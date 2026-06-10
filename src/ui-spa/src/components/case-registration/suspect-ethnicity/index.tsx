@@ -1,5 +1,5 @@
 import { useEffect, useState, useContext, useCallback, useMemo } from "react";
-import { Radios, ErrorSummary, BackLink } from "../../govuk";
+import { Radios, BackLink } from "../../govuk";
 import SaveAndCancel from "../../common/SaveAndCancel";
 import { CaseRegistrationFormContext } from "../../../common/providers/CaseRegistrationProvider";
 import { getEthnicities } from "../../../apis/gateway-api";
@@ -8,6 +8,7 @@ import { useNavigate, useParams } from "react-router-dom";
 import { formatNameUtil } from "../../../common/utils/formatNameUtil";
 import useErrorSummaryList from "../../../common/hooks/useErrorSummaryList";
 import useGetSuspectRoute from "../../../common/hooks/useGetSuspectRoute";
+import ErrorSummaryWrapper from "../../common/ErrorSummaryWrapper";
 import styles from "../index.module.scss";
 
 const SuspectEthnicityPage = () => {
@@ -159,19 +160,12 @@ const SuspectEthnicityPage = () => {
   return (
     <div>
       <BackLink to={previousRoute}>Back</BackLink>
-      {!!errorList.length && (
-        <div
-          ref={errorSummaryRef}
-          tabIndex={-1}
-          className={styles.errorSummaryWrapper}
-        >
-          <ErrorSummary
-            data-testid={"suspect-ethnicity-error-summary"}
-            errorList={errorList}
-            titleChildren="There is a problem"
-          />
-        </div>
-      )}
+
+      <ErrorSummaryWrapper
+        errorList={errorList}
+        errorSummaryRef={errorSummaryRef}
+        dataTestId="suspect-ethnicity-error-summary"
+      />
       <form onSubmit={handleSubmit}>
         <div className={styles.inputWrapper}>
           <Radios

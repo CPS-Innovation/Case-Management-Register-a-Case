@@ -1,5 +1,5 @@
 import { useEffect, useState, useContext, useCallback, useMemo } from "react";
-import { Radios, ErrorSummary, BackLink } from "../../govuk";
+import { Radios, BackLink } from "../../govuk";
 import SaveAndCancel from "../../common/SaveAndCancel";
 import { CaseRegistrationFormContext } from "../../../common/providers/CaseRegistrationProvider";
 import { getReligions } from "../../../apis/gateway-api";

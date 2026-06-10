@@ -1,11 +1,12 @@
 import { useState, useContext, useCallback, useMemo } from "react";
-import { Input, ErrorSummary, BackLink } from "../../govuk";
+import { Input, BackLink } from "../../govuk";
 import SaveAndCancel from "../../common/SaveAndCancel";
 import { CaseRegistrationFormContext } from "../../../common/providers/CaseRegistrationProvider";
 import { useNavigate, useParams } from "react-router-dom";
 import { sanitizeASNText } from "../../../common/utils/sanitizeASNText";
 import useErrorSummaryList from "../../../common/hooks/useErrorSummaryList";
 import useGetSuspectRoute from "../../../common/hooks/useGetSuspectRoute";
+import ErrorSummaryWrapper from "../../common/ErrorSummaryWrapper";
 import styles from "../index.module.scss";
 
 const SuspectASNPage = () => {
@@ -100,19 +101,12 @@ const SuspectASNPage = () => {
   return (
     <div>
       <BackLink to={previousRoute}>Back</BackLink>
-      {!!errorList.length && (
-        <div
-          ref={errorSummaryRef}
-          tabIndex={-1}
-          className={styles.errorSummaryWrapper}
-        >
-          <ErrorSummary
-            data-testid={"suspect-asn-error-summary"}
-            errorList={errorList}
-            titleChildren="There is a problem"
-          />
-        </div>
-      )}
+
+      <ErrorSummaryWrapper
+        errorList={errorList}
+        errorSummaryRef={errorSummaryRef}
+        dataTestId="suspect-asn-error-summary"
+      />
       <form onSubmit={handleSubmit}>
         <div className={styles.inputWrapper}>
           <Input
