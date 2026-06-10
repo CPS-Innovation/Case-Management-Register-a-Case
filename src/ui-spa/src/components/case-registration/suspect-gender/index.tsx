@@ -6,11 +6,9 @@ import { getGenders } from "../../../apis/gateway-api";
 import { useQuery } from "@tanstack/react-query";
 import { formatNameUtil } from "../../../common/utils/formatNameUtil";
 import { useNavigate, useParams } from "react-router-dom";
-import {
-  getNextSuspectJourneyRoute,
-  getPreviousSuspectJourneyRoute,
-} from "../../../common/utils/getSuspectJourneyRoutes";
+import { getNextSuspectJourneyRoute } from "../../../common/utils/getSuspectJourneyRoutes";
 import useErrorSummaryList from "../../../common/hooks/useErrorSummaryList";
+import usePreviousSuspectRoute from "../../../common/hooks/usePreviousSuspectRoute";
 import styles from "../index.module.scss";
 
 const SuspectGenderPage = () => {
@@ -58,13 +56,11 @@ const SuspectGenderPage = () => {
     if (gendersError) throw gendersError;
   }, [gendersError]);
 
-  const previousRoute = useMemo(() => {
-    return getPreviousSuspectJourneyRoute(
-      "suspect-gender",
-      state.formData.suspects[suspectIndex].suspectAdditionalDetailsCheckboxes,
-      suspectIndex,
-    );
-  }, [state.formData.suspects, suspectIndex]);
+  const previousRoute = usePreviousSuspectRoute(
+    "suspect-gender",
+    state.formData.suspects[suspectIndex].suspectAdditionalDetailsCheckboxes,
+    suspectIndex,
+  );
 
   const [formDataErrors, setFormDataErrors] = useState<FormDataErrors>({});
 

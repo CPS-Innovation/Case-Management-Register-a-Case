@@ -6,11 +6,9 @@ import { getReligions } from "../../../apis/gateway-api";
 import { useQuery } from "@tanstack/react-query";
 import { useNavigate, useParams } from "react-router-dom";
 import { formatNameUtil } from "../../../common/utils/formatNameUtil";
-import {
-  getNextSuspectJourneyRoute,
-  getPreviousSuspectJourneyRoute,
-} from "../../../common/utils/getSuspectJourneyRoutes";
+import { getNextSuspectJourneyRoute } from "../../../common/utils/getSuspectJourneyRoutes";
 import useErrorSummaryList from "../../../common/hooks/useErrorSummaryList";
+import usePreviousSuspectRoute from "../../../common/hooks/usePreviousSuspectRoute";
 import styles from "../index.module.scss";
 
 const SuspectReligionPage = () => {
@@ -58,13 +56,11 @@ const SuspectReligionPage = () => {
     if (religionsError) throw religionsError;
   }, [religionsError]);
 
-  const previousRoute = useMemo(() => {
-    return getPreviousSuspectJourneyRoute(
-      "suspect-religion",
-      state.formData.suspects[suspectIndex].suspectAdditionalDetailsCheckboxes,
-      suspectIndex,
-    );
-  }, [state.formData.suspects, suspectIndex]);
+  const previousRoute = usePreviousSuspectRoute(
+    "suspect-religion",
+    state.formData.suspects[suspectIndex].suspectAdditionalDetailsCheckboxes,
+    suspectIndex,
+  );
 
   const [formDataErrors, setFormDataErrors] = useState<FormDataErrors>({});
 

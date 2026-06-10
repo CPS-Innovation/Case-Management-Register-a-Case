@@ -2,12 +2,10 @@ import { useState, useContext, useCallback, useMemo } from "react";
 import { Radios, ErrorSummary, BackLink, SummaryList } from "../../govuk";
 import SaveAndCancel from "../../common/SaveAndCancel";
 import { CaseRegistrationFormContext } from "../../../common/providers/CaseRegistrationProvider";
-import {
-  getNextSuspectJourneyRoute,
-  getPreviousSuspectJourneyRoute,
-} from "../../../common/utils/getSuspectJourneyRoutes";
+import { getNextSuspectJourneyRoute } from "../../../common/utils/getSuspectJourneyRoutes";
 import { formatNameUtil } from "../../../common/utils/formatNameUtil";
 import useErrorSummaryList from "../../../common/hooks/useErrorSummaryList";
+import usePreviousSuspectRoute from "../../../common/hooks/usePreviousSuspectRoute";
 import { useNavigate, useParams } from "react-router-dom";
 import styles from "../index.module.scss";
 import pageStyles from "./index.module.scss";
@@ -35,13 +33,11 @@ const SuspectAliasesSummaryPage = () => {
     return Number.parseInt(index, 10);
   }, [suspectId]);
 
-  const previousRoute = useMemo(() => {
-    return getPreviousSuspectJourneyRoute(
-      "suspect-add-aliases",
-      state.formData.suspects[suspectIndex].suspectAdditionalDetailsCheckboxes,
-      suspectIndex,
-    );
-  }, [state.formData.suspects, suspectIndex]);
+  const previousRoute = usePreviousSuspectRoute(
+    "suspect-add-aliases",
+    state.formData.suspects[suspectIndex].suspectAdditionalDetailsCheckboxes,
+    suspectIndex,
+  );
 
   const [formDataErrors, setFormDataErrors] = useState<FormDataErrors>({});
 

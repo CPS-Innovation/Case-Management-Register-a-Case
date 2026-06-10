@@ -4,12 +4,10 @@ import SaveAndCancel from "../../common/SaveAndCancel";
 import { formatNameUtil } from "../../../common/utils/formatNameUtil";
 import { CaseRegistrationFormContext } from "../../../common/providers/CaseRegistrationProvider";
 import { validateDate } from "../../../common/utils/dateValidation";
-import {
-  getNextSuspectJourneyRoute,
-  getPreviousSuspectJourneyRoute,
-} from "../../../common/utils/getSuspectJourneyRoutes";
+import { getNextSuspectJourneyRoute } from "../../../common/utils/getSuspectJourneyRoutes";
 import { dobValidationConstants } from "../../../common/constants/dobValidationConstants";
 import useErrorSummaryList from "../../../common/hooks/useErrorSummaryList";
+import usePreviousSuspectRoute from "../../../common/hooks/usePreviousSuspectRoute";
 import { useNavigate, useParams } from "react-router-dom";
 import styles from "../index.module.scss";
 
@@ -46,13 +44,12 @@ const SuspectDOBPage = () => {
       state.formData.suspects[suspectIndex].suspectDOBYearText || "",
   });
 
-  const previousRoute = useMemo(() => {
-    return getPreviousSuspectJourneyRoute(
-      "suspect-dob",
-      state.formData.suspects[suspectIndex].suspectAdditionalDetailsCheckboxes,
-      suspectIndex,
-    );
-  }, [state.formData.suspects, suspectIndex]);
+  const previousRoute = usePreviousSuspectRoute(
+    "suspect-dob",
+    state.formData.suspects[suspectIndex].suspectAdditionalDetailsCheckboxes,
+    suspectIndex,
+  );
+
   const [formDataErrors, setFormDataErrors] = useState<FormDataErrors>({});
 
   const errorSummaryProperties = useCallback(() => {
