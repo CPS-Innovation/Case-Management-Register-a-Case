@@ -30,7 +30,7 @@ const SuspectReligionPage = () => {
     return Number.parseInt(index, 10);
   }, [suspectId]);
 
-  const [formData, setFormData] = useState<{
+  const [religionData, setReligionData] = useState<{
     suspectReligionRadio: { shortCode: string; description: string };
   }>({
     suspectReligionRadio: state.formData.suspects[suspectIndex]
@@ -80,11 +80,11 @@ const SuspectReligionPage = () => {
   );
   const { errorSummaryRef, errorList, disableBtns, setDisableBtns } =
     useErrorSummaryList(formDataErrors, errorSummaryProperties);
-  const validateFormData = () => {
+  const validateReligionFormData = () => {
     const errors: FormDataErrors = {};
 
     const { suspectReligionRadio = { shortCode: null, description: "" } } =
-      formData;
+      religionData;
 
     if (!suspectReligionRadio.shortCode) {
       errors.suspectReligionRadio = {
@@ -125,8 +125,8 @@ const SuspectReligionPage = () => {
       (religion) => religion.shortCode === value,
     );
     if (selectedReligion) {
-      setFormData({
-        ...formData,
+      setReligionData({
+        ...religionData,
         suspectReligionRadio: selectedReligion,
       });
     }
@@ -135,13 +135,13 @@ const SuspectReligionPage = () => {
   const handleSubmitReligion = (event: React.FormEvent) => {
     event.preventDefault();
 
-    if (!validateFormData()) return;
+    if (!validateReligionFormData()) return;
     setDisableBtns(true);
     dispatch({
       type: "SET_SUSPECT_FIELDS",
       payload: {
         index: suspectIndex,
-        data: formData,
+        data: religionData,
       },
     });
 
@@ -193,7 +193,7 @@ const SuspectReligionPage = () => {
                 : undefined
             }
             items={religionItems}
-            value={formData.suspectReligionRadio.shortCode || ""}
+            value={religionData.suspectReligionRadio.shortCode || ""}
             onChange={(value) => {
               if (value) setFormValue(value);
             }}
