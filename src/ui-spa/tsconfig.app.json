@@ -24,5 +24,10 @@
     "noUncheckedSideEffectImports": true,
     "types": ["vitest/globals"]
   },
-  "include": ["src", "integration-tests/**/*.ts", "playwright.config.ts"]
+  "include": [
+    "src",
+    "integration-tests/**/*.ts",
+    "e2e-tests/**/*.ts",
+    "playwright.config.ts"
+  ]
 }

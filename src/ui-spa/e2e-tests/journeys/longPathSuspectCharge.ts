@@ -1,4 +1,5 @@
 import { expect, type Page } from "@playwright/test";
+import { faker } from "@faker-js/faker";
 import { AddSuspectPage } from "../../integration-tests/pages/addSuspectPage";
 import { SuspectDOBPage } from "../../integration-tests/pages/suspectDOBPage";
 import { SuspectGenderPage } from "../../integration-tests/pages/suspectGenderPage";
@@ -31,6 +32,11 @@ import {
 const OFFENCE_CODE = process.env.E2E_OFFENCE_CODE ?? "TH68040";
 
 const isoDate = (d: Date): string => d.toISOString().split("T")[0];
+const alpha = (value: string): string => value.replace(/[^A-Za-z]/g, "");
+const personName = () => ({
+  first: alpha(faker.person.firstName()),
+  last: alpha(faker.person.lastName()),
+});
 
 export interface LongPathSuspectChargeOptions {
   operationName: string;
@@ -41,6 +47,16 @@ export async function completeLongPathSuspectCharge(
   { operationName }: LongPathSuspectChargeOptions,
 ): Promise<void> {
   const urn = generateUniqueUrn();
+  const suspect = personName();
+  const alias = personName();
+  const victim = personName();
+
+  const offenceFrom = new Date();
+  offenceFrom.setMonth(offenceFrom.getMonth() - 1);
+  const offenceTo = new Date(offenceFrom);
+  offenceTo.setDate(offenceTo.getDate() + 1);
+  const arrestDate = new Date();
+  arrestDate.setDate(arrestDate.getDate() - 14);
 
   await startAtHomePage(page, { operationName, hasSuspect: true });
   await enterAreasAndCaseDetails(page, urn);
@@ -48,8 +64,8 @@ export async function completeLongPathSuspectCharge(
   const addSuspectPage = new AddSuspectPage(page);
   await expectStep(page, "/case-registration/suspect-0/add-suspect");
   await addSuspectPage.addPersonSuspect();
-  await addSuspectPage.addSuspectFirstName("Harry");
-  await addSuspectPage.addSuspectLastName("Potter");
+  await addSuspectPage.addSuspectFirstName(suspect.first);
+  await addSuspectPage.addSuspectLastName(suspect.last);
   await addSuspectPage.selectAdditionalDetailsDOB(true);
   await addSuspectPage.selectAdditionalDetailsGender(true);
   await addSuspectPage.selectAdditionalDetailsDisability(true);
@@ -62,9 +78,11 @@ export async function completeLongPathSuspectCharge(
 
   const suspectDOBPage = new SuspectDOBPage(page);
   await expectStep(page, "/case-registration/suspect-0/suspect-dob");
-  await suspectDOBPage.addDOBDay("27");
-  await suspectDOBPage.addDOBMonth("03");
-  await suspectDOBPage.addDOBYear("2007");
+  const dob = new Date();
+  dob.setFullYear(dob.getFullYear() - 15);
+  await suspectDOBPage.addDOBDay(String(dob.getDate()));
+  await suspectDOBPage.addDOBMonth(String(dob.getMonth() + 1));
+  await suspectDOBPage.addDOBYear(String(dob.getFullYear()));
   await suspectDOBPage.saveAndContinue();
 
   const suspectGenderPage = new SuspectGenderPage(page);
@@ -79,18 +97,18 @@ export async function completeLongPathSuspectCharge(
 
   const suspectReligionPage = new SuspectReligionPage(page);
   await expectStep(page, "/case-registration/suspect-0/suspect-religion");
-  await page.locator("#suspect-religion-radio-0").check();
+  await suspectReligionPage.selectFirstReligion();
   await suspectReligionPage.saveAndContinue();
 
   const suspectEthnicityPage = new SuspectEthnicityPage(page);
   await expectStep(page, "/case-registration/suspect-0/suspect-ethnicity");
-  await page.locator("#suspect-ethnicity-radio-0").check();
+  await suspectEthnicityPage.selectFirstEthnicity();
   await suspectEthnicityPage.saveAndContinue();
 
   const suspectAliasesPage = new SuspectAliasesPage(page);
   await expectStep(page, "/case-registration/suspect-0/suspect-add-aliases");
-  await suspectAliasesPage.addFirstName("Harry");
-  await suspectAliasesPage.addLastName("Potter");
+  await suspectAliasesPage.addFirstName(alias.first);
+  await suspectAliasesPage.addLastName(alias.last);
   await suspectAliasesPage.saveAndContinue();
 
   const suspectAliasesSummaryPage = new SuspectAliasesSummaryPage(page);
@@ -109,7 +127,7 @@ export async function completeLongPathSuspectCharge(
   const suspectOffenderTypesPage = new SuspectOffenderTypesPage(page);
   await expectStep(page, "/case-registration/suspect-0/suspect-offender");
   await suspectOffenderTypesPage.selectOffenderTypePYO();
-  await suspectOffenderTypesPage.addArrestDate("2024-01-01");
+  await suspectOffenderTypesPage.addArrestDate(isoDate(arrestDate));
   await suspectOffenderTypesPage.saveAndContinue();
 
   const suspectSummaryPage = new SuspectSummaryPage(page);
@@ -141,8 +159,8 @@ export async function completeLongPathSuspectCharge(
     "/case-registration/suspect-0/charge-0/add-charge-details",
   );
   await addChargeDetailsPage.clickDateRange();
-  await addChargeDetailsPage.fillOffenceFromDate("2022-02-02");
-  await addChargeDetailsPage.fillOffenceToDate("2022-02-03");
+  await addChargeDetailsPage.fillOffenceFromDate(isoDate(offenceFrom));
+  await addChargeDetailsPage.fillOffenceToDate(isoDate(offenceTo));
   await addChargeDetailsPage.selectAddVictimYes();
   await addChargeDetailsPage.selectChargedWithAdultYes();
   await addChargeDetailsPage.saveAndContinue();
@@ -152,8 +170,8 @@ export async function completeLongPathSuspectCharge(
     page,
     "/case-registration/suspect-0/charge-0/add-charge-victim",
   );
-  await addChargeVictimPage.fillVictimFirstName("Steve");
-  await addChargeVictimPage.fillVictimLastName("Smith");
+  await addChargeVictimPage.fillVictimFirstName(victim.first);
+  await addChargeVictimPage.fillVictimLastName(victim.last);
   await addChargeVictimPage.selectVictimIsVulnerable(true);
   await addChargeVictimPage.selectVictimIsIntimidated(true);
   await addChargeVictimPage.selectVictimIsWitness(true);
@@ -174,7 +192,9 @@ export async function completeLongPathSuspectCharge(
     description: string;
   }[];
   const courtName = courts[0]?.description;
-  expect(courtName, "no courts returned for the registering unit").toBeTruthy();
+  if (!courtName) {
+    throw new Error("no courts returned for the registering unit");
+  }
   const hearingDate = new Date();
   hearingDate.setDate(hearingDate.getDate() + 14);
   await firstHearingDetailsPage.selectAddFirstHearingDetailsYes();

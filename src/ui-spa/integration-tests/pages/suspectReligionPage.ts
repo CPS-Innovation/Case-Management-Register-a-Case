@@ -41,6 +41,9 @@ export class SuspectReligionPage {
   async selectReligionHinduism() {
     await this.page.getByLabel(/^Hinduism$/).check();
   }
+  async selectFirstReligion() {
+    await this.page.locator("#suspect-religion-radio-0").check();
+  }
   async verifyBackLink(url: string) {
     await expect(this.page.getByRole("link", { name: "Back" })).toBeVisible();
     await expect(this.page.getByRole("link", { name: "Back" })).toHaveAttribute(

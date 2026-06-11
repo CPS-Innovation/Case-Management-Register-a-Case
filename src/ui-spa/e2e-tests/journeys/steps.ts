@@ -34,7 +34,7 @@ export async function startAtHomePage(
   { operationName, hasSuspect }: HomePageOptions,
 ): Promise<void> {
   await startRegistration(page);
-  await expect(page).toHaveTitle(/Case Management Register a Case/);
+  await expect(page).toHaveTitle(/Home - Register A Case/);
 
   const homePage = new CaseRegistrationHomePage(page);
   await expectStep(page, "/case-registration");
@@ -72,16 +72,19 @@ export async function enterAreasAndCaseDetails(
 }
 
 export function watchAssigneeLookups(page: Page) {
-  return {
-    prosecutors: page.waitForResponse(
-      (r) => /\/api\/v1\/prosecutors\//.test(r.url()) && r.ok(),
-      { timeout: 30_000 },
-    ),
-    caseworkers: page.waitForResponse(
-      (r) => /\/api\/v1\/caseworkers\//.test(r.url()) && r.ok(),
-      { timeout: 30_000 },
-    ),
-  };
+  const prosecutors = page.waitForResponse(
+    (r) => /\/api\/v1\/prosecutors\//.test(r.url()) && r.ok(),
+    { timeout: 30_000 },
+  );
+  const caseworkers = page.waitForResponse(
+    (r) => /\/api\/v1\/caseworkers\//.test(r.url()) && r.ok(),
+    { timeout: 30_000 },
+  );
+  // If an intermediate step fails before fillAssignee awaits these, swallow the
+  // standalone 30s timeout rejection so it doesn't obscure the real failure.
+  prosecutors.catch(() => {});
+  caseworkers.catch(() => {});
+  return { prosecutors, caseworkers };
 }
 
 export async function fillAssignee(

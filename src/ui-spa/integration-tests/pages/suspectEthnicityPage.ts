@@ -41,6 +41,9 @@ export class SuspectEthnicityPage {
   async selectEthnicityAsian() {
     await this.page.getByLabel(/^Asian$/).check();
   }
+  async selectFirstEthnicity() {
+    await this.page.locator("#suspect-ethnicity-radio-0").check();
+  }
   async verifyBackLink(url: string) {
     await expect(this.page.getByRole("link", { name: "Back" })).toBeVisible();
     await expect(this.page.getByRole("link", { name: "Back" })).toHaveAttribute(
