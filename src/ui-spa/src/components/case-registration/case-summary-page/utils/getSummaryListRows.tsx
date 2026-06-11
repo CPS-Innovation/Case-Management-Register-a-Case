@@ -63,7 +63,7 @@ export const getCaseDetailsSummaryListRows = (
                 "data-testid": "change-area-link",
                 children: <span>Change</span>,
                 to: "/case-registration/areas",
-                visuallyHiddenText: "Change Case Area",
+                visuallyHiddenText: "Case Area",
                 onClick: (event: React.MouseEvent<HTMLAnchorElement>) =>
                   handleAddChangeClick(event, "/case-registration/areas"),
               },
@@ -85,7 +85,7 @@ export const getCaseDetailsSummaryListRows = (
                 id: "change-urn-link",
                 children: <span>Change</span>,
                 to: "/case-registration/case-details",
-                visuallyHiddenText: "Change Case URN",
+                visuallyHiddenText: "Case URN",
                 onClick: (event: React.MouseEvent<HTMLAnchorElement>) =>
                   handleAddChangeClick(
                     event,
@@ -108,7 +108,7 @@ export const getCaseDetailsSummaryListRows = (
                 "data-testid": "change-registering-unit-link",
                 children: <span>Change</span>,
                 to: "/case-registration/case-details",
-                visuallyHiddenText: "Change Registering Unit",
+                visuallyHiddenText: "Registering Unit",
                 onClick: (event: React.MouseEvent<HTMLAnchorElement>) =>
                   handleAddChangeClick(
                     event,
@@ -131,7 +131,7 @@ export const getCaseDetailsSummaryListRows = (
                 "data-testid": "change-wcu-link",
                 children: <span>Change</span>,
                 to: "/case-registration/case-details",
-                visuallyHiddenText: "Change Witness Care Unit",
+                visuallyHiddenText: "Witness Care Unit",
                 onClick: (event: React.MouseEvent<HTMLAnchorElement>) =>
                   handleAddChangeClick(
                     event,
@@ -160,7 +160,7 @@ export const getCaseDetailsSummaryListRows = (
                 "data-testid": "change-operation-name-link",
                 children: <span>Change</span>,
                 to: "/case-registration",
-                visuallyHiddenText: "Change Operation Name",
+                visuallyHiddenText: "Operation Name",
                 onClick: (event: React.MouseEvent<HTMLAnchorElement>) =>
                   handleAddChangeClick(event, "/case-registration"),
               },
@@ -187,7 +187,6 @@ export const getCaseDetailsSummaryListRows = (
                 children: <span>Add a suspect</span>,
                 to: `/case-registration/suspect-${formData.suspects.length}/add-suspect`,
                 "data-testid": "add-suspect-link",
-                visuallyHiddenText: "Add Suspect",
                 onClick: (event: React.MouseEvent<HTMLAnchorElement>) =>
                   handleAddSuspectClick(
                     event,
@@ -237,7 +236,7 @@ export const getFirstHearingSummaryRows = (
                       "data-testid": "change-court-location-link",
                       children: <span>Change</span>,
                       to: "/case-registration/first-hearing",
-                      visuallyHiddenText: "Change First Hearing Court Location",
+                      visuallyHiddenText: "First Hearing Court Location",
                       onClick: (event: React.MouseEvent<HTMLAnchorElement>) =>
                         handleAddChangeClick(event),
                     },
@@ -261,7 +260,7 @@ export const getFirstHearingSummaryRows = (
                       "data-testid": "change-first-hearing-date-link",
                       children: <span>Change</span>,
                       to: "/case-registration/first-hearing",
-                      visuallyHiddenText: "Change First Hearing Date",
+                      visuallyHiddenText: "First Hearing Date",
                       onClick: (event: React.MouseEvent<HTMLAnchorElement>) =>
                         handleAddChangeClick(event),
                     },
@@ -283,7 +282,7 @@ export const getFirstHearingSummaryRows = (
                       "data-testid": "change-first-hearing-link",
                       children: <span>Change</span>,
                       to: "/case-registration/first-hearing",
-                      visuallyHiddenText: "Change First Hearing Details",
+                      visuallyHiddenText: "First Hearing Details",
                       onClick: (event: React.MouseEvent<HTMLAnchorElement>) =>
                         handleAddChangeClick(event),
                     },
@@ -339,7 +338,7 @@ export const getCaseComplexityAndMonitoringCodesSummaryListRows = (
                 "data-testid": "change-case-complexity-link",
                 children: <span>Change</span>,
                 to: "/case-registration/case-complexity",
-                visuallyHiddenText: "Edit Case Complexity",
+                visuallyHiddenText: "Case Complexity",
                 onClick: (event: React.MouseEvent<HTMLAnchorElement>) =>
                   handleAddChangeClick(
                     event,
@@ -368,7 +367,7 @@ export const getCaseComplexityAndMonitoringCodesSummaryListRows = (
                 "data-testid": "change-monitoring-codes-link",
                 children: <span>Change</span>,
                 to: "/case-registration/case-monitoring-codes",
-                visuallyHiddenText: "Change Monitoring Codes",
+                visuallyHiddenText: "Monitoring Codes",
                 onClick: (event: React.MouseEvent<HTMLAnchorElement>) =>
                   handleAddChangeClick(
                     event,
@@ -432,8 +431,7 @@ export const getWhosIsWorkingOnTheCaseSummaryListRows = (
                       "data-testid": "change-case-investigator-link",
                       children: <span>Change</span>,
                       to: "/case-registration/case-assignee",
-                      visuallyHiddenText:
-                        "Change Police officer or investigator",
+                      visuallyHiddenText: "Police officer or investigator",
                       onClick: (event: React.MouseEvent<HTMLAnchorElement>) =>
                         handleAddChangeClick(
                           event,
@@ -462,7 +460,7 @@ export const getWhosIsWorkingOnTheCaseSummaryListRows = (
                       "data-testid": "change-shoulder-number-link",
                       children: <span>Change</span>,
                       to: "/case-registration/case-assignee",
-                      visuallyHiddenText: "Change Shoulder Number",
+                      visuallyHiddenText: "Shoulder Number",
                       onClick: (event: React.MouseEvent<HTMLAnchorElement>) =>
                         handleAddChangeClick(
                           event,
@@ -489,7 +487,7 @@ export const getWhosIsWorkingOnTheCaseSummaryListRows = (
                       "data-testid": "change-police-unit-link",
                       children: <span>Change</span>,
                       to: "/case-registration/case-assignee",
-                      visuallyHiddenText: "Change Police Unit",
+                      visuallyHiddenText: "Police Unit",
                       onClick: (event: React.MouseEvent<HTMLAnchorElement>) =>
                         handleAddChangeClick(
                           event,
@@ -515,8 +513,7 @@ export const getWhosIsWorkingOnTheCaseSummaryListRows = (
                         "change-police-officer-or-investigator-link",
                       children: <span>Change</span>,
                       to: "/case-registration/case-assignee",
-                      visuallyHiddenText:
-                        "Change Police officer or investigator",
+                      visuallyHiddenText: "Police officer or investigator",
                       onClick: (event: React.MouseEvent<HTMLAnchorElement>) =>
                         handleAddChangeClick(
                           event,
@@ -548,7 +545,7 @@ export const getWhosIsWorkingOnTheCaseSummaryListRows = (
                 "data-testid": "change-prosecutor-link",
                 children: <span>Change</span>,
                 to: "/case-registration/case-assignee",
-                visuallyHiddenText: "Change Prosecutor",
+                visuallyHiddenText: "Prosecutor",
                 onClick: (event: React.MouseEvent<HTMLAnchorElement>) =>
                   handleAddChangeClick(
                     event,
@@ -577,7 +574,7 @@ export const getWhosIsWorkingOnTheCaseSummaryListRows = (
                 "data-testid": "change-caseworker-link",
                 children: <span>Change</span>,
                 to: "/case-registration/case-assignee",
-                visuallyHiddenText: "Change Caseworker",
+                visuallyHiddenText: "Caseworker",
                 onClick: (event: React.MouseEvent<HTMLAnchorElement>) =>
                   handleAddChangeClick(
                     event,

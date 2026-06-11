@@ -14,9 +14,10 @@ export class ChargesSummaryPage {
   }
 
   async verifyPageElements(h1Text: string) {
+    await expect(this.page).toHaveTitle(/Charges Summary - Register A Case/);
     await expect(this.page.locator("h1")).toHaveText(h1Text);
     await expect(this.page.locator("legend").nth(0)).toHaveText(
-      "Do you need to add another charge?",
+      "Do you need to add another charge for any suspect?",
     );
     await expect(this.page.locator("label").nth(0)).toHaveText("Yes");
     await expect(this.page.locator("label").nth(1)).toHaveText("No");
@@ -139,7 +140,7 @@ export class ChargesSummaryPage {
       "You have added 0 charges",
     );
     await expect(this.page.locator("legend").nth(0)).toHaveText(
-      "Do you need to add a charge?",
+      "Do you need to add a charge for any suspect?",
     );
     await expect(this.page.locator("label").nth(0)).toHaveText("Yes");
     await expect(this.page.locator("label").nth(1)).toHaveText("No");

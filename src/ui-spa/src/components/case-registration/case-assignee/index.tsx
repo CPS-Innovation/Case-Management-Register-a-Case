@@ -1,11 +1,4 @@
-import {
-  useRef,
-  useEffect,
-  useState,
-  useContext,
-  useCallback,
-  useMemo,
-} from "react";
+import { useEffect, useState, useContext, useCallback, useMemo } from "react";
 import {
   AutoComplete,
   Radios,
@@ -27,6 +20,7 @@ import {
   getPoliceUnits,
 } from "../../../apis/gateway-api";
 import { useQuery } from "@tanstack/react-query";
+import useErrorSummaryList from "../../../common/hooks/useErrorSummaryList";
 import { useNavigate } from "react-router-dom";
 import pageStyles from "./index.module.scss";
 import styles from "../index.module.scss";
@@ -45,7 +39,7 @@ const CaseAssigneePage = () => {
     caseInvestigatorTitleSelect?: ErrorText;
     caseInvestigatorLastNameText?: ErrorText;
   };
-  const errorSummaryRef = useRef<HTMLInputElement>(null);
+
   const { state, dispatch } = useContext(CaseRegistrationFormContext);
   const navigate = useNavigate();
   const [formData, setFormData] = useState<{
@@ -184,6 +178,8 @@ const CaseAssigneePage = () => {
     },
     [formDataErrors],
   );
+  const { errorSummaryRef, errorList, disableBtns, setDisableBtns } =
+    useErrorSummaryList(formDataErrors, errorSummaryProperties);
 
   const validateFormData = (
     prosecutors: { id: number; description: string }[],
@@ -327,23 +323,6 @@ const CaseAssigneePage = () => {
     populateResults(filteredResults);
   };
 
-  const errorList = useMemo(() => {
-    const validErrorKeys = Object.keys(formDataErrors).filter(
-      (errorKey) => formDataErrors[errorKey as keyof FormDataErrors],
-    );
-
-    const errorSummary = validErrorKeys.map((errorKey, index) => ({
-      reactListKey: `${index}`,
-      ...errorSummaryProperties(errorKey as keyof FormDataErrors)!,
-    }));
-
-    return errorSummary;
-  }, [formDataErrors, errorSummaryProperties]);
-
-  useEffect(() => {
-    if (errorList.length) errorSummaryRef.current?.focus();
-  }, [errorList]);
-
   useEffect(() => {
     if (!isCaseProsecutorsLoading && caseProsecutorsData) {
       dispatch({
@@ -485,6 +464,7 @@ const CaseAssigneePage = () => {
       !validateFormData(prosecutors, inputProsecutorValue, inputCaseworkerValue)
     )
       return;
+    setDisableBtns(true);
 
     dispatch({
       type: "SET_FIELDS",
@@ -766,7 +746,7 @@ const CaseAssigneePage = () => {
             }}
           ></Radios>
         </div>
-        <SaveAndCancel onSave={handleSubmit} />
+        <SaveAndCancel onSave={handleSubmit} disabled={disableBtns} />
       </form>
     </div>
   );

@@ -12,6 +12,7 @@ export class AddChargeVictimPage {
   }
 
   async verifyPageElements(name: string, charge: string) {
+    await expect(this.page).toHaveTitle(/Add Charge Victim - Register A Case/);
     await expect(this.page.locator("h1")).toHaveText(
       "Add a victim to this charge",
     );

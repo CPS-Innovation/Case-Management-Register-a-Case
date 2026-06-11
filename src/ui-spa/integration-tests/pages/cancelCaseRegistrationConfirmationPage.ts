@@ -14,6 +14,9 @@ export class CancelCaseRegistrationConfirmationPage {
   }
 
   async verifyPageElements() {
+    await expect(this.page).toHaveTitle(
+      /Cancel Case Registration Confirmation - Register A Case/,
+    );
     await expect(this.page.locator("h1")).toHaveText(
       "Are you sure you want to cancel?",
     );

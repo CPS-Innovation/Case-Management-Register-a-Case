@@ -12,6 +12,7 @@ export class SuspectEthnicityPage {
   }
 
   async verifyPageElements() {
+    await expect(this.page).toHaveTitle(/Suspect Ethnicity - Register A Case/);
     await expect(this.page.locator("h1")).toHaveText(
       "What is POTTER, Harry's ethnicity?",
     );

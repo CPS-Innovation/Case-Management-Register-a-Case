@@ -1,4 +1,4 @@
-import { expect, test } from "./utils/test";
+import { test } from "./utils/test";
 import { CaseRegistrationHomePage } from "./pages/caseRegistrationHomePage";
 import { CaseAreasPage } from "./pages/caseAreasPage";
 import { CaseDetailsPage } from "./pages/caseDetailsPage";
@@ -17,7 +17,6 @@ test("Add a new suspect from summary page journey with no charges & change a new
   page,
 }) => {
   await page.goto("http://localhost:5173");
-  await expect(page).toHaveTitle(/Case Management Register a Case/);
   const caseRegistrationHomePage = new CaseRegistrationHomePage(page);
   await caseRegistrationHomePage.addOperationName("thunderstruck");
   await caseRegistrationHomePage.addNoSuspect();
@@ -134,7 +133,6 @@ test("Add a new suspect from summary page journey with charges &  change a new s
   page,
 }) => {
   await page.goto("http://localhost:5173");
-  await expect(page).toHaveTitle(/Case Management Register a Case/);
   const caseRegistrationHomePage = new CaseRegistrationHomePage(page);
   await caseRegistrationHomePage.addOperationName("thunderstruck");
   await caseRegistrationHomePage.addNoSuspect();
@@ -370,7 +368,6 @@ test("Add a new suspect from summary page journey with charges &  change a new s
 
 test("Add new charge from summary page journey", async ({ page }) => {
   await page.goto("http://localhost:5173");
-  await expect(page).toHaveTitle(/Case Management Register a Case/);
   const caseRegistrationHomePage = new CaseRegistrationHomePage(page);
   await caseRegistrationHomePage.addOperationName("thunderstruck");
   await caseRegistrationHomePage.addSuspect();

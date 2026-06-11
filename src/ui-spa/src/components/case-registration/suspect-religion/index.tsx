@@ -1,22 +1,14 @@
-import {
-  useRef,
-  useEffect,
-  useState,
-  useContext,
-  useCallback,
-  useMemo,
-} from "react";
-import { Radios, ErrorSummary, BackLink } from "../../govuk";
+import { useEffect, useState, useContext, useCallback, useMemo } from "react";
+import { Radios, BackLink } from "../../govuk";
 import SaveAndCancel from "../../common/SaveAndCancel";
 import { CaseRegistrationFormContext } from "../../../common/providers/CaseRegistrationProvider";
 import { getReligions } from "../../../apis/gateway-api";
 import { useQuery } from "@tanstack/react-query";
 import { useNavigate, useParams } from "react-router-dom";
 import { formatNameUtil } from "../../../common/utils/formatNameUtil";
-import {
-  getNextSuspectJourneyRoute,
-  getPreviousSuspectJourneyRoute,
-} from "../../../common/utils/getSuspectJourneyRoutes";
+import useErrorSummaryList from "../../../common/hooks/useErrorSummaryList";
+import useGetSuspectRoute from "../../../common/hooks/useGetSuspectRoute";
+import ErrorSummaryWrapper from "../../common/ErrorSummaryWrapper";
 import styles from "../index.module.scss";
 
 const SuspectReligionPage = () => {
@@ -27,7 +19,7 @@ const SuspectReligionPage = () => {
   type FormDataErrors = {
     suspectReligionRadio?: ErrorText;
   };
-  const errorSummaryRef = useRef<HTMLInputElement>(null);
+
   const { state, dispatch } = useContext(CaseRegistrationFormContext);
   const navigate = useNavigate();
   const { suspectId } = useParams<{ suspectId: string }>() as {
@@ -39,7 +31,7 @@ const SuspectReligionPage = () => {
     return Number.parseInt(index, 10);
   }, [suspectId]);
 
-  const [formData, setFormData] = useState<{
+  const [religionFormData, setReligionFormData] = useState<{
     suspectReligionRadio: { shortCode: string; description: string };
   }>({
     suspectReligionRadio: state.formData.suspects[suspectIndex]
@@ -64,21 +56,21 @@ const SuspectReligionPage = () => {
     if (religionsError) throw religionsError;
   }, [religionsError]);
 
-  const previousRoute = useMemo(() => {
-    return getPreviousSuspectJourneyRoute(
-      "suspect-religion",
-      state.formData.suspects[suspectIndex].suspectAdditionalDetailsCheckboxes,
-      suspectIndex,
-    );
-  }, [state.formData.suspects, suspectIndex]);
+  const { previousRoute, nextRoute } = useGetSuspectRoute(
+    "suspect-religion",
+    state.formData.suspects[suspectIndex].suspectAdditionalDetailsCheckboxes,
+    suspectIndex,
+    state.formData.suspects[suspectIndex].suspectAliases.length > 0,
+  );
 
-  const [formDataErrors, setFormDataErrors] = useState<FormDataErrors>({});
+  const [religionFormDataErrors, setReligionFormDataErrors] =
+    useState<FormDataErrors>({});
 
   const errorSummaryProperties = useCallback(
     (errorKey: keyof FormDataErrors) => {
       if (errorKey === "suspectReligionRadio") {
         return {
-          children: formDataErrors[errorKey]?.errorSummaryText,
+          children: religionFormDataErrors[errorKey]?.errorSummaryText,
           href: "#suspect-religion-radio-0",
           "data-testid": "suspect-religion-radio-link",
         };
@@ -86,14 +78,15 @@ const SuspectReligionPage = () => {
 
       return null;
     },
-    [formDataErrors],
+    [religionFormDataErrors],
   );
-
-  const validateFormData = () => {
+  const { errorSummaryRef, errorList, disableBtns, setDisableBtns } =
+    useErrorSummaryList(religionFormDataErrors, errorSummaryProperties);
+  const validateReligionFormData = () => {
     const errors: FormDataErrors = {};
 
     const { suspectReligionRadio = { shortCode: null, description: "" } } =
-      formData;
+      religionFormData;
 
     if (!suspectReligionRadio.shortCode) {
       errors.suspectReligionRadio = {
@@ -104,26 +97,9 @@ const SuspectReligionPage = () => {
 
     const isValid = !Object.entries(errors).filter(([, value]) => value).length;
 
-    setFormDataErrors(errors);
+    setReligionFormDataErrors(errors);
     return isValid;
   };
-
-  const errorList = useMemo(() => {
-    const validErrorKeys = Object.keys(formDataErrors).filter(
-      (errorKey) => formDataErrors[errorKey as keyof FormDataErrors],
-    );
-
-    const errorSummary = validErrorKeys.map((errorKey, index) => ({
-      reactListKey: `${index}`,
-      ...errorSummaryProperties(errorKey as keyof FormDataErrors)!,
-    }));
-
-    return errorSummary;
-  }, [formDataErrors, errorSummaryProperties]);
-
-  useEffect(() => {
-    if (errorList.length) errorSummaryRef.current?.focus();
-  }, [errorList]);
 
   useEffect(() => {
     if (!isReligionsLoading && religionsData) {
@@ -151,31 +127,26 @@ const SuspectReligionPage = () => {
       (religion) => religion.shortCode === value,
     );
     if (selectedReligion) {
-      setFormData({
-        ...formData,
+      setReligionFormData({
+        ...religionFormData,
         suspectReligionRadio: selectedReligion,
       });
     }
   };
 
-  const handleSubmit = (event: React.FormEvent) => {
+  const handleSubmitReligion = (event: React.FormEvent) => {
     event.preventDefault();
 
-    if (!validateFormData()) return;
+    if (!validateReligionFormData()) return;
+    setDisableBtns(true);
     dispatch({
       type: "SET_SUSPECT_FIELDS",
       payload: {
         index: suspectIndex,
-        data: formData,
+        data: religionFormData,
       },
     });
 
-    const nextRoute = getNextSuspectJourneyRoute(
-      "suspect-religion",
-      state.formData.suspects[suspectIndex].suspectAdditionalDetailsCheckboxes,
-      suspectIndex,
-      state.formData.suspects[suspectIndex].suspectAliases.length > 0,
-    );
     return navigate(nextRoute);
   };
 
@@ -189,20 +160,13 @@ const SuspectReligionPage = () => {
   return (
     <div>
       <BackLink to={previousRoute}>Back</BackLink>
-      {!!errorList.length && (
-        <div
-          ref={errorSummaryRef}
-          tabIndex={-1}
-          className={styles.errorSummaryWrapper}
-        >
-          <ErrorSummary
-            data-testid={"suspect-religion-error-summary"}
-            errorList={errorList}
-            titleChildren="There is a problem"
-          />
-        </div>
-      )}
-      <form onSubmit={handleSubmit}>
+
+      <ErrorSummaryWrapper
+        errorList={errorList}
+        errorSummaryRef={errorSummaryRef}
+        dataTestId={"suspect-religion-error-summary"}
+      />
+      <form onSubmit={handleSubmitReligion}>
         <div className={styles.inputWrapper}>
           <Radios
             fieldset={{
@@ -216,21 +180,22 @@ const SuspectReligionPage = () => {
               },
             }}
             errorMessage={
-              formDataErrors["suspectReligionRadio"]
+              religionFormDataErrors["suspectReligionRadio"]
                 ? {
                     children:
-                      formDataErrors["suspectReligionRadio"].inputErrorText,
+                      religionFormDataErrors["suspectReligionRadio"]
+                        .inputErrorText,
                   }
                 : undefined
             }
             items={religionItems}
-            value={formData.suspectReligionRadio.shortCode || ""}
+            value={religionFormData.suspectReligionRadio.shortCode || ""}
             onChange={(value) => {
               if (value) setFormValue(value);
             }}
           ></Radios>
         </div>
-        <SaveAndCancel onSave={handleSubmit} />
+        <SaveAndCancel onSave={handleSubmitReligion} disabled={disableBtns} />
       </form>
     </div>
   );

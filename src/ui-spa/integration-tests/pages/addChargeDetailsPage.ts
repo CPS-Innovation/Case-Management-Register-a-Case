@@ -16,14 +16,13 @@ export class AddChargeDetailsPage {
     charge: string,
     isYouthOffender: boolean = false,
   ) {
+    await expect(this.page).toHaveTitle(/Add Charge Details - Register A Case/);
     await expect(this.page.locator("h1")).toHaveText("Add charges");
     await expect(this.page.locator("h2").nth(0)).toHaveText(name);
     await expect(this.page.locator("h2").nth(1)).toHaveText(charge);
-    await expect(
-      this.page
-        .getByTestId("add-charge-details-dates-inputs")
-        .getByText("When was the offence?"),
-    ).toBeVisible();
+    await expect(this.page.locator("fieldset legend").nth(0)).toHaveText(
+      "When was the offence?",
+    );
     await expect(this.page.getByTestId("offence-from-date-text")).toBeVisible();
     await expect(
       this.page.getByTestId("offence-to-date-text"),
@@ -52,7 +51,7 @@ export class AddChargeDetailsPage {
     await expect(
       this.page.getByRole("button", { name: "Single date" }),
     ).not.toBeVisible();
-    await expect(this.page.locator("fieldset legend").nth(0)).toHaveText(
+    await expect(this.page.locator("fieldset legend").nth(1)).toHaveText(
       "Is there a victim?",
     );
     await expect(
@@ -62,7 +61,7 @@ export class AddChargeDetailsPage {
       this.page.getByTestId("add-victim-radio").getByLabel("No"),
     ).toBeVisible();
     if (isYouthOffender) {
-      await expect(this.page.locator("fieldset legend").nth(1)).toHaveText(
+      await expect(this.page.locator("fieldset legend").nth(2)).toHaveText(
         `Is ${name} charged with an adult?`,
       );
       await expect(

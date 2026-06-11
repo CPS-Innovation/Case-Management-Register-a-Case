@@ -1,11 +1,4 @@
-import {
-  useRef,
-  useEffect,
-  useState,
-  useContext,
-  useCallback,
-  useMemo,
-} from "react";
+import { useEffect, useState, useContext, useCallback, useMemo } from "react";
 import {
   Input,
   Button,
@@ -20,13 +13,12 @@ import { useQuery } from "@tanstack/react-query";
 import { Link, useParams, useNavigate } from "react-router-dom";
 import { formatNameUtil } from "../../../common/utils/formatNameUtil";
 import useChargesCount from "../../../common/hooks/useChargesCount";
+import useErrorSummaryList from "../../../common/hooks/useErrorSummaryList";
 import { format } from "date-fns";
 import styles from "../index.module.scss";
 import pageStyles from "./index.module.scss";
 
 const ChargesOffenceSearch = () => {
-  const errorSummaryRef = useRef<HTMLInputElement>(null);
-
   const { state, dispatch } = useContext(CaseRegistrationFormContext);
   const navigate = useNavigate();
   const { chargesCount } = useChargesCount(state.formData.suspects);
@@ -114,6 +106,10 @@ const ChargesOffenceSearch = () => {
     },
     [formDataErrors],
   );
+  const { errorSummaryRef, errorList } = useErrorSummaryList(
+    formDataErrors,
+    errorSummaryProperties,
+  );
 
   const validateFormData = () => {
     const errors: FormDataErrors = {};
@@ -131,18 +127,6 @@ const ChargesOffenceSearch = () => {
     setFormDataErrors(errors);
     return isValid;
   };
-  const errorList = useMemo(() => {
-    const validErrorKeys = Object.keys(formDataErrors).filter(
-      (errorKey) => formDataErrors[errorKey as keyof FormDataErrors],
-    );
-
-    const errorSummary = validErrorKeys.map((errorKey, index) => ({
-      reactListKey: `${index}`,
-      ...errorSummaryProperties(errorKey as keyof FormDataErrors)!,
-    }));
-
-    return errorSummary;
-  }, [formDataErrors, errorSummaryProperties]);
 
   const suspectName = useMemo(() => {
     const {
@@ -154,10 +138,6 @@ const ChargesOffenceSearch = () => {
       ? suspectCompanyNameText
       : formatNameUtil(suspectFirstNameText, suspectLastNameText);
   }, [state.formData.suspects, suspectIndex]);
-
-  useEffect(() => {
-    if (errorList.length) errorSummaryRef.current?.focus();
-  }, [errorList]);
 
   useEffect(() => {
     if (resultsPerPage && searchText) {

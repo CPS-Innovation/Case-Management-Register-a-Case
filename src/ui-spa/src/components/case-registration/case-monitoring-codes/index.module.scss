@@ -1,6 +1,9 @@
 .caseMonitoringCodesPage {
   & :global(.govuk-checkboxes) {
     display: grid;
-    grid-template-columns: repeat(2, 1fr);
+    grid-template-columns: repeat(1, 1fr);
+    @media (min-width: 40.0625em) {
+      grid-template-columns: repeat(2, 1fr);
+    }
   }
 }

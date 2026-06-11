@@ -12,6 +12,7 @@ export class SuspectASNPage {
   }
 
   async verifyPageElements() {
+    await expect(this.page).toHaveTitle(/Suspect ASN - Register A Case/);
     await expect(this.page.locator("h1")).toHaveText(
       "What is the Arrest Summons Number (ASN)?",
     );

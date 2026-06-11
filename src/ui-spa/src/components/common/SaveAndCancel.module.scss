@@ -3,4 +3,8 @@
   gap: 1rem;
   align-items: baseline;
   padding-top: 0.5rem;
+
+  & :global(.govuk-button) {
+    width: fit-content;
+  }
 }

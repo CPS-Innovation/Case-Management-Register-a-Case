@@ -1,11 +1,4 @@
-import {
-  useRef,
-  useEffect,
-  useState,
-  useContext,
-  useCallback,
-  useMemo,
-} from "react";
+import { useEffect, useState, useContext, useCallback } from "react";
 import { Input, Radios, ErrorSummary } from "../govuk";
 import SaveAndCancel from "../common/SaveAndCancel";
 import { CaseRegistrationFormContext } from "../../common/providers/CaseRegistrationProvider";
@@ -19,6 +12,7 @@ import { useQuery } from "@tanstack/react-query";
 import { useIsAreaSensitive } from "../../common/hooks/useIsAreaSensitive";
 import { sanitizeOperationNameText } from "../../common/utils/sanitizeOperationNameText";
 import { DEFAULT_COMPLEXITY_DESCRIPTION } from "../../common/constants/general";
+import useErrorSummaryList from "../../common/hooks/useErrorSummaryList";
 import { useNavigate } from "react-router-dom";
 import styles from "./index.module.scss";
 
@@ -34,7 +28,7 @@ const CaseRegistrationPage = () => {
     operationNameText?: ErrorText;
     genericError?: ErrorText;
   };
-  const errorSummaryRef = useRef<HTMLInputElement>(null);
+
   const { state, dispatch } = useContext(CaseRegistrationFormContext);
   const navigate = useNavigate();
   const isAreaSensitive = useIsAreaSensitive();
@@ -97,17 +91,15 @@ const CaseRegistrationPage = () => {
             href: "#operation-name-text",
             "data-testid": "operation-name-text-link",
           };
-        case "genericError":
-          return {
-            children: formDataErrors[errorKey]?.errorSummaryText,
-            "data-testid": "generic-error-text",
-          };
         default:
           return null;
       }
     },
     [formDataErrors],
   );
+
+  const { errorSummaryRef, errorList, disableBtns, setDisableBtns } =
+    useErrorSummaryList(formDataErrors, errorSummaryProperties);
 
   const validateFormData = () => {
     const errors: FormDataErrors = {};
@@ -168,19 +160,6 @@ const CaseRegistrationPage = () => {
     return isValid;
   };
 
-  const errorList = useMemo(() => {
-    const validErrorKeys = Object.keys(formDataErrors).filter(
-      (errorKey) => formDataErrors[errorKey as keyof FormDataErrors],
-    );
-
-    const errorSummary = validErrorKeys.map((errorKey, index) => ({
-      reactListKey: `${index}`,
-      ...errorSummaryProperties(errorKey as keyof FormDataErrors)!,
-    }));
-
-    return errorSummary;
-  }, [formDataErrors, errorSummaryProperties]);
-
   useEffect(() => {
     if (areaDataError) throw areaDataError;
   }, [areaDataError]);
@@ -192,10 +171,6 @@ const CaseRegistrationPage = () => {
   useEffect(() => {
     if (caseComplexitiesError) throw caseComplexitiesError;
   }, [caseComplexitiesError]);
-
-  useEffect(() => {
-    if (errorList.length) errorSummaryRef.current?.focus();
-  }, [errorList]);
 
   useEffect(() => {
     if (areasData && !state.apiData.areasAndRegisteringUnits) {
@@ -281,6 +256,7 @@ const CaseRegistrationPage = () => {
     event.preventDefault();
 
     if (!validateFormData()) return;
+    setDisableBtns(true);
 
     let nextRoute = "/case-registration/areas";
     if (state.formData.navigation.fromCaseSummaryPage) {
@@ -457,7 +433,7 @@ const CaseRegistrationPage = () => {
             }}
           ></Radios>
         </div>
-        <SaveAndCancel onSave={handleSubmit} />
+        <SaveAndCancel onSave={handleSubmit} disabled={disableBtns} />
       </form>
     </div>
   );

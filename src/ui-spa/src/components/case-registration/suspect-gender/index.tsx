@@ -1,22 +1,14 @@
-import {
-  useRef,
-  useEffect,
-  useState,
-  useContext,
-  useCallback,
-  useMemo,
-} from "react";
-import { Radios, ErrorSummary, BackLink } from "../../govuk";
+import { useEffect, useState, useContext, useCallback, useMemo } from "react";
+import { Radios, BackLink } from "../../govuk";
 import SaveAndCancel from "../../common/SaveAndCancel";
 import { CaseRegistrationFormContext } from "../../../common/providers/CaseRegistrationProvider";
 import { getGenders } from "../../../apis/gateway-api";
 import { useQuery } from "@tanstack/react-query";
 import { formatNameUtil } from "../../../common/utils/formatNameUtil";
 import { useNavigate, useParams } from "react-router-dom";
-import {
-  getNextSuspectJourneyRoute,
-  getPreviousSuspectJourneyRoute,
-} from "../../../common/utils/getSuspectJourneyRoutes";
+import useErrorSummaryList from "../../../common/hooks/useErrorSummaryList";
+import useGetSuspectRoute from "../../../common/hooks/useGetSuspectRoute";
+import ErrorSummaryWrapper from "../../common/ErrorSummaryWrapper";
 import styles from "../index.module.scss";
 
 const SuspectGenderPage = () => {
@@ -27,7 +19,7 @@ const SuspectGenderPage = () => {
   type FormDataErrors = {
     suspectGenderRadio?: ErrorText;
   };
-  const errorSummaryRef = useRef<HTMLInputElement>(null);
+
   const { state, dispatch } = useContext(CaseRegistrationFormContext);
   const navigate = useNavigate();
   const { suspectId } = useParams<{ suspectId: string }>() as {
@@ -39,7 +31,7 @@ const SuspectGenderPage = () => {
     return Number.parseInt(index, 10);
   }, [suspectId]);
 
-  const [formData, setFormData] = useState<{
+  const [genderData, setGenderData] = useState<{
     suspectGenderRadio: { shortCode: string; description: string };
   }>({
     suspectGenderRadio: state.formData.suspects[suspectIndex]
@@ -64,21 +56,21 @@ const SuspectGenderPage = () => {
     if (gendersError) throw gendersError;
   }, [gendersError]);
 
-  const previousRoute = useMemo(() => {
-    return getPreviousSuspectJourneyRoute(
-      "suspect-gender",
-      state.formData.suspects[suspectIndex].suspectAdditionalDetailsCheckboxes,
-      suspectIndex,
-    );
-  }, [state.formData.suspects, suspectIndex]);
+  const { previousRoute, nextRoute } = useGetSuspectRoute(
+    "suspect-gender",
+    state.formData.suspects[suspectIndex].suspectAdditionalDetailsCheckboxes,
+    suspectIndex,
+    state.formData.suspects[suspectIndex].suspectAliases.length > 0,
+  );
 
-  const [formDataErrors, setFormDataErrors] = useState<FormDataErrors>({});
+  const [genderFormDataErrors, setGenderFormDataErrors] =
+    useState<FormDataErrors>({});
 
   const errorSummaryProperties = useCallback(
     (errorKey: keyof FormDataErrors) => {
       if (errorKey === "suspectGenderRadio") {
         return {
-          children: formDataErrors[errorKey]?.errorSummaryText,
+          children: genderFormDataErrors[errorKey]?.errorSummaryText,
           href: "#suspect-gender-radio-0",
           "data-testid": "suspect-gender-radio-link",
         };
@@ -86,13 +78,14 @@ const SuspectGenderPage = () => {
 
       return null;
     },
-    [formDataErrors],
+    [genderFormDataErrors],
   );
-
+  const { errorSummaryRef, errorList, disableBtns, setDisableBtns } =
+    useErrorSummaryList(genderFormDataErrors, errorSummaryProperties);
   const validateFormData = () => {
     const errors: FormDataErrors = {};
     const { suspectGenderRadio = { shortCode: null, description: "" } } =
-      formData;
+      genderData;
 
     if (!suspectGenderRadio.shortCode) {
       errors.suspectGenderRadio = {
@@ -103,26 +96,9 @@ const SuspectGenderPage = () => {
 
     const isValid = !Object.entries(errors).filter(([, value]) => value).length;
 
-    setFormDataErrors(errors);
+    setGenderFormDataErrors(errors);
     return isValid;
   };
-
-  const errorList = useMemo(() => {
-    const validErrorKeys = Object.keys(formDataErrors).filter(
-      (errorKey) => formDataErrors[errorKey as keyof FormDataErrors],
-    );
-
-    const errorSummary = validErrorKeys.map((errorKey, index) => ({
-      reactListKey: `${index}`,
-      ...errorSummaryProperties(errorKey as keyof FormDataErrors)!,
-    }));
-
-    return errorSummary;
-  }, [formDataErrors, errorSummaryProperties]);
-
-  useEffect(() => {
-    if (errorList.length) errorSummaryRef.current?.focus();
-  }, [errorList]);
 
   useEffect(() => {
     if (!isGendersLoading && gendersData) {
@@ -155,8 +131,8 @@ const SuspectGenderPage = () => {
       (gender) => gender.shortCode === value,
     );
     if (selectedGender) {
-      setFormData({
-        ...formData,
+      setGenderData({
+        ...genderData,
         suspectGenderRadio: selectedGender,
       });
     }
@@ -166,20 +142,16 @@ const SuspectGenderPage = () => {
     event.preventDefault();
 
     if (!validateFormData()) return;
+    setDisableBtns(true);
+
     dispatch({
       type: "SET_SUSPECT_FIELDS",
       payload: {
         index: suspectIndex,
-        data: formData,
+        data: genderData,
       },
     });
 
-    const nextRoute = getNextSuspectJourneyRoute(
-      "suspect-gender",
-      state.formData.suspects[suspectIndex].suspectAdditionalDetailsCheckboxes,
-      suspectIndex,
-      state.formData.suspects[suspectIndex].suspectAliases.length > 0,
-    );
     return navigate(nextRoute);
   };
 
@@ -193,19 +165,12 @@ const SuspectGenderPage = () => {
   return (
     <div>
       <BackLink to={previousRoute}>Back</BackLink>
-      {!!errorList.length && (
-        <div
-          ref={errorSummaryRef}
-          tabIndex={-1}
-          className={styles.errorSummaryWrapper}
-        >
-          <ErrorSummary
-            data-testid={"suspect-gender-error-summary"}
-            errorList={errorList}
-            titleChildren="There is a problem"
-          />
-        </div>
-      )}
+
+      <ErrorSummaryWrapper
+        errorList={errorList}
+        errorSummaryRef={errorSummaryRef}
+        dataTestId="suspect-gender-error-summary"
+      />
       <form onSubmit={handleSubmit}>
         <div className={styles.inputWrapper}>
           <Radios
@@ -219,21 +184,21 @@ const SuspectGenderPage = () => {
               },
             }}
             errorMessage={
-              formDataErrors["suspectGenderRadio"]
+              genderFormDataErrors["suspectGenderRadio"]
                 ? {
                     children:
-                      formDataErrors["suspectGenderRadio"].inputErrorText,
+                      genderFormDataErrors["suspectGenderRadio"].inputErrorText,
                   }
                 : undefined
             }
             items={genderItems}
-            value={formData.suspectGenderRadio.shortCode || ""}
+            value={genderData.suspectGenderRadio.shortCode || ""}
             onChange={(value) => {
               if (value) setFormValue(value);
             }}
           ></Radios>
         </div>
-        <SaveAndCancel onSave={handleSubmit} />
+        <SaveAndCancel onSave={handleSubmit} disabled={disableBtns} />
       </form>
     </div>
   );

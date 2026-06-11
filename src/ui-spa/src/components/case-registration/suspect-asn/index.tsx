@@ -1,20 +1,12 @@
-import {
-  useRef,
-  useEffect,
-  useState,
-  useContext,
-  useCallback,
-  useMemo,
-} from "react";
-import { Input, ErrorSummary, BackLink } from "../../govuk";
+import { useState, useContext, useCallback, useMemo } from "react";
+import { Input, BackLink } from "../../govuk";
 import SaveAndCancel from "../../common/SaveAndCancel";
 import { CaseRegistrationFormContext } from "../../../common/providers/CaseRegistrationProvider";
 import { useNavigate, useParams } from "react-router-dom";
-import {
-  getNextSuspectJourneyRoute,
-  getPreviousSuspectJourneyRoute,
-} from "../../../common/utils/getSuspectJourneyRoutes";
 import { sanitizeASNText } from "../../../common/utils/sanitizeASNText";
+import useErrorSummaryList from "../../../common/hooks/useErrorSummaryList";
+import useGetSuspectRoute from "../../../common/hooks/useGetSuspectRoute";
+import ErrorSummaryWrapper from "../../common/ErrorSummaryWrapper";
 import styles from "../index.module.scss";
 
 const SuspectASNPage = () => {
@@ -25,7 +17,7 @@ const SuspectASNPage = () => {
   type FormDataErrors = {
     suspectASNText?: ErrorText;
   };
-  const errorSummaryRef = useRef<HTMLInputElement>(null);
+
   const { state, dispatch } = useContext(CaseRegistrationFormContext);
   const navigate = useNavigate();
   const { suspectId } = useParams<{ suspectId: string }>() as {
@@ -37,27 +29,28 @@ const SuspectASNPage = () => {
     return Number.parseInt(index, 10);
   }, [suspectId]);
 
-  const [formData, setFormData] = useState<{
+  const [asnFormData, setAsnFormData] = useState<{
     suspectASNText: string;
   }>({
     suspectASNText: state.formData.suspects[suspectIndex].suspectASNText || "",
   });
 
-  const previousRoute = useMemo(() => {
-    return getPreviousSuspectJourneyRoute(
-      "suspect-asn",
-      state.formData.suspects[suspectIndex].suspectAdditionalDetailsCheckboxes,
-      suspectIndex,
-    );
-  }, [state.formData.suspects, suspectIndex]);
+  const { previousRoute, nextRoute } = useGetSuspectRoute(
+    "suspect-asn",
+    state.formData.suspects[suspectIndex].suspectAdditionalDetailsCheckboxes,
+    suspectIndex,
+    state.formData.suspects[suspectIndex].suspectAliases.length > 0,
+  );
 
-  const [formDataErrors, setFormDataErrors] = useState<FormDataErrors>({});
+  const [asnFormDataErrors, setAsnFormDataErrors] = useState<FormDataErrors>(
+    {},
+  );
 
   const errorSummaryProperties = useCallback(
     (errorKey: keyof FormDataErrors) => {
       if (errorKey === "suspectASNText") {
         return {
-          children: formDataErrors[errorKey]?.errorSummaryText,
+          children: asnFormDataErrors[errorKey]?.errorSummaryText,
           href: "#suspect-asn-text",
           "data-testid": "suspect-asn-text-link",
         };
@@ -65,12 +58,13 @@ const SuspectASNPage = () => {
 
       return null;
     },
-    [formDataErrors],
+    [asnFormDataErrors],
   );
-
+  const { errorSummaryRef, errorList, disableBtns, setDisableBtns } =
+    useErrorSummaryList(asnFormDataErrors, errorSummaryProperties);
   const validateFormData = () => {
     const errors: FormDataErrors = {};
-    const { suspectASNText = "" } = formData;
+    const { suspectASNText = "" } = asnFormData;
     if (!suspectASNText) {
       errors.suspectASNText = {
         errorSummaryText: "Enter the Arrest Summons Number (ASN)",
@@ -80,70 +74,41 @@ const SuspectASNPage = () => {
 
     const isValid = !Object.entries(errors).filter(([, value]) => value).length;
 
-    setFormDataErrors(errors);
+    setAsnFormDataErrors(errors);
     return isValid;
   };
 
-  const errorList = useMemo(() => {
-    const validErrorKeys = Object.keys(formDataErrors).filter(
-      (errorKey) => formDataErrors[errorKey as keyof FormDataErrors],
-    );
-
-    const errorSummary = validErrorKeys.map((errorKey, index) => ({
-      reactListKey: `${index}`,
-      ...errorSummaryProperties(errorKey as keyof FormDataErrors)!,
-    }));
-
-    return errorSummary;
-  }, [formDataErrors, errorSummaryProperties]);
-
-  useEffect(() => {
-    if (errorList.length) errorSummaryRef.current?.focus();
-  }, [errorList]);
-
   const setFormValue = (value: string) => {
     value = sanitizeASNText(value);
-    setFormData({ ...formData, suspectASNText: value });
+    setAsnFormData({ ...asnFormData, suspectASNText: value });
   };
 
   const handleSubmit = (event: React.FormEvent) => {
     event.preventDefault();
 
     if (!validateFormData()) return;
+    setDisableBtns(true);
 
     dispatch({
       type: "SET_SUSPECT_FIELDS",
       payload: {
         index: suspectIndex,
-        data: formData,
+        data: asnFormData,
       },
     });
 
-    const nextRoute = getNextSuspectJourneyRoute(
-      "suspect-asn",
-      state.formData.suspects[suspectIndex].suspectAdditionalDetailsCheckboxes,
-      suspectIndex,
-      state.formData.suspects[suspectIndex].suspectAliases.length > 0,
-    );
     return navigate(nextRoute);
   };
 
   return (
     <div>
       <BackLink to={previousRoute}>Back</BackLink>
-      {!!errorList.length && (
-        <div
-          ref={errorSummaryRef}
-          tabIndex={-1}
-          className={styles.errorSummaryWrapper}
-        >
-          <ErrorSummary
-            data-testid={"suspect-asn-error-summary"}
-            errorList={errorList}
-            titleChildren="There is a problem"
-          />
-        </div>
-      )}
+
+      <ErrorSummaryWrapper
+        errorList={errorList}
+        errorSummaryRef={errorSummaryRef}
+        dataTestId="suspect-asn-error-summary"
+      />
       <form onSubmit={handleSubmit}>
         <div className={styles.inputWrapper}>
           <Input
@@ -151,9 +116,10 @@ const SuspectASNPage = () => {
             id="suspect-asn-text"
             data-testid="suspect-asn-text"
             errorMessage={
-              formDataErrors["suspectASNText"]
+              asnFormDataErrors["suspectASNText"]
                 ? {
-                    children: formDataErrors["suspectASNText"].inputErrorText,
+                    children:
+                      asnFormDataErrors["suspectASNText"].inputErrorText,
                   }
                 : undefined
             }
@@ -162,11 +128,11 @@ const SuspectASNPage = () => {
               children: <h1>What is the Arrest Summons Number (ASN)?</h1>,
             }}
             type="text"
-            value={formData.suspectASNText}
+            value={asnFormData.suspectASNText}
             onChange={setFormValue}
           />
         </div>
-        <SaveAndCancel onSave={handleSubmit} />
+        <SaveAndCancel onSave={handleSubmit} disabled={disableBtns} />
       </form>
     </div>
   );

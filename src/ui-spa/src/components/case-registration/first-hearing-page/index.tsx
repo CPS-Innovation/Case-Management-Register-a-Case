@@ -1,11 +1,4 @@
-import {
-  useRef,
-  useEffect,
-  useState,
-  useContext,
-  useCallback,
-  useMemo,
-} from "react";
+import { useEffect, useState, useContext, useCallback, useMemo } from "react";
 import { AutoComplete, Radios, ErrorSummary, BackLink } from "../../govuk";
 import SaveAndCancel from "../../common/SaveAndCancel";
 import DateInputNative from "../../common/DateInputNative";
@@ -17,6 +10,7 @@ import { useNavigate } from "react-router-dom";
 import { isOnOrAfterChargeDates } from "../../../common/utils/chargeDatesUtil";
 import { isMonitoringCodeOptional } from "../../../common/utils/isMonitoringCodeOptional";
 import { PRE_CHARGE_DECISION_CODE } from "../../../common/constants/general";
+import useErrorSummaryList from "../../../common/hooks/useErrorSummaryList";
 import styles from "../index.module.scss";
 const FirstHearingPage = () => {
   type ErrorText = {
@@ -29,7 +23,7 @@ const FirstHearingPage = () => {
     firstHearingCourtLocationText?: ErrorText;
     firstHearingDateText?: ErrorText;
   };
-  const errorSummaryRef = useRef<HTMLInputElement>(null);
+
   const { state, dispatch } = useContext(CaseRegistrationFormContext);
   const navigate = useNavigate();
 
@@ -103,6 +97,8 @@ const FirstHearingPage = () => {
     },
     [formDataErrors],
   );
+  const { errorSummaryRef, errorList, disableBtns, setDisableBtns } =
+    useErrorSummaryList(formDataErrors, errorSummaryProperties);
 
   const validateFormData = (
     courtLocations: { id: number; description: string }[],
@@ -183,23 +179,6 @@ const FirstHearingPage = () => {
     populateResults(filteredResults);
   };
 
-  const errorList = useMemo(() => {
-    const validErrorKeys = Object.keys(formDataErrors).filter(
-      (errorKey) => formDataErrors[errorKey as keyof FormDataErrors],
-    );
-
-    const errorSummary = validErrorKeys.map((errorKey, index) => ({
-      reactListKey: `${index}`,
-      ...errorSummaryProperties(errorKey as keyof FormDataErrors)!,
-    }));
-
-    return errorSummary;
-  }, [formDataErrors, errorSummaryProperties]);
-
-  useEffect(() => {
-    if (errorList.length) errorSummaryRef.current?.focus();
-  }, [errorList]);
-
   useEffect(() => {
     if (!isCourtLocationsLoading && courtLocationsData) {
       dispatch({
@@ -252,7 +231,7 @@ const FirstHearingPage = () => {
     }
 
     if (!validateFormData(courtLocations, inputCourtLocationValue)) return;
-
+    setDisableBtns(true);
     dispatch({
       type: "SET_FIELDS",
       payload: {
@@ -417,7 +396,7 @@ const FirstHearingPage = () => {
             }}
           ></Radios>
         </div>
-        <SaveAndCancel onSave={handleSubmit} />
+        <SaveAndCancel onSave={handleSubmit} disabled={disableBtns} />
       </form>
     </div>
   );

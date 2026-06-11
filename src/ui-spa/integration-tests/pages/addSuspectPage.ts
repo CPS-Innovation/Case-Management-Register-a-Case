@@ -12,6 +12,7 @@ export class AddSuspectPage {
   }
 
   async verifyBasePageElements() {
+    await expect(this.page).toHaveTitle(/Add Suspect - Register A Case/);
     await expect(this.page.locator("h1")).toHaveText("Add a suspect");
     await expect(this.page.locator(".govuk-hint ").nth(0)).toHaveText(
       "Choose the type of suspect you want to add",

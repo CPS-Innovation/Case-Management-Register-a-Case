@@ -99,7 +99,7 @@ const AddChargeDetailsPage = () => {
   }, [state, suspectIndex]);
 
   const [formDataErrors, setFormDataErrors] = useState<FormDataErrors>({});
-
+  const [disableBtns, setDisableBtns] = useState<boolean>(false);
   const errorSummaryProperties = useCallback(
     (errorKey: keyof FormDataErrors) => {
       switch (errorKey) {
@@ -294,6 +294,7 @@ const AddChargeDetailsPage = () => {
     event.preventDefault();
 
     if (!validateFormData()) return;
+    setDisableBtns(true);
 
     dispatch({
       type: "SET_CHARGE_FIELDS",
@@ -350,54 +351,63 @@ const AddChargeDetailsPage = () => {
           className={styles.inputWrapper}
           data-testid="add-charge-details-dates-inputs"
         >
-          <span className="govuk-!-font-weight-bold">
-            When was the offence?
-          </span>
-          <div className={pageStyles.dateInputsWrapper}>
-            <DateInputNative
-              key="offence-from-date-text"
-              id="offence-from-date-text"
-              data-testid="offence-from-date-text"
-              className={pageStyles.dateInput}
-              value={formData.offenceFromDate}
-              onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
-                handleDateChange("offenceFromDate", e.target.value)
-              }
-              errorMessage={
-                formDataErrors["offenceFromDate"]
-                  ? formDataErrors["offenceFromDate"].inputErrorText
-                  : undefined
-              }
-            />
-            {showDateRange && (
-              <>
-                <span className={pageStyles.dateRangeSeparator}> to </span>
+          <div className="govuk-form-group ">
+            <fieldset className="govuk-fieldset ">
+              <legend className="govuk-fieldset__legend ">
+                <span className="govuk-!-font-weight-bold">
+                  When was the offence?
+                </span>
+              </legend>
+              <div className={pageStyles.dateInputsWrapper}>
                 <DateInputNative
-                  key="offence-to-date-text"
-                  id="offence-to-date-text"
-                  data-testid="offence-to-date-text"
+                  key="offence-from-date-text"
+                  id="offence-from-date-text"
+                  data-testid="offence-from-date-text"
                   className={pageStyles.dateInput}
-                  value={formData.offenceToDate}
+                  value={formData.offenceFromDate}
+                  aria-label="offence from date"
                   onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
-                    handleDateChange("offenceToDate", e.target.value)
+                    handleDateChange("offenceFromDate", e.target.value)
                   }
                   errorMessage={
-                    formDataErrors["offenceToDate"]
-                      ? formDataErrors["offenceToDate"].inputErrorText
+                    formDataErrors["offenceFromDate"]
+                      ? formDataErrors["offenceFromDate"].inputErrorText
                       : undefined
                   }
                 />
-              </>
-            )}
-            <Button
-              className="govuk-button--secondary"
-              name="secondary"
-              type="button"
-              onClick={() => handleDateRangeButtonClick()}
-            >
-              {showDateRange ? "Single date" : "Date range"}
-            </Button>
+                {showDateRange && (
+                  <>
+                    <span className={pageStyles.dateRangeSeparator}> to </span>
+                    <DateInputNative
+                      key="offence-to-date-text"
+                      id="offence-to-date-text"
+                      data-testid="offence-to-date-text"
+                      aria-label="offence to date"
+                      className={pageStyles.dateInput}
+                      value={formData.offenceToDate}
+                      onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+                        handleDateChange("offenceToDate", e.target.value)
+                      }
+                      errorMessage={
+                        formDataErrors["offenceToDate"]
+                          ? formDataErrors["offenceToDate"].inputErrorText
+                          : undefined
+                      }
+                    />
+                  </>
+                )}
+                <Button
+                  className="govuk-button--secondary"
+                  name="secondary"
+                  type="button"
+                  onClick={() => handleDateRangeButtonClick()}
+                >
+                  {showDateRange ? "Single date" : "Date range"}
+                </Button>
+              </div>
+            </fieldset>
           </div>
+
           <Radios
             data-testid="add-victim-radio"
             fieldset={{
@@ -476,7 +486,7 @@ const AddChargeDetailsPage = () => {
             ></Radios>
           )}
         </div>
-        <SaveAndCancel onSave={handleSubmit} />
+        <SaveAndCancel onSave={handleSubmit} disabled={disableBtns} />
       </form>
     </div>
   );

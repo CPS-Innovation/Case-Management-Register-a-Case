@@ -22,7 +22,6 @@ test("Should successfully complete multiple suspect journey", async ({
   page,
 }) => {
   await page.goto("http://localhost:5173");
-  await expect(page).toHaveTitle(/Case Management Register a Case/);
   const caseRegistrationHomePage = new CaseRegistrationHomePage(page);
   await caseRegistrationHomePage.verifyUrl();
   await caseRegistrationHomePage.verifyPageElements();

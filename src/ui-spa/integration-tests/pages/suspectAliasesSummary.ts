@@ -12,6 +12,9 @@ export class SuspectAliasesSummaryPage {
   }
 
   async verifyPageElements() {
+    await expect(this.page).toHaveTitle(
+      /Suspect Aliases Summary - Register A Case/,
+    );
     await expect(this.page.locator("h1")).toHaveText(
       "Aliases for POTTER, Harry",
     );

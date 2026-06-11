@@ -1,15 +1,9 @@
-import {
-  useRef,
-  useEffect,
-  useState,
-  useContext,
-  useCallback,
-  useMemo,
-} from "react";
+import { useState, useContext, useCallback } from "react";
 import { Radios, ErrorSummary, BackLink } from "../../govuk";
 import SaveAndCancel from "../../common/SaveAndCancel";
 import { CaseRegistrationFormContext } from "../../../common/providers/CaseRegistrationProvider";
 import { type GeneralRadioValue } from "../../../common/reducers/caseRegistrationReducer";
+import useErrorSummaryList from "../../../common/hooks/useErrorSummaryList";
 import { useNavigate } from "react-router-dom";
 import styles from "../index.module.scss";
 
@@ -21,7 +15,7 @@ const WantToAddCharges = () => {
   type FormDataErrors = {
     wantToAddChargesRadio?: ErrorText;
   };
-  const errorSummaryRef = useRef<HTMLInputElement>(null);
+
   const { state, dispatch } = useContext(CaseRegistrationFormContext);
   const navigate = useNavigate();
   const [formData, setFormData] = useState<{
@@ -46,7 +40,8 @@ const WantToAddCharges = () => {
     },
     [formDataErrors],
   );
-
+  const { errorSummaryRef, errorList, disableBtns, setDisableBtns } =
+    useErrorSummaryList(formDataErrors, errorSummaryProperties);
   const validateFormData = () => {
     let isValid = true;
     const errors: FormDataErrors = {};
@@ -70,23 +65,6 @@ const WantToAddCharges = () => {
     return isValid;
   };
 
-  const errorList = useMemo(() => {
-    const validErrorKeys = Object.keys(formDataErrors).filter(
-      (errorKey) => formDataErrors[errorKey as keyof FormDataErrors],
-    );
-
-    const errorSummary = validErrorKeys.map((errorKey, index) => ({
-      reactListKey: `${index}`,
-      ...errorSummaryProperties(errorKey as keyof FormDataErrors)!,
-    }));
-
-    return errorSummary;
-  }, [formDataErrors, errorSummaryProperties]);
-
-  useEffect(() => {
-    if (errorList.length) errorSummaryRef.current?.focus();
-  }, [errorList]);
-
   const setFormValue = (value: string) => {
     setFormData({
       wantToAddChargesRadio: value as GeneralRadioValue,
@@ -97,6 +75,7 @@ const WantToAddCharges = () => {
     event.preventDefault();
 
     if (!validateFormData()) return;
+    setDisableBtns(true);
     dispatch({
       type: "SET_FIELDS",
       payload: {
@@ -194,7 +173,7 @@ const WantToAddCharges = () => {
             }}
           ></Radios>
         </div>
-        <SaveAndCancel onSave={handleSubmit} />
+        <SaveAndCancel onSave={handleSubmit} disabled={disableBtns} />
       </form>
     </div>
   );

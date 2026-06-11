@@ -1,11 +1,4 @@
-import {
-  useRef,
-  useEffect,
-  useState,
-  useContext,
-  useCallback,
-  useMemo,
-} from "react";
+import { useEffect, useState, useContext, useCallback, useMemo } from "react";
 import { Checkboxes, ErrorSummary, BackLink } from "../../govuk";
 import SaveAndCancel from "../../common/SaveAndCancel";
 import { CaseRegistrationFormContext } from "../../../common/providers/CaseRegistrationProvider";
@@ -15,9 +8,10 @@ import { useNavigate } from "react-router-dom";
 import { type CaseMonitoringCodes } from "../../../schemas";
 import { isMonitoringCodeOptional } from "../../../common/utils/isMonitoringCodeOptional";
 import useChargesCount from "../../../common/hooks/useChargesCount";
+import useErrorSummaryList from "../../../common/hooks/useErrorSummaryList";
+import { PRE_CHARGE_DECISION_CODE } from "../../../common/constants/general";
 import pageStyles from "./index.module.scss";
 import styles from "../index.module.scss";
-import { PRE_CHARGE_DECISION_CODE } from "../../../common/constants/general";
 
 const CaseMonitoringCodesPage = () => {
   type ErrorText = {
@@ -28,7 +22,7 @@ const CaseMonitoringCodesPage = () => {
   type FormDataErrors = {
     caseMonitoringCodesCheckboxes?: ErrorText;
   };
-  const errorSummaryRef = useRef<HTMLInputElement>(null);
+
   const { state, dispatch } = useContext(CaseRegistrationFormContext);
   const navigate = useNavigate();
   const { chargesCount } = useChargesCount(state.formData.suspects);
@@ -70,6 +64,8 @@ const CaseMonitoringCodesPage = () => {
     },
     [formDataErrors],
   );
+  const { errorSummaryRef, errorList, disableBtns, setDisableBtns } =
+    useErrorSummaryList(formDataErrors, errorSummaryProperties);
 
   const caseMonitoringCodes = useMemo(() => {
     if (state.apiData.caseMonitoringCodes) {
@@ -79,19 +75,6 @@ const CaseMonitoringCodesPage = () => {
     }
     return [] as CaseMonitoringCodes;
   }, [state.apiData.caseMonitoringCodes]);
-
-  const errorList = useMemo(() => {
-    const validErrorKeys = Object.keys(formDataErrors).filter(
-      (errorKey) => formDataErrors[errorKey as keyof FormDataErrors],
-    );
-
-    const errorSummary = validErrorKeys.map((errorKey, index) => ({
-      reactListKey: `${index}`,
-      ...errorSummaryProperties(errorKey as keyof FormDataErrors)!,
-    }));
-
-    return errorSummary;
-  }, [formDataErrors, errorSummaryProperties]);
 
   const previousRoute = useMemo(() => {
     if (state.formData.navigation.fromCaseSummaryPage) {
@@ -113,10 +96,6 @@ const CaseMonitoringCodesPage = () => {
   useEffect(() => {
     if (caseMonitoringCodesError) throw caseMonitoringCodesError;
   }, [caseMonitoringCodesError]);
-
-  useEffect(() => {
-    if (errorList.length) errorSummaryRef.current?.focus();
-  }, [errorList]);
 
   useEffect(() => {
     if (!isCaseMonitoringCodesLoading && caseMonitoringCodesData) {
@@ -177,6 +156,7 @@ const CaseMonitoringCodesPage = () => {
     event.preventDefault();
 
     if (!validateFormData()) return;
+    setDisableBtns(true);
     dispatch({
       type: "SET_FIELDS",
       payload: { data: { ...formData } },
@@ -271,7 +251,7 @@ const CaseMonitoringCodesPage = () => {
             }}
           />
         </div>
-        <SaveAndCancel onSave={handleSubmit} />
+        <SaveAndCancel onSave={handleSubmit} disabled={disableBtns} />
       </form>
     </div>
   );

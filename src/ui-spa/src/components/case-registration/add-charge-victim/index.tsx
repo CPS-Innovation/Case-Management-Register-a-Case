@@ -84,7 +84,7 @@ const AddChargeVictimPage = () => {
   }, [state, suspectIndex]);
 
   const [formDataErrors, setFormDataErrors] = useState<FormDataErrors>({});
-
+  const [disableBtns, setDisableBtns] = useState(false);
   const errorSummaryProperties = useCallback(
     (errorKey: keyof FormDataErrors) => {
       switch (errorKey) {
@@ -311,6 +311,7 @@ const AddChargeVictimPage = () => {
     event.preventDefault();
 
     if (!validateFormData()) return;
+    setDisableBtns(true);
 
     const isVictimNameExists = state.formData.victimsList.some((victim) => {
       return (
@@ -523,7 +524,7 @@ const AddChargeVictimPage = () => {
             )}
           </>
         </div>
-        <SaveAndCancel onSave={handleSubmit} />
+        <SaveAndCancel onSave={handleSubmit} disabled={disableBtns} />
       </form>
     </div>
   );

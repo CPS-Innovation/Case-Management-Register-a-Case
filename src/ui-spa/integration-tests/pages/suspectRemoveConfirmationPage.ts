@@ -20,15 +20,20 @@ export class SuspectRemoveConfirmationPage {
     const cancelLinkHref = fromCaseSummaryPage
       ? "/case-registration/case-summary"
       : "/case-registration/suspect-summary";
+    await expect(this.page).toHaveTitle(
+      /Suspect Remove Confirmation - Register A Case/,
+    );
     await expect(this.page.locator("h1")).toHaveText(
       `Are you sure you want to remove ${suspectName}?`,
     );
-    await expect(this.page.locator("p").nth(0)).toHaveText(
+    await expect(
+      this.page.getByTestId("main-content").locator("p").nth(0),
+    ).toHaveText(
       "This will permanently remove all the details you've entered including any linked charges.",
     );
-    await expect(this.page.locator("p").nth(1)).toHaveText(
-      "You will not be able to restore them.",
-    );
+    await expect(
+      this.page.getByTestId("main-content").locator("p").nth(1),
+    ).toHaveText("You will not be able to restore them.");
     await expect(
       this.page.getByRole("button", { name: "Save and continue" }),
     ).toBeVisible();

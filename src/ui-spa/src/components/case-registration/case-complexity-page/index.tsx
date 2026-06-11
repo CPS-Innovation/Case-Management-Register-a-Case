@@ -1,16 +1,10 @@
-import {
-  useRef,
-  useEffect,
-  useState,
-  useContext,
-  useCallback,
-  useMemo,
-} from "react";
+import { useEffect, useState, useContext, useCallback, useMemo } from "react";
 import { Radios, ErrorSummary, BackLink } from "../../govuk";
 import SaveAndCancel from "../../common/SaveAndCancel";
 import { CaseRegistrationFormContext } from "../../../common/providers/CaseRegistrationProvider";
 import { getCaseComplexities } from "../../../apis/gateway-api";
 import { useQuery } from "@tanstack/react-query";
+import useErrorSummaryList from "../../../common/hooks/useErrorSummaryList";
 import { useNavigate } from "react-router-dom";
 import styles from "../index.module.scss";
 
@@ -23,7 +17,7 @@ const CaseComplexityPage = () => {
   type FormDataErrors = {
     caseComplexityRadio?: ErrorText;
   };
-  const errorSummaryRef = useRef<HTMLInputElement>(null);
+
   const { state, dispatch } = useContext(CaseRegistrationFormContext);
   const navigate = useNavigate();
 
@@ -64,6 +58,8 @@ const CaseComplexityPage = () => {
     },
     [formDataErrors],
   );
+  const { errorSummaryRef, errorList, disableBtns, setDisableBtns } =
+    useErrorSummaryList(formDataErrors, errorSummaryProperties);
 
   const validateFormData = () => {
     const errors: FormDataErrors = {};
@@ -89,26 +85,9 @@ const CaseComplexityPage = () => {
     return [] as { shortCode: number; description: string }[];
   }, [state.apiData.caseComplexities]);
 
-  const errorList = useMemo(() => {
-    const validErrorKeys = Object.keys(formDataErrors).filter(
-      (errorKey) => formDataErrors[errorKey as keyof FormDataErrors],
-    );
-
-    const errorSummary = validErrorKeys.map((errorKey, index) => ({
-      reactListKey: `${index}`,
-      ...errorSummaryProperties(errorKey as keyof FormDataErrors)!,
-    }));
-
-    return errorSummary;
-  }, [formDataErrors, errorSummaryProperties]);
-
   useEffect(() => {
     if (caseComplexitiesError) throw caseComplexitiesError;
   }, [caseComplexitiesError]);
-
-  useEffect(() => {
-    if (errorList.length) errorSummaryRef.current?.focus();
-  }, [errorList]);
 
   useEffect(() => {
     if (!isCaseComplexitiesLoading && caseComplexitiesData) {
@@ -138,6 +117,7 @@ const CaseComplexityPage = () => {
     event.preventDefault();
 
     if (!validateFormData()) return;
+    setDisableBtns(true);
 
     dispatch({
       type: "SET_FIELDS",
@@ -212,7 +192,7 @@ const CaseComplexityPage = () => {
             }}
           ></Radios>
         </div>
-        <SaveAndCancel onSave={handleSubmit} />
+        <SaveAndCancel onSave={handleSubmit} disabled={disableBtns} />
       </form>
     </div>
   );

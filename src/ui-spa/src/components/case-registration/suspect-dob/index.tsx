@@ -1,21 +1,13 @@
-import {
-  useRef,
-  useEffect,
-  useState,
-  useContext,
-  useCallback,
-  useMemo,
-} from "react";
-import { ErrorSummary, BackLink, DateInput } from "../../govuk";
+import { useState, useContext, useCallback, useMemo } from "react";
+import { BackLink, DateInput } from "../../govuk";
 import SaveAndCancel from "../../common/SaveAndCancel";
 import { formatNameUtil } from "../../../common/utils/formatNameUtil";
 import { CaseRegistrationFormContext } from "../../../common/providers/CaseRegistrationProvider";
 import { validateDate } from "../../../common/utils/dateValidation";
-import {
-  getNextSuspectJourneyRoute,
-  getPreviousSuspectJourneyRoute,
-} from "../../../common/utils/getSuspectJourneyRoutes";
 import { dobValidationConstants } from "../../../common/constants/dobValidationConstants";
+import useErrorSummaryList from "../../../common/hooks/useErrorSummaryList";
+import useGetSuspectRoute from "../../../common/hooks/useGetSuspectRoute";
+import ErrorSummaryWrapper from "../../common/ErrorSummaryWrapper";
 import { useNavigate, useParams } from "react-router-dom";
 import styles from "../index.module.scss";
 
@@ -27,7 +19,7 @@ const SuspectDOBPage = () => {
   type FormDataErrors = {
     suspectDOBDateError?: ErrorText;
   };
-  const errorSummaryRef = useRef<HTMLInputElement>(null);
+
   const { state, dispatch } = useContext(CaseRegistrationFormContext);
   const navigate = useNavigate();
   const { suspectId } = useParams<{ suspectId: string }>() as {
@@ -52,19 +44,20 @@ const SuspectDOBPage = () => {
       state.formData.suspects[suspectIndex].suspectDOBYearText || "",
   });
 
-  const previousRoute = useMemo(() => {
-    return getPreviousSuspectJourneyRoute(
-      "suspect-dob",
-      state.formData.suspects[suspectIndex].suspectAdditionalDetailsCheckboxes,
-      suspectIndex,
-    );
-  }, [state.formData.suspects, suspectIndex]);
+  const { previousRoute, nextRoute } = useGetSuspectRoute(
+    "suspect-dob",
+    state.formData.suspects[suspectIndex].suspectAdditionalDetailsCheckboxes,
+    suspectIndex,
+    state.formData.suspects[suspectIndex].suspectAliases.length > 0,
+  );
+
   const [formDataErrors, setFormDataErrors] = useState<FormDataErrors>({});
 
   const errorSummaryProperties = useCallback(() => {
     if (formDataErrors.suspectDOBDateError?.inputErrorFields.includes("day")) {
       return {
         href: "#suspect-DOB-day-text",
+        children: formDataErrors.suspectDOBDateError?.errorSummaryText,
         "data-testid": "suspect-DOB-day-text-link",
       };
     }
@@ -73,16 +66,21 @@ const SuspectDOBPage = () => {
     ) {
       return {
         href: "#suspect-DOB-month-text",
+        children: formDataErrors.suspectDOBDateError?.errorSummaryText,
         "data-testid": "suspect-DOB-month-text-link",
       };
     }
     if (formDataErrors.suspectDOBDateError?.inputErrorFields.includes("year")) {
       return {
         href: "#suspect-DOB-year-text",
+        children: formDataErrors.suspectDOBDateError?.errorSummaryText,
         "data-testid": "suspect-DOB-year-text-link",
       };
     }
+    return null;
   }, [formDataErrors]);
+  const { errorSummaryRef, errorList, disableBtns, setDisableBtns } =
+    useErrorSummaryList(formDataErrors, errorSummaryProperties);
 
   const validateFormData = () => {
     const {
@@ -140,24 +138,6 @@ const SuspectDOBPage = () => {
     return false;
   };
 
-  const errorList = useMemo(() => {
-    const validErrorKeys = Object.keys(formDataErrors).filter(
-      (errorKey) => formDataErrors[errorKey as keyof FormDataErrors],
-    );
-
-    const errorSummary = validErrorKeys.map((key) => ({
-      reactListKey: `${key}`,
-      children: formDataErrors.suspectDOBDateError?.errorSummaryText,
-      ...errorSummaryProperties()!,
-    }));
-
-    return errorSummary;
-  }, [formDataErrors, errorSummaryProperties]);
-
-  useEffect(() => {
-    if (errorList.length) errorSummaryRef.current?.focus();
-  }, [errorList]);
-
   const setFormValue = (event: React.ChangeEvent<HTMLInputElement>) => {
     let field:
       | "suspectDOBDayText"
@@ -185,6 +165,7 @@ const SuspectDOBPage = () => {
     event.preventDefault();
 
     if (!validateFormData()) return;
+    setDisableBtns(true);
 
     dispatch({
       type: "SET_SUSPECT_FIELDS",
@@ -193,12 +174,6 @@ const SuspectDOBPage = () => {
         data: formData,
       },
     });
-    const nextRoute = getNextSuspectJourneyRoute(
-      "suspect-dob",
-      state.formData.suspects[suspectIndex].suspectAdditionalDetailsCheckboxes,
-      suspectIndex,
-      state.formData.suspects[suspectIndex].suspectAliases.length > 0,
-    );
 
     return navigate(nextRoute);
   };
@@ -213,19 +188,12 @@ const SuspectDOBPage = () => {
   return (
     <div>
       <BackLink to={previousRoute}>Back</BackLink>
-      {!!errorList.length && (
-        <div
-          ref={errorSummaryRef}
-          tabIndex={-1}
-          className={styles.errorSummaryWrapper}
-        >
-          <ErrorSummary
-            data-testid={"add-suspect-error-summary"}
-            errorList={errorList}
-            titleChildren="There is a problem"
-          />
-        </div>
-      )}
+
+      <ErrorSummaryWrapper
+        errorList={errorList}
+        errorSummaryRef={errorSummaryRef}
+        dataTestId="suspect-dob-error-summary"
+      />
       <form onSubmit={handleSubmit}>
         <div className={styles.inputWrapper}>
           <DateInput
@@ -294,7 +262,7 @@ const SuspectDOBPage = () => {
             onChange={setFormValue}
           />
         </div>
-        <SaveAndCancel onSave={handleSubmit} />
+        <SaveAndCancel onSave={handleSubmit} disabled={disableBtns} />
       </form>
     </div>
   );

@@ -14,15 +14,24 @@ export class CaseRegistrationConfirmationPage {
   }
 
   async verifyPageElements(urn: string) {
+    await expect(this.page).toHaveTitle(
+      /Case Registration Confirmation - Register A Case/,
+    );
     await expect(this.page.locator("h1")).toHaveText(
       "Case registered successfully",
     );
-    await expect(this.page.locator("p").nth(0)).toHaveText("URN");
-    await expect(this.page.locator("p").nth(1)).toHaveText(urn);
-    await expect(this.page.locator("h2")).toHaveText("Next steps");
-    await expect(this.page.locator("p").nth(2)).toHaveText(
-      "Use the URN to find the case.",
-    );
+    await expect(
+      this.page.getByTestId("main-content").locator("p").nth(0),
+    ).toHaveText("URN");
+    await expect(
+      this.page.getByTestId("main-content").locator("p").nth(1),
+    ).toHaveText(urn);
+    await expect(
+      this.page.getByTestId("main-content").locator("h2"),
+    ).toHaveText("Next steps");
+    await expect(
+      this.page.getByTestId("main-content").locator("p").nth(2),
+    ).toHaveText("Use the URN to find the case.");
     await expect(
       this.page.getByRole("link", { name: "Return to the home page" }),
     ).toBeVisible();

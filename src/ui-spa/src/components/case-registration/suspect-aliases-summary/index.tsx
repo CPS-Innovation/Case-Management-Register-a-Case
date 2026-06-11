@@ -1,19 +1,11 @@
-import {
-  useRef,
-  useEffect,
-  useState,
-  useContext,
-  useCallback,
-  useMemo,
-} from "react";
-import { Radios, ErrorSummary, BackLink, SummaryList } from "../../govuk";
+import { useState, useContext, useCallback, useMemo } from "react";
+import { Radios, BackLink, SummaryList } from "../../govuk";
 import SaveAndCancel from "../../common/SaveAndCancel";
 import { CaseRegistrationFormContext } from "../../../common/providers/CaseRegistrationProvider";
-import {
-  getNextSuspectJourneyRoute,
-  getPreviousSuspectJourneyRoute,
-} from "../../../common/utils/getSuspectJourneyRoutes";
 import { formatNameUtil } from "../../../common/utils/formatNameUtil";
+import useErrorSummaryList from "../../../common/hooks/useErrorSummaryList";
+import useGetSuspectRoute from "../../../common/hooks/useGetSuspectRoute";
+import ErrorSummaryWrapper from "../../common/ErrorSummaryWrapper";
 import { useNavigate, useParams } from "react-router-dom";
 import styles from "../index.module.scss";
 import pageStyles from "./index.module.scss";
@@ -26,7 +18,7 @@ const SuspectAliasesSummaryPage = () => {
   type FormDataErrors = {
     addMoreAliasesRadio?: ErrorText;
   };
-  const errorSummaryRef = useRef<HTMLInputElement>(null);
+
   const { state, dispatch } = useContext(CaseRegistrationFormContext);
   const navigate = useNavigate();
   const { suspectId } = useParams<{
@@ -41,13 +33,12 @@ const SuspectAliasesSummaryPage = () => {
     return Number.parseInt(index, 10);
   }, [suspectId]);
 
-  const previousRoute = useMemo(() => {
-    return getPreviousSuspectJourneyRoute(
-      "suspect-add-aliases",
-      state.formData.suspects[suspectIndex].suspectAdditionalDetailsCheckboxes,
-      suspectIndex,
-    );
-  }, [state.formData.suspects, suspectIndex]);
+  const { previousRoute, nextRoute } = useGetSuspectRoute(
+    "suspect-add-aliases",
+    state.formData.suspects[suspectIndex].suspectAdditionalDetailsCheckboxes,
+    suspectIndex,
+    state.formData.suspects[suspectIndex].suspectAliases.length > 0,
+  );
 
   const [formDataErrors, setFormDataErrors] = useState<FormDataErrors>({});
 
@@ -64,6 +55,8 @@ const SuspectAliasesSummaryPage = () => {
     },
     [formDataErrors],
   );
+  const { errorSummaryRef, errorList, disableBtns, setDisableBtns } =
+    useErrorSummaryList(formDataErrors, errorSummaryProperties);
 
   const validateFormData = () => {
     const errors: FormDataErrors = {};
@@ -84,23 +77,6 @@ const SuspectAliasesSummaryPage = () => {
     setFormDataErrors(errors);
     return isValid;
   };
-
-  const errorList = useMemo(() => {
-    const validErrorKeys = Object.keys(formDataErrors).filter(
-      (errorKey) => formDataErrors[errorKey as keyof FormDataErrors],
-    );
-
-    const errorSummary = validErrorKeys.map((errorKey, index) => ({
-      reactListKey: `${index}`,
-      ...errorSummaryProperties(errorKey as keyof FormDataErrors)!,
-    }));
-
-    return errorSummary;
-  }, [formDataErrors, errorSummaryProperties]);
-
-  useEffect(() => {
-    if (errorList.length) errorSummaryRef.current?.focus();
-  }, [errorList]);
 
   const getAliasesSummaryListRows = (
     suspectAliases: { firstName: string; lastName: string }[],
@@ -147,6 +123,7 @@ const SuspectAliasesSummaryPage = () => {
     event.preventDefault();
 
     if (!validateFormData()) return;
+    setDisableBtns(true);
 
     if (addMoreAliasesRadio === "yes") {
       return navigate(
@@ -154,12 +131,6 @@ const SuspectAliasesSummaryPage = () => {
       );
     }
 
-    const nextRoute = getNextSuspectJourneyRoute(
-      "suspect-add-aliases",
-      state.formData.suspects[suspectIndex].suspectAdditionalDetailsCheckboxes,
-      suspectIndex,
-      state.formData.suspects[suspectIndex].suspectAliases.length > 0,
-    );
     return navigate(nextRoute);
   };
 
@@ -173,19 +144,12 @@ const SuspectAliasesSummaryPage = () => {
   return (
     <div className={pageStyles.caseSuspectAliasesSummaryPage}>
       <BackLink to={previousRoute}>Back</BackLink>
-      {!!errorList.length && (
-        <div
-          ref={errorSummaryRef}
-          tabIndex={-1}
-          className={styles.errorSummaryWrapper}
-        >
-          <ErrorSummary
-            data-testid={"suspect-aliases-summary-error-summary"}
-            errorList={errorList}
-            titleChildren="There is a problem"
-          />
-        </div>
-      )}
+
+      <ErrorSummaryWrapper
+        errorList={errorList}
+        errorSummaryRef={errorSummaryRef}
+        dataTestId={"suspect-aliases-summary-error-summary"}
+      />
       <form onSubmit={handleSubmit}>
         <h1>
           {`Aliases for ${formatNameUtil(suspectFirstNameText, suspectLastNameText)}`}
@@ -260,7 +224,7 @@ const SuspectAliasesSummaryPage = () => {
             }}
           ></Radios>
         </div>
-        <SaveAndCancel onSave={handleSubmit} />
+        <SaveAndCancel onSave={handleSubmit} disabled={disableBtns} />
       </form>
     </div>
   );

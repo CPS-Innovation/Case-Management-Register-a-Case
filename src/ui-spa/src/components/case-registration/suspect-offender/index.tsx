@@ -1,12 +1,5 @@
-import {
-  useRef,
-  useEffect,
-  useState,
-  useContext,
-  useCallback,
-  useMemo,
-} from "react";
-import { Radios, ErrorSummary, BackLink } from "../../govuk";
+import { useEffect, useState, useContext, useCallback, useMemo } from "react";
+import { Radios, BackLink } from "../../govuk";
 import SaveAndCancel from "../../common/SaveAndCancel";
 import DateInputNative from "../../common/DateInputNative";
 import { CaseRegistrationFormContext } from "../../../common/providers/CaseRegistrationProvider";
@@ -14,12 +7,11 @@ import { getOffenderTypes } from "../../../apis/gateway-api";
 import { useQuery } from "@tanstack/react-query";
 import { useNavigate, useParams } from "react-router-dom";
 import { formatNameUtil } from "../../../common/utils/formatNameUtil";
-import {
-  getNextSuspectJourneyRoute,
-  getPreviousSuspectJourneyRoute,
-} from "../../../common/utils/getSuspectJourneyRoutes";
 import { isValidOnOrBeforeDate } from "../../../common/utils/isValidOnOrBeforeDate";
 import { isChargedWithAdultWarningActive } from "../../../common/utils/isChargedWithAdultWarningActive";
+import useErrorSummaryList from "../../../common/hooks/useErrorSummaryList";
+import useGetSuspectRoute from "../../../common/hooks/useGetSuspectRoute";
+import ErrorSummaryWrapper from "../../common/ErrorSummaryWrapper";
 import styles from "../index.module.scss";
 
 const SuspectOffenderPage = () => {
@@ -31,7 +23,7 @@ const SuspectOffenderPage = () => {
     suspectOffenderTypesRadio?: ErrorText;
     suspectArrestDate?: ErrorText;
   };
-  const errorSummaryRef = useRef<HTMLInputElement>(null);
+
   const { state, dispatch } = useContext(CaseRegistrationFormContext);
   const navigate = useNavigate();
   const { suspectId } = useParams<{ suspectId: string }>() as {
@@ -74,13 +66,13 @@ const SuspectOffenderPage = () => {
   useEffect(() => {
     if (offenderError) throw offenderError;
   }, [offenderError]);
-  const previousRoute = useMemo(() => {
-    return getPreviousSuspectJourneyRoute(
-      "suspect-offender",
-      state.formData.suspects[suspectIndex].suspectAdditionalDetailsCheckboxes,
-      suspectIndex,
-    );
-  }, [state.formData.suspects, suspectIndex]);
+
+  const { previousRoute, nextRoute } = useGetSuspectRoute(
+    "suspect-offender",
+    state.formData.suspects[suspectIndex].suspectAdditionalDetailsCheckboxes,
+    suspectIndex,
+    state.formData.suspects[suspectIndex].suspectAliases.length > 0,
+  );
 
   const [formDataErrors, setFormDataErrors] = useState<FormDataErrors>({});
 
@@ -106,7 +98,8 @@ const SuspectOffenderPage = () => {
     },
     [formDataErrors],
   );
-
+  const { errorSummaryRef, errorList, disableBtns, setDisableBtns } =
+    useErrorSummaryList(formDataErrors, errorSummaryProperties);
   const validateFormData = () => {
     const errors: FormDataErrors = {};
     const {
@@ -139,23 +132,6 @@ const SuspectOffenderPage = () => {
     setFormDataErrors(errors);
     return isValid;
   };
-
-  const errorList = useMemo(() => {
-    const validErrorKeys = Object.keys(formDataErrors).filter(
-      (errorKey) => formDataErrors[errorKey as keyof FormDataErrors],
-    );
-
-    const errorSummary = validErrorKeys.map((errorKey, index) => ({
-      reactListKey: `${index}`,
-      ...errorSummaryProperties(errorKey as keyof FormDataErrors)!,
-    }));
-
-    return errorSummary;
-  }, [formDataErrors, errorSummaryProperties]);
-
-  useEffect(() => {
-    if (errorList.length) errorSummaryRef.current?.focus();
-  }, [errorList]);
 
   useEffect(() => {
     if (!isOffendersLoading && offenderData) {
@@ -243,6 +219,7 @@ const SuspectOffenderPage = () => {
     event.preventDefault();
 
     if (!validateFormData()) return;
+    setDisableBtns(true);
     dispatch({
       type: "SET_SUSPECT_FIELDS",
       payload: {
@@ -264,12 +241,6 @@ const SuspectOffenderPage = () => {
       });
     }
 
-    const nextRoute = getNextSuspectJourneyRoute(
-      "suspect-offender",
-      state.formData.suspects[suspectIndex].suspectAdditionalDetailsCheckboxes,
-      suspectIndex,
-      state.formData.suspects[suspectIndex].suspectAliases.length > 0,
-    );
     return navigate(nextRoute);
   };
 
@@ -278,19 +249,12 @@ const SuspectOffenderPage = () => {
   return (
     <div>
       <BackLink to={previousRoute}>Back</BackLink>
-      {!!errorList.length && (
-        <div
-          ref={errorSummaryRef}
-          tabIndex={-1}
-          className={styles.errorSummaryWrapper}
-        >
-          <ErrorSummary
-            data-testid={"suspect-offender-types-error-summary"}
-            errorList={errorList}
-            titleChildren="There is a problem"
-          />
-        </div>
-      )}
+
+      <ErrorSummaryWrapper
+        errorList={errorList}
+        errorSummaryRef={errorSummaryRef}
+        dataTestId="suspect-offender-types-error-summary"
+      />
       <form onSubmit={handleSubmit}>
         <div className={styles.inputWrapper}>
           <Radios
@@ -319,7 +283,7 @@ const SuspectOffenderPage = () => {
             }}
           ></Radios>
         </div>
-        <SaveAndCancel onSave={handleSubmit} />
+        <SaveAndCancel onSave={handleSubmit} disabled={disableBtns} />
       </form>
     </div>
   );

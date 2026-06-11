@@ -1,18 +1,13 @@
-import {
-  useRef,
-  useEffect,
-  useState,
-  useContext,
-  useCallback,
-  useMemo,
-} from "react";
-import { Input, ErrorSummary, BackLink } from "../../govuk";
+import { useState, useContext, useCallback, useMemo } from "react";
+import { Input, BackLink } from "../../govuk";
 import SaveAndCancel from "../../common/SaveAndCancel";
 import { CaseRegistrationFormContext } from "../../../common/providers/CaseRegistrationProvider";
 import { getPreviousSuspectJourneyRoute } from "../../../common/utils/getSuspectJourneyRoutes";
 import { formatNameUtil } from "../../../common/utils/formatNameUtil";
 import { sanitizeNameText } from "../../../common/utils/sanitizeNameText";
+import useErrorSummaryList from "../../../common/hooks/useErrorSummaryList";
 import { useNavigate, useParams } from "react-router-dom";
+import ErrorSummaryWrapper from "../../common/ErrorSummaryWrapper";
 import styles from "../index.module.scss";
 import pageStyles from "./index.module.scss";
 
@@ -24,7 +19,7 @@ const SuspectAliasesPage = () => {
   type FormDataErrors = {
     suspectAliasesLastNameText?: ErrorText;
   };
-  const errorSummaryRef = useRef<HTMLInputElement>(null);
+
   const { state, dispatch } = useContext(CaseRegistrationFormContext);
   const navigate = useNavigate();
   const { suspectId } = useParams<{
@@ -74,6 +69,8 @@ const SuspectAliasesPage = () => {
     },
     [formDataErrors],
   );
+  const { errorSummaryRef, errorList, disableBtns, setDisableBtns } =
+    useErrorSummaryList(formDataErrors, errorSummaryProperties);
 
   const validateFormData = () => {
     const errors: FormDataErrors = {};
@@ -92,23 +89,6 @@ const SuspectAliasesPage = () => {
     return isValid;
   };
 
-  const errorList = useMemo(() => {
-    const validErrorKeys = Object.keys(formDataErrors).filter(
-      (errorKey) => formDataErrors[errorKey as keyof FormDataErrors],
-    );
-
-    const errorSummary = validErrorKeys.map((errorKey, index) => ({
-      reactListKey: `${index}`,
-      ...errorSummaryProperties(errorKey as keyof FormDataErrors)!,
-    }));
-
-    return errorSummary;
-  }, [formDataErrors, errorSummaryProperties]);
-
-  useEffect(() => {
-    if (errorList.length) errorSummaryRef.current?.focus();
-  }, [errorList]);
-
   const setFormValue = (fieldName: "firstName" | "lastName", value: string) => {
     if (fieldName === "firstName" || fieldName === "lastName") {
       value = sanitizeNameText(value);
@@ -123,6 +103,7 @@ const SuspectAliasesPage = () => {
     event.preventDefault();
 
     if (!validateFormData()) return;
+    setDisableBtns(true);
     const newAliases = [...suspectAliases, alias];
     dispatch({
       type: "SET_SUSPECT_FIELDS",
@@ -149,19 +130,12 @@ const SuspectAliasesPage = () => {
   return (
     <div className={pageStyles.caseSuspectAliasesPage}>
       <BackLink to={previousRoute}>Back</BackLink>
-      {!!errorList.length && (
-        <div
-          ref={errorSummaryRef}
-          tabIndex={-1}
-          className={styles.errorSummaryWrapper}
-        >
-          <ErrorSummary
-            data-testid={"suspect-aliases-error-summary"}
-            errorList={errorList}
-            titleChildren="There is a problem"
-          />
-        </div>
-      )}
+
+      <ErrorSummaryWrapper
+        errorList={errorList}
+        errorSummaryRef={errorSummaryRef}
+        dataTestId={"suspect-aliases-error-summary"}
+      />
       <form onSubmit={handleSubmit}>
         <div className={pageStyles.headingWrapper}>
           <h1>
@@ -215,7 +189,7 @@ const SuspectAliasesPage = () => {
             }}
           />
         </div>
-        <SaveAndCancel onSave={handleSubmit} />
+        <SaveAndCancel onSave={handleSubmit} disabled={disableBtns} />
       </form>
     </div>
   );

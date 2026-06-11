@@ -1,13 +1,12 @@
 .chargesSummaryPage {
-  max-width: 66%;
   & :global(.govuk-details) {
-    margin-bottom: 10px;
+    margin-bottom: 0.625rem;
   }
   & :global(.govuk-summary-list) {
-    margin-bottom: 5px;
+    margin-bottom: 0.3125rem;
   }
   & .chargesSummaryWrapper {
-    margin-bottom: 60px;
+    margin-bottom: 3.75rem;
   }
   & .chargeWrapper {
     margin-bottom: 3rem;

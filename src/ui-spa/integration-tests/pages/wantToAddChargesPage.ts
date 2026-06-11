@@ -14,6 +14,9 @@ export class WantToAddChargesPage {
   }
 
   async verifyPageElements(h1Text: string) {
+    await expect(this.page).toHaveTitle(
+      /Want To Add Charges - Register A Case/,
+    );
     await expect(this.page.locator("h1")).toHaveText(h1Text);
     await expect(this.page.locator("label").nth(0)).toHaveText("Yes");
     await expect(this.page.locator("label").nth(1)).toHaveText("No");

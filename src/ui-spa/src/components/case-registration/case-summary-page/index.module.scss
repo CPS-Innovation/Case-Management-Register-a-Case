@@ -1,5 +1,4 @@
 .caseSummaryPage {
-  max-width: 66.66%;
   h2 {
     font-size: 1.5rem;
     margin-top: 0;
@@ -12,17 +11,20 @@
     margin-bottom: 1.875rem;
   }
   & :global(.govuk-fieldset.govuk-form-group--error) {
-    padding-left: 15px;
+    padding-left: 1rem;
     border-top: none;
     border-right: none;
     border-bottom: none;
-    border-left: 5px solid #d4351c;
+    border-left: 0.3125rem solid #d4351c;
   }
 
   & :global(.govuk-tag) {
     text-transform: inherit;
     letter-spacing: 0;
     font-weight: normal;
+  }
+  & :global(.govuk-button) {
+    width: fit-content;
   }
 }
 .errorSummaryWrapper {

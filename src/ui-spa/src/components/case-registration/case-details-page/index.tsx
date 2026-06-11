@@ -1,11 +1,4 @@
-import {
-  useContext,
-  useMemo,
-  useRef,
-  useCallback,
-  useState,
-  useEffect,
-} from "react";
+import { useContext, useMemo, useCallback, useState, useEffect } from "react";
 import { AutoComplete, BackLink, ErrorSummary, Input } from "../../govuk";
 import SaveAndCancel from "../../common/SaveAndCancel";
 import { CaseRegistrationFormContext } from "../../../common/providers/CaseRegistrationProvider";
@@ -15,6 +8,7 @@ import { useIsAreaSensitive } from "../../../common/hooks/useIsAreaSensitive";
 import { getSelectedUnit } from "../../../common/utils/getSelectedUnit";
 import { useQuery } from "@tanstack/react-query";
 import { validateUrn } from "../../../apis/gateway-api";
+import useErrorSummaryList from "../../../common/hooks/useErrorSummaryList";
 import { useNavigate } from "react-router-dom";
 import styles from "../index.module.scss";
 import pageStyles from "./index.module.scss";
@@ -32,7 +26,6 @@ const CaseDetailsPage = () => {
     witnessCareUnitErrorText?: ErrorText;
   };
 
-  const errorSummaryRef = useRef<HTMLInputElement>(null);
   const { state, dispatch } = useContext(CaseRegistrationFormContext);
   const navigate = useNavigate();
   const isAreaSensitive = useIsAreaSensitive();
@@ -105,26 +98,12 @@ const CaseDetailsPage = () => {
     },
     [formDataErrors],
   );
-  const errorList = useMemo(() => {
-    const validErrorKeys = Object.keys(formDataErrors).filter(
-      (errorKey) => formDataErrors[errorKey as keyof FormDataErrors],
-    );
-
-    const errorSummary = validErrorKeys.map((errorKey, index) => ({
-      reactListKey: `${index}`,
-      ...errorSummaryProperties(errorKey as keyof FormDataErrors)!,
-    }));
-
-    return errorSummary;
-  }, [formDataErrors, errorSummaryProperties]);
+  const { errorSummaryRef, errorList, disableBtns, setDisableBtns } =
+    useErrorSummaryList(formDataErrors, errorSummaryProperties);
 
   useEffect(() => {
     if (validateUrnError) throw validateUrnError;
   }, [validateUrnError]);
-
-  useEffect(() => {
-    if (errorList.length) errorSummaryRef.current?.focus();
-  }, [errorList]);
 
   const registeringUnits = useMemo(() => {
     if (state.apiData.areasAndRegisteringUnits) {
@@ -389,6 +368,7 @@ const CaseDetailsPage = () => {
     }
     if (!validateFormData(registeringUnitInputValue, witnessCareUnitInputValue))
       return;
+    setDisableBtns(true);
     const { data } = await refetchValidateUrn();
     if (data) {
       setFormDataErrors((prev) => ({
@@ -400,6 +380,7 @@ const CaseDetailsPage = () => {
           errorIds: ["urn-unique-reference-text"],
         },
       }));
+      setDisableBtns(false);
       return;
     }
     if (
@@ -617,7 +598,7 @@ const CaseDetailsPage = () => {
             />
           )}
         </div>
-        <SaveAndCancel onSave={handleSubmit} />
+        <SaveAndCancel onSave={handleSubmit} disabled={disableBtns} />
       </form>
     </div>
   );

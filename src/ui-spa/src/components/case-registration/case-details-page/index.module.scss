@@ -1,10 +1,10 @@
 .caseDetailsPage {
   & :global(.govuk-fieldset.govuk-form-group--error) {
-    padding-left: 15px;
+    padding-left: 1rem;
     border-top: none;
     border-right: none;
     border-bottom: none;
-    border-left: 5px solid #d4351c;
+    border-left: 0.3125rem solid #d4351c;
   }
 }
 .errorSummaryWrapper {
@@ -20,8 +20,5 @@
   gap: 0.2rem;
   & :global(.govuk-form-group) {
     margin-bottom: 1.875rem;
-  }
-  :global(.govuk-label) {
-    display: none;
   }
 }

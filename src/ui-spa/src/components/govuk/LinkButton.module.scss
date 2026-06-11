@@ -11,7 +11,7 @@
   font-family: "NewTransport", "Arial", sans-serif;
 
   &:hover:not(:disabled):not(:focus) {
-    text-decoration-thickness: max(3px, 0.1875rem, 0.12em);
+    text-decoration-thickness: max(0.1875rem, 0.1875rem, 0.12em);
   }
 
   &:focus {

@@ -1,16 +1,10 @@
-import {
-  useContext,
-  useMemo,
-  useRef,
-  useCallback,
-  useState,
-  useEffect,
-} from "react";
+import { useContext, useMemo, useCallback, useState } from "react";
 import { AutoComplete, BackLink, ErrorSummary } from "../../govuk";
 import SaveAndCancel from "../../common/SaveAndCancel";
 import { CaseRegistrationFormContext } from "../../../common/providers/CaseRegistrationProvider";
 import { getAreasOrDivisions } from "../../../common/utils/getAreasOrDivisions";
 import { getSelectedUnit } from "../../../common/utils/getSelectedUnit";
+import useErrorSummaryList from "../../../common/hooks/useErrorSummaryList";
 import { useNavigate } from "react-router-dom";
 import styles from "../index.module.scss";
 import pageStyles from "./index.module.scss";
@@ -24,7 +18,7 @@ const CaseAreasPage = () => {
   type FormDataErrors = {
     areaOrDivisionText?: ErrorText;
   };
-  const errorSummaryRef = useRef<HTMLInputElement>(null);
+
   const { state, dispatch } = useContext(CaseRegistrationFormContext);
   const navigate = useNavigate();
 
@@ -60,19 +54,8 @@ const CaseAreasPage = () => {
     },
     [formDataErrors],
   );
-
-  const errorList = useMemo(() => {
-    const validErrorKeys = Object.keys(formDataErrors).filter(
-      (errorKey) => formDataErrors[errorKey as keyof FormDataErrors],
-    );
-
-    const errorSummary = validErrorKeys.map((errorKey, index) => ({
-      reactListKey: `${index}`,
-      ...errorSummaryProperties(errorKey as keyof FormDataErrors)!,
-    }));
-
-    return errorSummary;
-  }, [formDataErrors, errorSummaryProperties]);
+  const { errorSummaryRef, errorList, disableBtns, setDisableBtns } =
+    useErrorSummaryList(formDataErrors, errorSummaryProperties);
 
   const areas = useMemo(() => {
     if (state.apiData.areasAndRegisteringUnits) {
@@ -80,10 +63,6 @@ const CaseAreasPage = () => {
     }
     return [];
   }, [state.apiData.areasAndRegisteringUnits]);
-
-  useEffect(() => {
-    if (errorList.length) errorSummaryRef.current?.focus();
-  }, [errorList]);
 
   const validateFormData = (
     areas: {
@@ -147,6 +126,7 @@ const CaseAreasPage = () => {
     }
 
     if (!validateFormData(areas, inputValue)) return;
+    setDisableBtns(true);
 
     if (
       state.formData.navigation.changeCaseArea &&
@@ -221,7 +201,9 @@ const CaseAreasPage = () => {
           <AutoComplete
             id="area-or-division-text"
             inputClasses={"govuk-input--error"}
-            label={{ children: <h1>What is the division or area?</h1> }}
+            label={{
+              children: <h1 tabIndex={-1}>What is the division or area?</h1>,
+            }}
             source={areaSuggests}
             confirmOnBlur={false}
             onConfirm={handleAreaConfirm}
@@ -234,7 +216,7 @@ const CaseAreasPage = () => {
           />
         </div>
 
-        <SaveAndCancel onSave={handleSubmit} />
+        <SaveAndCancel onSave={handleSubmit} disabled={disableBtns} />
       </form>
     </div>
   );

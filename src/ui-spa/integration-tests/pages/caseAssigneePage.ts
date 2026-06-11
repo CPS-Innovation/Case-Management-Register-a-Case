@@ -14,6 +14,7 @@ export class CaseAssigneePage {
   }
 
   async verifyPageElements() {
+    await expect(this.page).toHaveTitle(/Case Assignee - Register A Case/);
     await expect(this.page.locator("h1")).toHaveText(
       "Who is working on the case?",
     );

@@ -1,22 +1,14 @@
-import {
-  useRef,
-  useEffect,
-  useState,
-  useContext,
-  useCallback,
-  useMemo,
-} from "react";
-import { Radios, ErrorSummary, BackLink } from "../../govuk";
+import { useEffect, useState, useContext, useCallback, useMemo } from "react";
+import { Radios, BackLink } from "../../govuk";
 import SaveAndCancel from "../../common/SaveAndCancel";
 import { CaseRegistrationFormContext } from "../../../common/providers/CaseRegistrationProvider";
 import { getEthnicities } from "../../../apis/gateway-api";
 import { useQuery } from "@tanstack/react-query";
 import { useNavigate, useParams } from "react-router-dom";
-import {
-  getNextSuspectJourneyRoute,
-  getPreviousSuspectJourneyRoute,
-} from "../../../common/utils/getSuspectJourneyRoutes";
 import { formatNameUtil } from "../../../common/utils/formatNameUtil";
+import useErrorSummaryList from "../../../common/hooks/useErrorSummaryList";
+import useGetSuspectRoute from "../../../common/hooks/useGetSuspectRoute";
+import ErrorSummaryWrapper from "../../common/ErrorSummaryWrapper";
 import styles from "../index.module.scss";
 
 const SuspectEthnicityPage = () => {
@@ -27,7 +19,7 @@ const SuspectEthnicityPage = () => {
   type FormDataErrors = {
     suspectEthnicityRadio?: ErrorText;
   };
-  const errorSummaryRef = useRef<HTMLInputElement>(null);
+
   const { state, dispatch } = useContext(CaseRegistrationFormContext);
   const navigate = useNavigate();
   const { suspectId } = useParams<{ suspectId: string }>() as {
@@ -39,7 +31,7 @@ const SuspectEthnicityPage = () => {
     return Number.parseInt(index, 10);
   }, [suspectId]);
 
-  const [formData, setFormData] = useState<{
+  const [ethnicityFormData, setEthnicityFormData] = useState<{
     suspectEthnicityRadio: { shortCode: string; description: string };
   }>({
     suspectEthnicityRadio: state.formData.suspects[suspectIndex]
@@ -64,21 +56,21 @@ const SuspectEthnicityPage = () => {
     if (ethnicityError) throw ethnicityError;
   }, [ethnicityError]);
 
-  const previousRoute = useMemo(() => {
-    return getPreviousSuspectJourneyRoute(
-      "suspect-ethnicity",
-      state.formData.suspects[suspectIndex].suspectAdditionalDetailsCheckboxes,
-      suspectIndex,
-    );
-  }, [state.formData.suspects, suspectIndex]);
+  const { previousRoute, nextRoute } = useGetSuspectRoute(
+    "suspect-ethnicity",
+    state.formData.suspects[suspectIndex].suspectAdditionalDetailsCheckboxes,
+    suspectIndex,
+    state.formData.suspects[suspectIndex].suspectAliases.length > 0,
+  );
 
-  const [formDataErrors, setFormDataErrors] = useState<FormDataErrors>({});
+  const [ethnicityFormDataErrors, setEthnicityFormDataErrors] =
+    useState<FormDataErrors>({});
 
   const errorSummaryProperties = useCallback(
     (errorKey: keyof FormDataErrors) => {
       if (errorKey === "suspectEthnicityRadio") {
         return {
-          children: formDataErrors[errorKey]?.errorSummaryText,
+          children: ethnicityFormDataErrors[errorKey]?.errorSummaryText,
           href: "#suspect-ethnicity-radio-0",
           "data-testid": "suspect-ethnicity-radio-link",
         };
@@ -86,13 +78,15 @@ const SuspectEthnicityPage = () => {
 
       return null;
     },
-    [formDataErrors],
+    [ethnicityFormDataErrors],
   );
+  const { errorSummaryRef, errorList, disableBtns, setDisableBtns } =
+    useErrorSummaryList(ethnicityFormDataErrors, errorSummaryProperties);
 
   const validateFormData = () => {
     const errors: FormDataErrors = {};
     const { suspectEthnicityRadio = { shortCode: null, description: "" } } =
-      formData;
+      ethnicityFormData;
 
     if (!suspectEthnicityRadio.shortCode) {
       errors.suspectEthnicityRadio = {
@@ -103,26 +97,9 @@ const SuspectEthnicityPage = () => {
 
     const isValid = !Object.entries(errors).filter(([, value]) => value).length;
 
-    setFormDataErrors(errors);
+    setEthnicityFormDataErrors(errors);
     return isValid;
   };
-
-  const errorList = useMemo(() => {
-    const validErrorKeys = Object.keys(formDataErrors).filter(
-      (errorKey) => formDataErrors[errorKey as keyof FormDataErrors],
-    );
-
-    const errorSummary = validErrorKeys.map((errorKey, index) => ({
-      reactListKey: `${index}`,
-      ...errorSummaryProperties(errorKey as keyof FormDataErrors)!,
-    }));
-
-    return errorSummary;
-  }, [formDataErrors, errorSummaryProperties]);
-
-  useEffect(() => {
-    if (errorList.length) errorSummaryRef.current?.focus();
-  }, [errorList]);
 
   useEffect(() => {
     if (!isEthnicitiesLoading && ethnicityData) {
@@ -150,8 +127,8 @@ const SuspectEthnicityPage = () => {
       (ethnicity) => ethnicity.shortCode === value,
     );
     if (selectedEthnicity) {
-      setFormData({
-        ...formData,
+      setEthnicityFormData({
+        ...ethnicityFormData,
         suspectEthnicityRadio: selectedEthnicity,
       });
     }
@@ -161,21 +138,16 @@ const SuspectEthnicityPage = () => {
     event.preventDefault();
 
     if (!validateFormData()) return;
+    setDisableBtns(true);
 
     dispatch({
       type: "SET_SUSPECT_FIELDS",
       payload: {
         index: suspectIndex,
-        data: formData,
+        data: ethnicityFormData,
       },
     });
 
-    const nextRoute = getNextSuspectJourneyRoute(
-      "suspect-ethnicity",
-      state.formData.suspects[suspectIndex].suspectAdditionalDetailsCheckboxes,
-      suspectIndex,
-      state.formData.suspects[suspectIndex].suspectAliases.length > 0,
-    );
     return navigate(nextRoute);
   };
 
@@ -189,19 +161,12 @@ const SuspectEthnicityPage = () => {
   return (
     <div>
       <BackLink to={previousRoute}>Back</BackLink>
-      {!!errorList.length && (
-        <div
-          ref={errorSummaryRef}
-          tabIndex={-1}
-          className={styles.errorSummaryWrapper}
-        >
-          <ErrorSummary
-            data-testid={"suspect-ethnicity-error-summary"}
-            errorList={errorList}
-            titleChildren="There is a problem"
-          />
-        </div>
-      )}
+
+      <ErrorSummaryWrapper
+        errorList={errorList}
+        errorSummaryRef={errorSummaryRef}
+        dataTestId="suspect-ethnicity-error-summary"
+      />
       <form onSubmit={handleSubmit}>
         <div className={styles.inputWrapper}>
           <Radios
@@ -213,21 +178,22 @@ const SuspectEthnicityPage = () => {
               },
             }}
             errorMessage={
-              formDataErrors["suspectEthnicityRadio"]
+              ethnicityFormDataErrors["suspectEthnicityRadio"]
                 ? {
                     children:
-                      formDataErrors["suspectEthnicityRadio"].inputErrorText,
+                      ethnicityFormDataErrors["suspectEthnicityRadio"]
+                        .inputErrorText,
                   }
                 : undefined
             }
             items={ethnicityItems}
-            value={formData.suspectEthnicityRadio.shortCode || ""}
+            value={ethnicityFormData.suspectEthnicityRadio.shortCode || ""}
             onChange={(value) => {
               if (value) setFormValue(value);
             }}
           ></Radios>
         </div>
-        <SaveAndCancel onSave={handleSubmit} />
+        <SaveAndCancel onSave={handleSubmit} disabled={disableBtns} />
       </form>
     </div>
   );

@@ -1,21 +1,15 @@
-import {
-  useRef,
-  useEffect,
-  useState,
-  useContext,
-  useCallback,
-  useMemo,
-} from "react";
+import { useState, useContext, useCallback, useMemo } from "react";
 import { Radios, ErrorSummary, BackLink } from "../../govuk";
 import SaveAndCancel from "../../common/SaveAndCancel";
 import { CaseRegistrationFormContext } from "../../../common/providers/CaseRegistrationProvider";
 import { useNavigate } from "react-router-dom";
 import useChargesCount from "../../../common/hooks/useChargesCount";
 import ChargesSummary from "./ChargesSummary";
+import useErrorSummaryList from "../../../common/hooks/useErrorSummaryList";
 import styles from "../index.module.scss";
 import pageStyles from "./index.module.scss";
 
-const SuspectSummaryPage = () => {
+const ChargesSummaryPage = () => {
   type ErrorText = {
     errorSummaryText: string;
     inputErrorText?: string;
@@ -23,7 +17,7 @@ const SuspectSummaryPage = () => {
   type FormDataErrors = {
     addMoreChargesRadio?: ErrorText;
   };
-  const errorSummaryRef = useRef<HTMLInputElement>(null);
+
   const { state, dispatch } = useContext(CaseRegistrationFormContext);
   const navigate = useNavigate();
   const { chargesCount } = useChargesCount(state.formData.suspects);
@@ -45,6 +39,8 @@ const SuspectSummaryPage = () => {
     },
     [formDataErrors],
   );
+  const { errorSummaryRef, errorList, disableBtns, setDisableBtns } =
+    useErrorSummaryList(formDataErrors, errorSummaryProperties);
 
   const validateFormData = () => {
     const errors: FormDataErrors = {};
@@ -67,18 +63,6 @@ const SuspectSummaryPage = () => {
     return isValid;
   };
 
-  const errorList = useMemo(() => {
-    const validErrorKeys = Object.keys(formDataErrors).filter(
-      (errorKey) => formDataErrors[errorKey as keyof FormDataErrors],
-    );
-
-    const errorSummary = validErrorKeys.map((errorKey, index) => ({
-      reactListKey: `${index}`,
-      ...errorSummaryProperties(errorKey as keyof FormDataErrors)!,
-    }));
-
-    return errorSummary;
-  }, [formDataErrors, errorSummaryProperties]);
   const previousRoute = useMemo(() => {
     if (state.formData.navigation.changeCaseCharges) {
       return "/case-registration/case-summary";
@@ -86,10 +70,6 @@ const SuspectSummaryPage = () => {
 
     return "/case-registration/suspect-summary";
   }, [state.formData.navigation.changeCaseCharges]);
-
-  useEffect(() => {
-    if (errorList.length) errorSummaryRef.current?.focus();
-  }, [errorList]);
 
   const getTitle = useCallback(() => {
     if (chargesCount > 1) {
@@ -102,6 +82,7 @@ const SuspectSummaryPage = () => {
     event.preventDefault();
 
     if (!validateFormData()) return;
+    setDisableBtns(true);
 
     if (addMoreChargesRadio === "yes") {
       dispatch({
@@ -184,8 +165,8 @@ const SuspectSummaryPage = () => {
                 children: (
                   <span className="govuk-!-font-weight-bold">
                     {chargesCount
-                      ? `Do you need to add another charge?`
-                      : `Do you need to add a charge?`}
+                      ? `Do you need to add another charge for any suspect?`
+                      : `Do you need to add a charge for any suspect?`}
                   </span>
                 ),
               },
@@ -218,10 +199,10 @@ const SuspectSummaryPage = () => {
             }}
           ></Radios>
         </div>
-        <SaveAndCancel onSave={handleSubmit} />
+        <SaveAndCancel onSave={handleSubmit} disabled={disableBtns} />
       </form>
     </div>
   );
 };
 
-export default SuspectSummaryPage;
+export default ChargesSummaryPage;
