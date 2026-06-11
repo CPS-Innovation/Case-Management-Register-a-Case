@@ -126,7 +126,7 @@ const CaseAreasPage = () => {
     }
 
     if (!validateFormData(areas, inputValue)) return;
-    setDisableBtns(false);
+    setDisableBtns(true);
 
     if (
       state.formData.navigation.changeCaseArea &&
