@@ -75,7 +75,7 @@ export async function completeMonitoringAndAssignee(page: Page): Promise<void> {
   const monitoringPage = new CaseMonitoringPage(page);
   await expectStep(page, "/case-registration/case-monitoring-codes");
   await monitoringPage.verifyPreChargeCheckboxChecked();
-
+ 
   const prosecutorsResponse = page.waitForResponse(
     (r) => /\/api\/v1\/prosecutors\//.test(r.url()) && r.ok(),
     { timeout: 30_000 },
@@ -85,12 +85,12 @@ export async function completeMonitoringAndAssignee(page: Page): Promise<void> {
     { timeout: 30_000 },
   );
   await monitoringPage.saveAndContinue();
-
+ 
   const assigneePage = new CaseAssigneePage(page);
   await expectStep(page, "/case-registration/case-assignee");
   await assigneePage.addProsecutorYes();
   await assigneePage.addInvestigatorYes();
-
+ 
   const prosecutors = (await (await prosecutorsResponse).json()) as {
     description: string;
   }[];
@@ -107,7 +107,7 @@ export async function completeMonitoringAndAssignee(page: Page): Promise<void> {
     caseworkerName,
     "no caseworkers returned for the registering unit",
   ).toBeTruthy();
-
+ 
   await assigneePage.enterProsecutorName(prosecutorName);
   await assigneePage.enterCaseworkerName(caseworkerName);
   await assigneePage.addInvestigatorFirstName(INVESTIGATOR_FIRST_NAME);
@@ -116,7 +116,7 @@ export async function completeMonitoringAndAssignee(page: Page): Promise<void> {
     INVESTIGATOR_SHOULDER_NUMBER,
   );
   await assigneePage.saveAndContinue();
-
+ 
   await expectStep(page, "/case-registration/case-summary");
 }
 
@@ -141,21 +141,21 @@ export async function submitCaseFromSummary(
   urn: UrnParts,
 ): Promise<void> {
   const summaryPage = new CaseRegistrationSummaryPage(page);
-
+ 
   const registerCaseResponsePromise = page.waitForResponse(
     (response) =>
       response.url().endsWith("/api/v1/cases") &&
       response.request().method() === "POST",
   );
-
+ 
   await summaryPage.clickCreateCaseButton();
-
+ 
   const registerCaseResponse = await registerCaseResponsePromise;
   expect(
     registerCaseResponse.ok(),
     `POST /api/v1/cases returned ${registerCaseResponse.status()}`,
   ).toBe(true);
-
+ 
   await expectStep(page, "/case-registration/case-registration-confirmation");
   await expect(
     page.getByRole("heading", { name: "Case registered successfully" }),
@@ -168,78 +168,7 @@ export async function completeAssigneeAndSubmit(
   urn: UrnParts,
   operationName?: string,
 ): Promise<void> {
-  const monitoringPage = new CaseMonitoringPage(page);
-  await expectStep(page, "/case-registration/case-monitoring-codes");
-  await monitoringPage.verifyPreChargeCheckboxChecked();
-
-  const prosecutorsResponse = page.waitForResponse(
-    (r) => /\/api\/v1\/prosecutors\//.test(r.url()) && r.ok(),
-    { timeout: 30_000 },
-  );
-  const caseworkersResponse = page.waitForResponse(
-    (r) => /\/api\/v1\/caseworkers\//.test(r.url()) && r.ok(),
-    { timeout: 30_000 },
-  );
-  await monitoringPage.saveAndContinue();
-
-  const assigneePage = new CaseAssigneePage(page);
-  await expectStep(page, "/case-registration/case-assignee");
-  await assigneePage.addProsecutorYes();
-  await assigneePage.addInvestigatorYes();
-
-  const prosecutors = (await (await prosecutorsResponse).json()) as {
-    description: string;
-  }[];
-  const caseworkers = (await (await caseworkersResponse).json()) as {
-    description: string;
-  }[];
-  const prosecutorName = PROSECUTOR ?? prosecutors[0]?.description;
-  const caseworkerName = CASEWORKER ?? caseworkers[0]?.description;
-  expect(
-    prosecutorName,
-    "no prosecutors returned for the registering unit",
-  ).toBeTruthy();
-  expect(
-    caseworkerName,
-    "no caseworkers returned for the registering unit",
-  ).toBeTruthy();
-
-  await assigneePage.enterProsecutorName(prosecutorName);
-  await assigneePage.enterCaseworkerName(caseworkerName);
-  await assigneePage.addInvestigatorFirstName(INVESTIGATOR_FIRST_NAME);
-  await assigneePage.addInvestigatorLastName(INVESTIGATOR_LAST_NAME);
-  await assigneePage.addInvestigatorShoulderNumber(
-    INVESTIGATOR_SHOULDER_NUMBER,
-  );
-  await assigneePage.saveAndContinue();
-
-  const summaryPage = new CaseRegistrationSummaryPage(page);
-  await expectStep(page, "/case-registration/case-summary");
-  await summaryPage.verifyCaseDetailsElements({
-    area: AREA,
-    urn: urn.formatted,
-    registeringUnit: REGISTERING_UNIT,
-    wcu: WITNESS_CARE_UNIT,
-    operationName: operationName ?? "Not entered",
-  });
-
-  const registerCaseResponsePromise = page.waitForResponse(
-    (response) =>
-      response.url().endsWith("/api/v1/cases") &&
-      response.request().method() === "POST",
-  );
-
-  await summaryPage.clickCreateCaseButton();
-
-  const registerCaseResponse = await registerCaseResponsePromise;
-  expect(
-    registerCaseResponse.ok(),
-    `POST /api/v1/cases returned ${registerCaseResponse.status()}`,
-  ).toBe(true);
-
-  await expectStep(page, "/case-registration/case-registration-confirmation");
-  await expect(
-    page.getByRole("heading", { name: "Case registered successfully" }),
-  ).toBeVisible();
-  await expect(page.getByText(urn.formatted, { exact: false })).toBeVisible();
+  await completeMonitoringAndAssignee(page);
+  await verifyCaseSummary(page, urn, operationName);
+  await submitCaseFromSummary(page, urn);
 }
