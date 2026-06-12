@@ -9,10 +9,10 @@ import { expectStep } from "../utils/expectStep";
 import { startRegistration } from "../utils/startRegistration";
 import type { UrnParts } from "../utils/generateUrn";
 
-const AREA = process.env.E2E_AREA ?? "CAMBRIDGESHIRE";
-const REGISTERING_UNIT =
+export const AREA = process.env.E2E_AREA ?? "CAMBRIDGESHIRE";
+export const REGISTERING_UNIT =
   process.env.E2E_REGISTERING_UNIT ?? "NORTHERN CJU (Peterborough)";
-const WITNESS_CARE_UNIT =
+export const WITNESS_CARE_UNIT =
   process.env.E2E_WITNESS_CARE_UNIT ?? "Cambridgeshire Non Operational WCU";
 
 const PROSECUTOR = process.env.E2E_PROSECUTOR;
@@ -34,7 +34,7 @@ export async function startAtHomePage(
   { operationName, hasSuspect }: HomePageOptions,
 ): Promise<void> {
   await startRegistration(page);
-  await expect(page).toHaveTitle(/Case Management Register a Case/);
+  await expect(page).toHaveTitle(/Home - Register A Case/);
 
   const homePage = new CaseRegistrationHomePage(page);
   await expectStep(page, "/case-registration");
@@ -71,38 +71,42 @@ export async function enterAreasAndCaseDetails(
   await detailsPage.saveAndContinue();
 }
 
-export async function completeAssigneeAndSubmit(
-  page: Page,
-  urn: UrnParts,
-  operationName?: string,
-): Promise<void> {
-  const monitoringPage = new CaseMonitoringPage(page);
-  await expectStep(page, "/case-registration/case-monitoring-codes");
-  await monitoringPage.verifyPreChargeCheckboxChecked();
-
-  const prosecutorsResponse = page.waitForResponse(
+export function watchAssigneeLookups(page: Page) {
+  const prosecutors = page.waitForResponse(
     (r) => /\/api\/v1\/prosecutors\//.test(r.url()) && r.ok(),
     { timeout: 30_000 },
   );
-  const caseworkersResponse = page.waitForResponse(
+  const caseworkers = page.waitForResponse(
     (r) => /\/api\/v1\/caseworkers\//.test(r.url()) && r.ok(),
     { timeout: 30_000 },
   );
-  await monitoringPage.saveAndContinue();
+  // If an intermediate step fails before fillAssignee awaits these, swallow the
+  // standalone 30s timeout rejection so it doesn't obscure the real failure.
+  prosecutors.catch(() => {});
+  caseworkers.catch(() => {});
+  return { prosecutors, caseworkers };
+}
 
+export async function fillAssignee(
+  page: Page,
+  lookups: ReturnType<typeof watchAssigneeLookups>,
+  { ignoreNameOverrides = false }: { ignoreNameOverrides?: boolean } = {},
+): Promise<void> {
   const assigneePage = new CaseAssigneePage(page);
   await expectStep(page, "/case-registration/case-assignee");
   await assigneePage.addProsecutorYes();
   await assigneePage.addInvestigatorYes();
 
-  const prosecutors = (await (await prosecutorsResponse).json()) as {
+  const prosecutors = (await (await lookups.prosecutors).json()) as {
     description: string;
   }[];
-  const caseworkers = (await (await caseworkersResponse).json()) as {
+  const caseworkers = (await (await lookups.caseworkers).json()) as {
     description: string;
   }[];
-  const prosecutorName = PROSECUTOR ?? prosecutors[0]?.description;
-  const caseworkerName = CASEWORKER ?? caseworkers[0]?.description;
+  const prosecutorOverride = ignoreNameOverrides ? undefined : PROSECUTOR;
+  const caseworkerOverride = ignoreNameOverrides ? undefined : CASEWORKER;
+  const prosecutorName = prosecutorOverride ?? prosecutors[0]?.description;
+  const caseworkerName = caseworkerOverride ?? caseworkers[0]?.description;
   expect(
     prosecutorName,
     "no prosecutors returned for the registering unit",
@@ -120,15 +124,45 @@ export async function completeAssigneeAndSubmit(
     INVESTIGATOR_SHOULDER_NUMBER,
   );
   await assigneePage.saveAndContinue();
+}
 
+export async function completeMonitoringAndAssignee(
+  page: Page,
+  { preChargeChecked = true }: { preChargeChecked?: boolean } = {},
+): Promise<void> {
+  const monitoringPage = new CaseMonitoringPage(page);
+  await expectStep(page, "/case-registration/case-monitoring-codes");
+  if (preChargeChecked) {
+    await monitoringPage.verifyPreChargeCheckboxChecked();
+  } else {
+    await monitoringPage.verifyPreChargeCheckboxNotChecked();
+  }
+
+  const lookups = watchAssigneeLookups(page);
+  await monitoringPage.saveAndContinue();
+  await fillAssignee(page, lookups);
+}
+
+export interface SummaryValues {
+  area: string;
+  registeringUnit: string;
+  wcu: string;
+  operationName?: string;
+}
+
+export async function verifySummaryAndSubmit(
+  page: Page,
+  urn: UrnParts,
+  values: SummaryValues,
+): Promise<void> {
   const summaryPage = new CaseRegistrationSummaryPage(page);
   await expectStep(page, "/case-registration/case-summary");
   await summaryPage.verifyCaseDetailsElements({
-    area: AREA,
+    area: values.area,
     urn: urn.formatted,
-    registeringUnit: REGISTERING_UNIT,
-    wcu: WITNESS_CARE_UNIT,
-    operationName: operationName ?? "Not entered",
+    registeringUnit: values.registeringUnit,
+    wcu: values.wcu,
+    operationName: values.operationName ?? "Not entered",
   });
 
   const registerCaseResponsePromise = page.waitForResponse(
@@ -150,4 +184,18 @@ export async function completeAssigneeAndSubmit(
     page.getByRole("heading", { name: "Case registered successfully" }),
   ).toBeVisible();
   await expect(page.getByText(urn.formatted, { exact: false })).toBeVisible();
+}
+
+export async function completeAssigneeAndSubmit(
+  page: Page,
+  urn: UrnParts,
+  operationName?: string,
+): Promise<void> {
+  await completeMonitoringAndAssignee(page);
+  await verifySummaryAndSubmit(page, urn, {
+    area: AREA,
+    registeringUnit: REGISTERING_UNIT,
+    wcu: WITNESS_CARE_UNIT,
+    operationName,
+  });
 }
