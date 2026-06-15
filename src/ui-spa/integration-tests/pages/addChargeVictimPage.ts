@@ -170,6 +170,9 @@ export class AddChargeVictimPage {
   async selectVictimByName(name: string) {
     await this.page.getByLabel(name).check();
   }
+  async selectFirstExistingVictim() {
+    await this.page.locator("#add-victim-radio-0").check();
+  }
   async unSelectVictimByName(name: string) {
     await this.page.getByLabel(name).uncheck();
   }

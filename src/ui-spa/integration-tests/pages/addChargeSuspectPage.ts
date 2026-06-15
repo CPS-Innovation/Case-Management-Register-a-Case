@@ -43,6 +43,9 @@ export class AddChargeSuspectPage {
   async selectSuspectByName(name: string) {
     await this.page.getByLabel(name).check();
   }
+  async selectSuspectByIndex(index: number) {
+    await this.page.locator(`#suspect-radio-${index}`).check();
+  }
   async unSelectSuspectByName(name: string) {
     await this.page.getByLabel(name).uncheck();
   }
