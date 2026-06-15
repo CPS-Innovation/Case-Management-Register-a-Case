@@ -8,13 +8,11 @@ import { CaseRegistrationSummaryPage } from "../../integration-tests/pages/caseR
 import { expectStep } from "../utils/expectStep";
 import { startRegistration } from "../utils/startRegistration";
 import type { UrnParts } from "../utils/generateUrn";
-
 export const AREA = process.env.E2E_AREA ?? "CAMBRIDGESHIRE";
 export const REGISTERING_UNIT =
   process.env.E2E_REGISTERING_UNIT ?? "NORTHERN CJU (Peterborough)";
 export const WITNESS_CARE_UNIT =
   process.env.E2E_WITNESS_CARE_UNIT ?? "Cambridgeshire Non Operational WCU";
-
 const PROSECUTOR = process.env.E2E_PROSECUTOR;
 const CASEWORKER = process.env.E2E_CASEWORKER;
 const INVESTIGATOR_FIRST_NAME =
@@ -23,19 +21,16 @@ const INVESTIGATOR_LAST_NAME =
   process.env.E2E_INVESTIGATOR_LAST_NAME ?? "InvestigatorL";
 const INVESTIGATOR_SHOULDER_NUMBER =
   process.env.E2E_INVESTIGATOR_SHOULDER_NUMBER ?? "12345";
-
 export interface HomePageOptions {
   operationName?: string;
   hasSuspect: boolean;
 }
-
 export async function startAtHomePage(
   page: Page,
   { operationName, hasSuspect }: HomePageOptions,
 ): Promise<void> {
   await startRegistration(page);
   await expect(page).toHaveTitle(/Home - Register A Case/);
-
   const homePage = new CaseRegistrationHomePage(page);
   await expectStep(page, "/case-registration");
   if (operationName) {
@@ -50,7 +45,6 @@ export async function startAtHomePage(
   }
   await homePage.saveAndContinue();
 }
-
 export async function enterAreasAndCaseDetails(
   page: Page,
   urn: UrnParts,
@@ -59,7 +53,6 @@ export async function enterAreasAndCaseDetails(
   await expectStep(page, "/case-registration/areas");
   await areasPage.enterAreaOrDivision(AREA);
   await areasPage.saveAndContinue();
-
   const detailsPage = new CaseDetailsPage(page);
   await expectStep(page, "/case-registration/case-details");
   await detailsPage.enterUrnPoliceForce(urn.policeForce);
@@ -70,7 +63,6 @@ export async function enterAreasAndCaseDetails(
   await detailsPage.enterWitnessCareUnit(WITNESS_CARE_UNIT);
   await detailsPage.saveAndContinue();
 }
-
 export function watchAssigneeLookups(page: Page) {
   const prosecutors = page.waitForResponse(
     (r) => /\/api\/v1\/prosecutors\//.test(r.url()) && r.ok(),
@@ -86,7 +78,6 @@ export function watchAssigneeLookups(page: Page) {
   caseworkers.catch(() => {});
   return { prosecutors, caseworkers };
 }
-
 export async function fillAssignee(
   page: Page,
   lookups: ReturnType<typeof watchAssigneeLookups>,
@@ -96,7 +87,6 @@ export async function fillAssignee(
   await expectStep(page, "/case-registration/case-assignee");
   await assigneePage.addProsecutorYes();
   await assigneePage.addInvestigatorYes();
-
   const prosecutors = (await (await lookups.prosecutors).json()) as {
     description: string;
   }[];
@@ -115,7 +105,6 @@ export async function fillAssignee(
     caseworkerName,
     "no caseworkers returned for the registering unit",
   ).toBeTruthy();
-
   await assigneePage.enterProsecutorName(prosecutorName);
   await assigneePage.enterCaseworkerName(caseworkerName);
   await assigneePage.addInvestigatorFirstName(INVESTIGATOR_FIRST_NAME);
@@ -125,7 +114,6 @@ export async function fillAssignee(
   );
   await assigneePage.saveAndContinue();
 }
-
 export async function completeMonitoringAndAssignee(
   page: Page,
   { preChargeChecked = true }: { preChargeChecked?: boolean } = {},
@@ -137,19 +125,16 @@ export async function completeMonitoringAndAssignee(
   } else {
     await monitoringPage.verifyPreChargeCheckboxNotChecked();
   }
-
   const lookups = watchAssigneeLookups(page);
   await monitoringPage.saveAndContinue();
   await fillAssignee(page, lookups);
 }
-
 export interface SummaryValues {
   area: string;
   registeringUnit: string;
   wcu: string;
   operationName?: string;
 }
-
 export async function verifySummaryAndSubmit(
   page: Page,
   urn: UrnParts,
@@ -164,28 +149,8 @@ export async function verifySummaryAndSubmit(
     wcu: values.wcu,
     operationName: values.operationName ?? "Not entered",
   });
-
-  const registerCaseResponsePromise = page.waitForResponse(
-    (response) =>
-      response.url().endsWith("/api/v1/cases") &&
-      response.request().method() === "POST",
-  );
-
-  await summaryPage.clickCreateCaseButton();
-
-  const registerCaseResponse = await registerCaseResponsePromise;
-  expect(
-    registerCaseResponse.ok(),
-    `POST /api/v1/cases returned ${registerCaseResponse.status()}`,
-  ).toBe(true);
-
-  await expectStep(page, "/case-registration/case-registration-confirmation");
-  await expect(
-    page.getByRole("heading", { name: "Case registered successfully" }),
-  ).toBeVisible();
-  await expect(page.getByText(urn.formatted, { exact: false })).toBeVisible();
+  await submitCaseFromSummary(page, urn);
 }
-
 export async function verifyCaseSummary(
   page: Page,
   urn: UrnParts,
@@ -201,34 +166,28 @@ export async function verifyCaseSummary(
     operationName: operationName ?? "Not entered",
   });
 }
-
 export async function submitCaseFromSummary(
   page: Page,
   urn: UrnParts,
 ): Promise<void> {
   const summaryPage = new CaseRegistrationSummaryPage(page);
-
   const registerCaseResponsePromise = page.waitForResponse(
     (response) =>
       response.url().endsWith("/api/v1/cases") &&
       response.request().method() === "POST",
   );
-
   await summaryPage.clickCreateCaseButton();
-
   const registerCaseResponse = await registerCaseResponsePromise;
   expect(
     registerCaseResponse.ok(),
     `POST /api/v1/cases returned ${registerCaseResponse.status()}`,
   ).toBe(true);
-
   await expectStep(page, "/case-registration/case-registration-confirmation");
   await expect(
     page.getByRole("heading", { name: "Case registered successfully" }),
   ).toBeVisible();
   await expect(page.getByText(urn.formatted, { exact: false })).toBeVisible();
 }
-
 export async function completeAssigneeAndSubmitDuplicateUrn(
   page: Page,
   urn: UrnParts,
@@ -238,7 +197,6 @@ export async function completeAssigneeAndSubmitDuplicateUrn(
   await verifyCaseSummary(page, urn, operationName);
   await submitCaseFromSummary(page, urn);
 }
-
 export async function completeAssigneeAndSubmit(
   page: Page,
   urn: UrnParts,
