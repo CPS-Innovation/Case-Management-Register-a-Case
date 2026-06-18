@@ -98,7 +98,7 @@ export async function completeLongPathMultiSuspectCharge(
     offenceCode: OFFENCE_CODE_2,
     dates,
     chargedWithAdult: true,
-    victim: { mode: "reuse" },
+    victim: { mode: "reuse", expectVictim: victim0 },
     hasExistingVictims: true,
   });
   await expectStep(page, "/case-registration/charges-summary");

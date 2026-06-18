@@ -16,6 +16,7 @@ import { AddChargeVictimPage } from "../../integration-tests/pages/addChargeVict
 import { FirstHearingDetailsPage } from "../../integration-tests/pages/firstHearingDetailsPage";
 import { SuspectSummaryPage } from "../../integration-tests/pages/suspectSummaryPage";
 import { WantToAddChargesPage } from "../../integration-tests/pages/wantToAddChargesPage";
+import { formatNameUtil } from "../../src/common/utils/formatNameUtil";
 import { expectStep } from "../utils/expectStep";
 import { type UrnParts } from "../utils/generateUrn";
 import { startAtHomePage, enterAreasAndCaseDetails } from "./steps";
@@ -154,7 +155,9 @@ export interface AddChargeOptions {
   offenceCode: string;
   dates: { from: Date; to: Date };
   chargedWithAdult: boolean;
-  victim: { mode: "new"; name: PersonName } | { mode: "reuse" };
+  victim:
+    | { mode: "new"; name: PersonName }
+    | { mode: "reuse"; expectVictim: PersonName };
   hasExistingVictims: boolean;
 }
 
@@ -188,6 +191,12 @@ export async function addCharge(
   const addChargeVictimPage = new AddChargeVictimPage(page);
   await expectStep(page, `${base}/add-charge-victim`);
   if (opts.victim.mode === "reuse") {
+    await addChargeVictimPage.verifyFirstExistingVictim(
+      formatNameUtil(
+        opts.victim.expectVictim.first,
+        opts.victim.expectVictim.last,
+      ),
+    );
     await addChargeVictimPage.selectFirstExistingVictim();
   } else {
     if (opts.hasExistingVictims) {

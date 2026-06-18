@@ -179,6 +179,17 @@ export async function verifySummaryAndSubmit(
     `POST /api/v1/cases returned ${registerCaseResponse.status()}`,
   ).toBe(true);
 
+  // Assert on the payload, not just the status. The response body carries the
+  // created case id (not the URN), so assert it is a real, positive identifier
+  // confirming the backend actually persisted the case.
+  const body = (await registerCaseResponse.json()) as { caseId?: unknown };
+  expect(
+    typeof body.caseId === "number" &&
+      Number.isInteger(body.caseId) &&
+      body.caseId > 0,
+    `POST /api/v1/cases returned an unexpected body: ${JSON.stringify(body)}`,
+  ).toBe(true);
+
   await expectStep(page, "/case-registration/case-registration-confirmation");
   await expect(
     page.getByRole("heading", { name: "Case registered successfully" }),
