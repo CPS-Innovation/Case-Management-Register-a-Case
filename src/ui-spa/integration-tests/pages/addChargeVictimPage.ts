@@ -170,6 +170,16 @@ export class AddChargeVictimPage {
   async selectVictimByName(name: string) {
     await this.page.getByLabel(name).check();
   }
+  async selectFirstExistingVictim() {
+    await this.page.locator("#add-victim-radio-0").check();
+  }
+  async verifyFirstExistingVictim(expectedLabel: string) {
+    // Assert the first existing-victim radio really is the victim we expect to
+    // reuse, so the "reuse" path is tied to identity and not just to ordering.
+    const reusedVictim = this.page.getByLabel(expectedLabel);
+    await expect(reusedVictim).toBeVisible();
+    await expect(reusedVictim).toHaveAttribute("id", "add-victim-radio-0");
+  }
   async unSelectVictimByName(name: string) {
     await this.page.getByLabel(name).uncheck();
   }
