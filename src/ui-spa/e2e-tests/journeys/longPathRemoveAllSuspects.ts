@@ -1,6 +1,4 @@
 import { type Page } from "@playwright/test";
-import { SuspectSummaryPage } from "../../integration-tests/pages/suspectSummaryPage";
-import { WantToAddChargesPage } from "../../integration-tests/pages/wantToAddChargesPage";
 import { CaseRegistrationSummaryPage } from "../../integration-tests/pages/caseRegistrationSummaryPage";
 import { CaseRegistrationHomePage } from "../../integration-tests/pages/caseRegistrationHomePage";
 import { RemoveAllSuspectsConfirmationPage } from "../../integration-tests/pages/removeAllSuspectsConfirmationPage";
@@ -10,15 +8,12 @@ import {
   AREA,
   REGISTERING_UNIT,
   WITNESS_CARE_UNIT,
-  startAtHomePage,
-  enterAreasAndCaseDetails,
   completeMonitoringAndAssignee,
   verifySummaryAndSubmit,
 } from "./steps";
 import {
-  addPersonSuspectWithAllDetails,
   chargeDates,
-  personName,
+  startSingleSuspectUpToCharges,
 } from "./suspectChargeSteps";
 
 export interface LongPathRemoveAllSuspectsOptions {
@@ -34,25 +29,14 @@ export async function completeLongPathRemoveAllSuspects(
   const urn = generateUniqueUrn();
   const { arrestDate } = chargeDates();
 
-  // Enter suspect details Yes and add one suspect via the long path.
-  await startAtHomePage(page, { operationName, hasSuspect: true });
-  await enterAreasAndCaseDetails(page, urn);
-
-  await addPersonSuspectWithAllDetails(page, 0, {
-    name: personName(),
-    alias: personName(),
+  // Enter suspect details Yes and add one suspect via the long path, answering
+  // No to charges.
+  await startSingleSuspectUpToCharges(page, {
+    operationName,
+    urn,
     arrestDate,
+    addCharges: false,
   });
-
-  const suspectSummaryPage = new SuspectSummaryPage(page);
-  await expectStep(page, "/case-registration/suspect-summary");
-  await suspectSummaryPage.selectAddMoreSuspectNo();
-  await suspectSummaryPage.saveAndContinue();
-
-  const wantToAddChargesPage = new WantToAddChargesPage(page);
-  await expectStep(page, "/case-registration/want-to-add-charges");
-  await wantToAddChargesPage.selectAddChargesNo();
-  await wantToAddChargesPage.saveAndContinue();
 
   await completeMonitoringAndAssignee(page);
 

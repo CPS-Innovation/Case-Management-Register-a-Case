@@ -8,7 +8,7 @@ export const expectStep = async (
   pathname: string,
 ): Promise<void> => {
   await expect(page).toHaveURL(
-    new RegExp(`^https?://[^/]+${escapeRegExp(pathname)}/?(\\?.*)?$`),
+    new RegExp(String.raw`^https?://[^/]+${escapeRegExp(pathname)}/?(\?.*)?$`),
   );
 };
 
@@ -17,6 +17,6 @@ export const expectNotStep = async (
   pathname: string,
 ): Promise<void> => {
   await expect(page, `expected flow to skip ${pathname}`).not.toHaveURL(
-    new RegExp(`^https?://[^/]+${escapeRegExp(pathname)}/?(\\?.*)?$`),
+    new RegExp(String.raw`^https?://[^/]+${escapeRegExp(pathname)}/?(\?.*)?$`),
   );
 };

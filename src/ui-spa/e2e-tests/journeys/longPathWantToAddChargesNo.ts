@@ -1,17 +1,10 @@
 import { type Page } from "@playwright/test";
-import { SuspectSummaryPage } from "../../integration-tests/pages/suspectSummaryPage";
-import { WantToAddChargesPage } from "../../integration-tests/pages/wantToAddChargesPage";
 import { generateUniqueUrn } from "../utils/generateUrn";
 import { expectStep, expectNotStep } from "../utils/expectStep";
+import { completeAssigneeAndSubmit } from "./steps";
 import {
-  startAtHomePage,
-  enterAreasAndCaseDetails,
-  completeAssigneeAndSubmit,
-} from "./steps";
-import {
-  addPersonSuspectWithAllDetails,
   chargeDates,
-  personName,
+  startSingleSuspectUpToCharges,
 } from "./suspectChargeSteps";
 
 export interface LongPathWantToAddChargesNoOptions {
@@ -36,24 +29,12 @@ export async function completeLongPathWantToAddChargesNo(
   const urn = generateUniqueUrn();
   const { arrestDate } = chargeDates();
 
-  await startAtHomePage(page, { operationName, hasSuspect: true });
-  await enterAreasAndCaseDetails(page, urn);
-
-  await addPersonSuspectWithAllDetails(page, 0, {
-    name: personName(),
-    alias: personName(),
+  await startSingleSuspectUpToCharges(page, {
+    operationName,
+    urn,
     arrestDate,
+    addCharges: false,
   });
-
-  const suspectSummaryPage = new SuspectSummaryPage(page);
-  await expectStep(page, "/case-registration/suspect-summary");
-  await suspectSummaryPage.selectAddMoreSuspectNo();
-  await suspectSummaryPage.saveAndContinue();
-
-  const wantToAddChargesPage = new WantToAddChargesPage(page);
-  await expectStep(page, "/case-registration/want-to-add-charges");
-  await wantToAddChargesPage.selectAddChargesNo();
-  await wantToAddChargesPage.saveAndContinue();
 
   // The "No" branch lands directly on case monitoring codes, skipping the
   // entire charge sub-flow and the first hearing.
