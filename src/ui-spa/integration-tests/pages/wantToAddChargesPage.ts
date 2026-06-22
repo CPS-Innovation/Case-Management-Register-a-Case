@@ -40,10 +40,17 @@ export class WantToAddChargesPage {
     ).toBeFocused();
   }
   async selectAddChargesYes() {
-    await this.page.getByLabel(/^Yes$/).check();
+    await this.selectRadioReliably(/^Yes$/);
   }
   async selectAddChargesNo() {
-    await this.page.getByLabel(/^No$/).check();
+    await this.selectRadioReliably(/^No$/);
+  }
+  private async selectRadioReliably(label: RegExp) {
+    const radio = this.page.getByLabel(label);
+    await expect(async () => {
+      await radio.check();
+      await expect(radio).toBeChecked({ timeout: 1_000 });
+    }).toPass({ timeout: 10_000 });
   }
   async verifyBackLink(url: string) {
     await expect(this.page.getByRole("link", { name: "Back" })).toBeVisible();
