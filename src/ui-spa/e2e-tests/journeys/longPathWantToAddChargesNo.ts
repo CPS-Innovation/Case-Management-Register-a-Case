@@ -1,6 +1,6 @@
-import { type Page } from "@playwright/test";
+import { expect, type Page } from "@playwright/test";
 import { generateUniqueUrn } from "../utils/generateUrn";
-import { expectStep, expectNotStep } from "../utils/expectStep";
+import { expectStep } from "../utils/expectStep";
 import { completeAssigneeAndSubmit } from "./steps";
 import {
   chargeDates,
@@ -29,6 +29,17 @@ export async function completeLongPathWantToAddChargesNo(
   const urn = generateUniqueUrn();
   const { arrestDate } = chargeDates();
 
+  // Record every page we actually land on so we can prove the charge sub-flow
+  // was never entered. Checking the current URL can't show this: by the time we
+  // reach case monitoring codes the charge pages are trivially "not current"
+  // regardless of whether the flow passed through them.
+  const visited: string[] = [];
+  page.on("framenavigated", (frame) => {
+    if (frame === page.mainFrame()) {
+      visited.push(new URL(frame.url()).pathname);
+    }
+  });
+
   await startSingleSuspectUpToCharges(page, {
     operationName,
     urn,
@@ -40,7 +51,10 @@ export async function completeLongPathWantToAddChargesNo(
   // entire charge sub-flow and the first hearing.
   await expectStep(page, "/case-registration/case-monitoring-codes");
   for (const skipped of SKIPPED_STEPS) {
-    await expectNotStep(page, skipped);
+    expect(
+      visited,
+      `flow should not have navigated to ${skipped}`,
+    ).not.toContain(skipped);
   }
 
   await completeAssigneeAndSubmit(page, urn, operationName);

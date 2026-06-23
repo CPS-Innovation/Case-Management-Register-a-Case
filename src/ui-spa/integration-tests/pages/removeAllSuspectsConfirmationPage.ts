@@ -7,12 +7,6 @@ export class RemoveAllSuspectsConfirmationPage {
     this.page = page;
   }
 
-  async verifyUrl() {
-    await expect(this.page).toHaveURL(
-      "http://localhost:5173/case-registration/remove-all-suspects-confirmation",
-    );
-  }
-
   async verifyPageElements() {
     await expect(this.page.locator("h1")).toHaveText(
       "Are you sure you want to delete the suspect details?",
@@ -27,9 +21,5 @@ export class RemoveAllSuspectsConfirmationPage {
     await this.page
       .getByRole("button", { name: "Delete suspect details" })
       .click();
-  }
-
-  async cancel() {
-    await this.page.getByRole("link", { name: "Cancel" }).click();
   }
 }
