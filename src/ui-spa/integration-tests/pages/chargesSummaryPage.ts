@@ -137,7 +137,7 @@ export class ChargesSummaryPage {
       this.page.getByTestId("suspect-aliases-summary-list"),
     ).toHaveCount(0);
     await expect(this.page.locator("h1")).toHaveText(
-      "You have added 0 charges",
+      "You have added 0 charge",
     );
     await expect(this.page.locator("legend").nth(0)).toHaveText(
       "Do you need to add a charge for any suspect?",
