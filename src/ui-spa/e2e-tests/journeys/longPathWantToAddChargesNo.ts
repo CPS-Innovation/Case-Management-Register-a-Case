@@ -32,11 +32,12 @@ export async function completeLongPathWantToAddChargesNo(
   // Record every page we actually land on so we can prove the charge sub-flow
   // was never entered. Checking the current URL can't show this: by the time we
   // reach case monitoring codes the charge pages are trivially "not current"
-  // regardless of whether the flow passed through them.
+  // regardless of whether the flow passed through them. Strip any trailing slash
+  // so a route emitted as ".../charges-summary/" still matches SKIPPED_STEPS.
   const visited: string[] = [];
   page.on("framenavigated", (frame) => {
     if (frame === page.mainFrame()) {
-      visited.push(new URL(frame.url()).pathname);
+      visited.push(new URL(frame.url()).pathname.replace(/\/$/, ""));
     }
   });
 
