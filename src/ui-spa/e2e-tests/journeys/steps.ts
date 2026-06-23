@@ -210,3 +210,42 @@ export async function completeAssigneeAndSubmit(
     operationName,
   });
 }
+
+export async function verifyCaseSummary(
+  page: Page,
+  urn: UrnParts,
+  operationName?: string,
+): Promise<void> {
+  const summaryPage = new CaseRegistrationSummaryPage(page);
+  await expectStep(page, "/case-registration/case-summary");
+  await summaryPage.verifyCaseDetailsElements({
+    area: AREA,
+    urn: urn.formatted,
+    registeringUnit: REGISTERING_UNIT,
+    wcu: WITNESS_CARE_UNIT,
+    operationName: operationName ?? "Not entered",
+  });
+}
+
+export async function submitCaseFromSummary(
+  page: Page,
+  urn: UrnParts,
+): Promise<void> {
+  const summaryPage = new CaseRegistrationSummaryPage(page);
+  const registerCaseResponsePromise = page.waitForResponse(
+    (response) =>
+      response.url().endsWith("/api/v1/cases") &&
+      response.request().method() === "POST",
+  );
+  await summaryPage.clickCreateCaseButton();
+  const registerCaseResponse = await registerCaseResponsePromise;
+  expect(
+    registerCaseResponse.ok(),
+    `POST /api/v1/cases returned ${registerCaseResponse.status()}`,
+  ).toBe(true);
+  await expectStep(page, "/case-registration/case-registration-confirmation");
+  await expect(
+    page.getByRole("heading", { name: "Case registered successfully" }),
+  ).toBeVisible();
+  await expect(page.getByText(urn.formatted, { exact: false })).toBeVisible();
+}
