@@ -50,7 +50,12 @@ export function chargeDates(): {
 
 export async function startSingleSuspectUpToCharges(
   page: Page,
-  opts: { operationName: string; urn: UrnParts; arrestDate: Date },
+  opts: {
+    operationName?: string;
+    urn: UrnParts;
+    arrestDate: Date;
+    addCharges?: boolean;
+  },
 ): Promise<void> {
   await startAtHomePage(page, {
     operationName: opts.operationName,
@@ -71,7 +76,11 @@ export async function startSingleSuspectUpToCharges(
 
   const wantToAddChargesPage = new WantToAddChargesPage(page);
   await expectStep(page, "/case-registration/want-to-add-charges");
-  await wantToAddChargesPage.selectAddChargesYes();
+  if (opts.addCharges ?? true) {
+    await wantToAddChargesPage.selectAddChargesYes();
+  } else {
+    await wantToAddChargesPage.selectAddChargesNo();
+  }
   await wantToAddChargesPage.saveAndContinue();
 }
 

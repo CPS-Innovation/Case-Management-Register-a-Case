@@ -8,6 +8,6 @@ export const expectStep = async (
   pathname: string,
 ): Promise<void> => {
   await expect(page).toHaveURL(
-    new RegExp(`^https?://[^/]+${escapeRegExp(pathname)}/?(\\?.*)?$`),
+    new RegExp(String.raw`^https?://[^/]+${escapeRegExp(pathname)}/?(\?.*)?$`),
   );
 };
