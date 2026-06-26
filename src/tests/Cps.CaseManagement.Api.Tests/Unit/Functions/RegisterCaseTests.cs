@@ -74,7 +74,7 @@ public class RegisterCaseTest
     }
 
     [Fact]
-    public async Task Run_MdsException_ReturnsBadRequest()
+    public async Task Run_MdsException_PropagatesToMiddleware()
     {
         // Arrange
         var caseDetails = CreateValidCaseRegistrationRequest();
@@ -95,10 +95,9 @@ public class RegisterCaseTest
         var httpRequest = CreateHttpRequestFromJson(caseDetails, correlationId);
 
         // Act
-        var result = await _function.Run(httpRequest, functionContext);
+        var exception = await Assert.ThrowsAsync<Exception>(() => _function.Run(httpRequest, functionContext));
 
-        // Assert
-        Assert.IsType<BadRequestObjectResult>(result);
+        Assert.Equal("Error", exception.Message);
         _mdsServiceMock.Verify(c => c.RegisterCaseAsync(It.IsAny<MdsRegisterCaseArg>()), Times.Once);
         _requestValidatorMock.Verify(v => v.GetJsonBody<CaseRegistrationRequest, CaseRegistrationRequestValidator>(It.IsAny<HttpRequest>()), Times.Once);
     }
