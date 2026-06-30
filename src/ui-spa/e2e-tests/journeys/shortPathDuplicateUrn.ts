@@ -1,15 +1,16 @@
 import { expect, type Page } from "@playwright/test";
-import { CaseRegistrationSummaryPage } from "../../integration-tests/pages/caseRegistrationSummaryPage";
 import { CaseDetailsPage } from "../../integration-tests/pages/caseDetailsPage";
 import { generateUniqueUrn } from "../utils/generateUrn";
 import { expectStep } from "../utils/expectStep";
 import {
+  AREA,
+  REGISTERING_UNIT,
+  WITNESS_CARE_UNIT,
   startAtHomePage,
   enterAreasAndCaseDetails,
   completeAssigneeAndSubmit,
   completeMonitoringAndAssignee,
-  verifyCaseSummary,
-  submitCaseFromSummary,
+  verifySummaryAndSubmit,
 } from "./steps";
 
 export interface ShortPathDuplicateUrnOptions {
@@ -21,31 +22,30 @@ export async function completeShortPathDuplicateUrn(
   { operationName }: ShortPathDuplicateUrnOptions = {},
 ): Promise<void> {
   const existingUrn = generateUniqueUrn();
+  const freeUrn = generateUniqueUrn();
+
   await startAtHomePage(page, { operationName, hasSuspect: false });
   await enterAreasAndCaseDetails(page, existingUrn);
   await completeAssigneeAndSubmit(page, existingUrn, operationName);
 
   await startAtHomePage(page, { operationName, hasSuspect: false });
   await enterAreasAndCaseDetails(page, existingUrn);
-  await completeMonitoringAndAssignee(page);
 
-  const summaryPage = new CaseRegistrationSummaryPage(page);
-  await summaryPage.clickCreateCaseButton();
-
-  const errorSummary = page.getByTestId("case-summary-error-summary");
-  await expect(errorSummary).toBeVisible();
-  await expect(errorSummary).toContainText(
-    "Failed to register a case, please try again",
-  );
-  await expectStep(page, "/case-registration/case-summary");
-
-  const freeUrn = generateUniqueUrn();
-  await summaryPage.changeUrnLinkClick();
   const detailsPage = new CaseDetailsPage(page);
   await expectStep(page, "/case-registration/case-details");
+  await expect(page.getByTestId("case-details-error-summary")).toBeVisible();
+  await expect(page.getByTestId("urn-error-text-link")).toHaveText(
+    "URN already exists, please change reference text and try again",
+  );
+
   await detailsPage.enterUrnUniqueReference(freeUrn.uniqueReference);
   await detailsPage.saveAndContinue();
 
-  await verifyCaseSummary(page, freeUrn, operationName);
-  await submitCaseFromSummary(page, freeUrn);
+  await completeMonitoringAndAssignee(page);
+  await verifySummaryAndSubmit(page, freeUrn, {
+    area: AREA,
+    registeringUnit: REGISTERING_UNIT,
+    wcu: WITNESS_CARE_UNIT,
+    operationName,
+  });
 }
