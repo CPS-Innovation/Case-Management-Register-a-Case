@@ -59,7 +59,7 @@ public class ListExtensionsTests
         List<Dictionary<string, object>>? list = null;
 
         // Act
-        var result = list.GetDictionaryKeyValue("anyKey");
+        var result = list!.GetDictionaryKeyValue("anyKey");
 
         // Assert
         Assert.Null(result);

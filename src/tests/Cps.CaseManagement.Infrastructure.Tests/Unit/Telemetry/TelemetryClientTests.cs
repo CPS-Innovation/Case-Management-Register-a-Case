@@ -73,7 +73,7 @@ public class TelemetryClientTest
     public void TrackEvent_WithNullEvent_DoesNothing()
     {
         // Act
-        _telemetryClient.TrackEvent(null);
+        _telemetryClient.TrackEvent(null!);
 
         // Assert
         _mockAppInsightsTelemetryClient.Verify(
@@ -116,7 +116,7 @@ public class TelemetryClientTest
     public void TrackException_WithNullEvent_DoesNothing()
     {
         // Act
-        _telemetryClient.TrackException(null);
+        _telemetryClient.TrackException(null!);
 
         // Assert
         _mockAppInsightsTelemetryClient.Verify(
@@ -307,7 +307,7 @@ public class TelemetryClientTest
     public void TrackTrace_WithNullEvent_DoesNothing()
     {
         // Act
-        _telemetryClient.TrackTrace(null);
+        _telemetryClient.TrackTrace(null!);
 
         // Assert
         _mockAppInsightsTelemetryClient.Verify(
@@ -319,8 +319,8 @@ public class TelemetryClientTest
     }
 
     [Theory]
-    [InlineData(nameof(TestTelemetryEvent), "TestTelemetry")]
-    public void PrepareEventName_RemovesEventSuffix(string input, string expected)
+    [InlineData("TestTelemetry")]
+    public void PrepareEventName_RemovesEventSuffix(string expected)
     {
         // Arrange
         var telemetryEvent = new TestTelemetryEvent();
