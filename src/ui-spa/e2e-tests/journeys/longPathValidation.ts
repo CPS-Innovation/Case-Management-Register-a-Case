@@ -24,6 +24,7 @@ import { ChargesOffenceSearchPage } from "../pages/chargesOffenceSearchPage";
 import { generateUniqueUrn, type UrnParts } from "../utils/generateUrn";
 import { startRegistration } from "../utils/startRegistration";
 import { expectStep } from "../utils/expectStep";
+import { submitEmptyAndAssertErrors } from "../utils/stepValidation";
 import {
   AREA,
   REGISTERING_UNIT,
@@ -81,10 +82,20 @@ export async function completeLongPathValidation(
   // Start the validation walkthrough as a fresh registration.
   await startRegistration(page);
 
-  // Home: validate, then add an operation name and a suspect.
+  // Home.
   const homePage = new CaseRegistrationHomePage(page);
   await expectStep(page, "/case-registration");
-  await homePage.errorValidations();
+  await submitEmptyAndAssertErrors(
+    page,
+    () => homePage.saveAndContinue(),
+    "case-registration-error-summary",
+    [
+      {
+        testId: "suspect-details-radio-link",
+        message: "Select if you have suspect details",
+      },
+    ],
+  );
   await homePage.addOperationName(operationName);
   await homePage.addSuspect();
   await homePage.saveAndContinue();
@@ -92,7 +103,22 @@ export async function completeLongPathValidation(
   // Areas.
   const areasPage = new CaseAreasPage(page);
   await expectStep(page, "/case-registration/areas");
-  await areasPage.errorValidations();
+  await submitEmptyAndAssertErrors(
+    page,
+    async () => {
+      // Settle the area autocomplete (close any open suggestions) so the submit
+      // registers, mirroring the integration errorValidations.
+      await areasPage.enterAreaOrDivision("");
+      await areasPage.saveAndContinue();
+    },
+    "case-area-error-summary",
+    [
+      {
+        testId: "area-or-division-text-link",
+        message: "Select a division or area",
+      },
+    ],
+  );
   await areasPage.enterAreaOrDivision(AREA);
   await areasPage.saveAndContinue();
 
@@ -100,7 +126,22 @@ export async function completeLongPathValidation(
   // duplicate-URN error using the seeded URN, then a fresh URN to continue.
   const caseDetailsPage = new CaseDetailsPage(page);
   await expectStep(page, "/case-registration/case-details");
-  await caseDetailsPage.errorValidations();
+  await submitEmptyAndAssertErrors(
+    page,
+    () => caseDetailsPage.saveAndContinue(),
+    "case-details-error-summary",
+    [
+      { testId: "urn-error-text-link", message: "Enter the URN" },
+      {
+        testId: "registering-unit-error-text-link",
+        message: "Select the registering unit",
+      },
+      {
+        testId: "witness-care-unit-error-text-link",
+        message: "Select the witness care unit",
+      },
+    ],
+  );
   await caseDetailsPage.enterRegisteringUnit(REGISTERING_UNIT);
   await caseDetailsPage.enterWitnessCareUnit(WITNESS_CARE_UNIT);
   await caseDetailsPage.submitAndExpectExistingUrnError(existingUrn);
@@ -110,7 +151,17 @@ export async function completeLongPathValidation(
   // Add suspect.
   const addSuspectPage = new AddSuspectPage(page);
   await expectStep(page, "/case-registration/suspect-0/add-suspect");
-  await addSuspectPage.errorValidations();
+  await submitEmptyAndAssertErrors(
+    page,
+    () => addSuspectPage.saveAndContinue(),
+    "add-suspect-error-summary",
+    [
+      {
+        testId: "add-suspect-radio-link",
+        message: "Select whether the suspect is a person or a company",
+      },
+    ],
+  );
   await addSuspectPage.addPersonSuspect();
   await addSuspectPage.addSuspectFirstName(suspect.first);
   await addSuspectPage.addSuspectLastName(suspect.last);
@@ -127,7 +178,17 @@ export async function completeLongPathValidation(
   // Suspect DOB (15 years ago so the suspect qualifies as a youth offender).
   const suspectDOBPage = new SuspectDOBPage(page);
   await expectStep(page, "/case-registration/suspect-0/suspect-dob");
-  await suspectDOBPage.errorValidations();
+  await submitEmptyAndAssertErrors(
+    page,
+    () => suspectDOBPage.saveAndContinue(),
+    "suspect-dob-error-summary",
+    [
+      {
+        testId: "suspect-DOB-day-text-link",
+        message: "Enter the date of birth",
+      },
+    ],
+  );
   const dob = new Date();
   dob.setFullYear(dob.getFullYear() - 15);
   await suspectDOBPage.addDOBDay(String(dob.getDate()));
@@ -137,31 +198,76 @@ export async function completeLongPathValidation(
 
   const suspectGenderPage = new SuspectGenderPage(page);
   await expectStep(page, "/case-registration/suspect-0/suspect-gender");
-  await suspectGenderPage.errorValidations();
+  await submitEmptyAndAssertErrors(
+    page,
+    () => suspectGenderPage.saveAndContinue(),
+    "suspect-gender-error-summary",
+    [{ testId: "suspect-gender-radio-link", message: "Select a gender" }],
+  );
   await suspectGenderPage.selectGenderMale();
   await suspectGenderPage.saveAndContinue();
 
   const suspectDisabilityPage = new SuspectDisabilityPage(page);
   await expectStep(page, "/case-registration/suspect-0/suspect-disability");
-  await suspectDisabilityPage.errorValidations();
+  await submitEmptyAndAssertErrors(
+    page,
+    () => suspectDisabilityPage.saveAndContinue(),
+    "suspect-disability-error-summary",
+    [
+      {
+        testId: "suspect-disability-radio-link",
+        message: "Select whether the defendant has a disability",
+      },
+    ],
+  );
   await suspectDisabilityPage.selectDisabilityYes();
   await suspectDisabilityPage.saveAndContinue();
 
   const suspectReligionPage = new SuspectReligionPage(page);
   await expectStep(page, "/case-registration/suspect-0/suspect-religion");
-  await suspectReligionPage.errorValidations();
+  await submitEmptyAndAssertErrors(
+    page,
+    () => suspectReligionPage.saveAndContinue(),
+    "suspect-religion-error-summary",
+    [
+      {
+        testId: "suspect-religion-radio-link",
+        message: "Select the defendant's religion",
+      },
+    ],
+  );
   await suspectReligionPage.selectFirstReligion();
   await suspectReligionPage.saveAndContinue();
 
   const suspectEthnicityPage = new SuspectEthnicityPage(page);
   await expectStep(page, "/case-registration/suspect-0/suspect-ethnicity");
-  await suspectEthnicityPage.errorValidations();
+  await submitEmptyAndAssertErrors(
+    page,
+    () => suspectEthnicityPage.saveAndContinue(),
+    "suspect-ethnicity-error-summary",
+    [
+      {
+        testId: "suspect-ethnicity-radio-link",
+        message: "Select the defendant's ethnicity",
+      },
+    ],
+  );
   await suspectEthnicityPage.selectFirstEthnicity();
   await suspectEthnicityPage.saveAndContinue();
 
   const suspectAliasesPage = new SuspectAliasesPage(page);
   await expectStep(page, "/case-registration/suspect-0/suspect-add-aliases");
-  await suspectAliasesPage.errorValidations();
+  await submitEmptyAndAssertErrors(
+    page,
+    () => suspectAliasesPage.saveAndContinue(),
+    "suspect-aliases-error-summary",
+    [
+      {
+        testId: "suspect-aliases-last-name-text-link",
+        message: "Enter a last name",
+      },
+    ],
+  );
   await suspectAliasesPage.addFirstName(alias.first);
   await suspectAliasesPage.addLastName(alias.last);
   await suspectAliasesPage.saveAndContinue();
@@ -171,43 +277,103 @@ export async function completeLongPathValidation(
     page,
     "/case-registration/suspect-0/suspect-aliases-summary",
   );
-  await suspectAliasesSummaryPage.errorValidations();
+  await submitEmptyAndAssertErrors(
+    page,
+    () => suspectAliasesSummaryPage.saveAndContinue(),
+    "suspect-aliases-summary-error-summary",
+    [
+      {
+        testId: "suspect-add-more-aliases-radio-link",
+        message: "Select if you need to add another alias",
+      },
+    ],
+  );
   await suspectAliasesSummaryPage.selectAddMoreAliasesNo();
   await suspectAliasesSummaryPage.saveAndContinue();
 
   const suspectASNPage = new SuspectASNPage(page);
   await expectStep(page, "/case-registration/suspect-0/suspect-asn");
-  await suspectASNPage.errorValidations();
+  await submitEmptyAndAssertErrors(
+    page,
+    () => suspectASNPage.saveAndContinue(),
+    "suspect-asn-error-summary",
+    [
+      {
+        testId: "suspect-asn-text-link",
+        message: "Enter the Arrest Summons Number (ASN)",
+      },
+    ],
+  );
   await suspectASNPage.addASNText("123456");
   await suspectASNPage.saveAndContinue();
 
   const suspectOffenderTypesPage = new SuspectOffenderTypesPage(page);
   await expectStep(page, "/case-registration/suspect-0/suspect-offender");
-  await suspectOffenderTypesPage.errorValidations();
+  await submitEmptyAndAssertErrors(
+    page,
+    () => suspectOffenderTypesPage.saveAndContinue(),
+    "suspect-offender-types-error-summary",
+    [
+      {
+        testId: "suspect-offender-radio-link",
+        message: "Select the type of offender",
+      },
+    ],
+  );
   await suspectOffenderTypesPage.selectOffenderTypePYO();
   await suspectOffenderTypesPage.addArrestDate(isoDate(arrestDate));
   await suspectOffenderTypesPage.saveAndContinue();
 
   const suspectSummaryPage = new SuspectSummaryPage(page);
   await expectStep(page, "/case-registration/suspect-summary");
-  await suspectSummaryPage.errorValidations();
+  await submitEmptyAndAssertErrors(
+    page,
+    () => suspectSummaryPage.saveAndContinue(),
+    "suspect-summary-error-summary",
+    [
+      {
+        testId: "add-more-suspects-radio-link",
+        message: "Select whether you need to add another suspect",
+      },
+    ],
+  );
   await suspectSummaryPage.selectAddMoreSuspectNo();
   await suspectSummaryPage.saveAndContinue();
 
   const wantToAddChargesPage = new WantToAddChargesPage(page);
   await expectStep(page, "/case-registration/want-to-add-charges");
-  await wantToAddChargesPage.errorValidations();
+  await submitEmptyAndAssertErrors(
+    page,
+    () => wantToAddChargesPage.saveAndContinue(),
+    "want-to-add-charges-error-summary",
+    [
+      {
+        testId: "want-to-add-charges-radio-link",
+        message: "Select whether you need to add charges for the suspect",
+      },
+    ],
+  );
   await wantToAddChargesPage.selectAddChargesYes();
   await wantToAddChargesPage.saveAndContinue();
 
-  // Offence search: empty-submit validation, a real zero-result search, then a
+  // Offence search: empty-search validation, a real zero-result search, then a
   // valid offence code.
   const offenceSearchPage = new ChargesOffenceSearchPage(page);
   await expectStep(
     page,
     "/case-registration/suspect-0/charge-0/charges-offence-search",
   );
-  await offenceSearchPage.errorValidations();
+  await submitEmptyAndAssertErrors(
+    page,
+    () => offenceSearchPage.searchOffence(),
+    "offence-search-error-summary",
+    [
+      {
+        testId: "offence-search-text-link",
+        message: "Enter an offence to search for",
+      },
+    ],
+  );
   await offenceSearchPage.searchAndExpectNoResults(NO_RESULT_OFFENCE_CODE);
   await offenceSearchPage.searchAndAddFirstOffence(OFFENCE_CODE);
 
@@ -217,7 +383,21 @@ export async function completeLongPathValidation(
     page,
     "/case-registration/suspect-0/charge-0/add-charge-details",
   );
-  await addChargeDetailsPage.errorValidations(true);
+  await submitEmptyAndAssertErrors(
+    page,
+    () => addChargeDetailsPage.saveAndContinue(),
+    "charges-details-error-summary",
+    [
+      {
+        testId: "offence-from-date-text-link",
+        message: "Select an offence from date",
+      },
+      {
+        testId: "add-victim-radio-link",
+        message: "Select whether there is a victim",
+      },
+    ],
+  );
   await addChargeDetailsPage.clickDateRange();
   await addChargeDetailsPage.fillOffenceFromDate(isoDate(offence.from));
   await addChargeDetailsPage.fillOffenceToDate(isoDate(offence.to));
@@ -230,7 +410,17 @@ export async function completeLongPathValidation(
     page,
     "/case-registration/suspect-0/charge-0/add-charge-victim",
   );
-  await addChargeVictimPage.errorValidationsNewVictims();
+  await submitEmptyAndAssertErrors(
+    page,
+    () => addChargeVictimPage.saveAndContinue(),
+    "add-charge-victim-error-summary",
+    [
+      {
+        testId: "victim-lastname-link",
+        message: "Enter the victim's last name",
+      },
+    ],
+  );
   await addChargeVictimPage.fillVictimFirstName(victim.first);
   await addChargeVictimPage.fillVictimLastName(victim.last);
   await addChargeVictimPage.selectVictimIsVulnerable(true);
@@ -242,7 +432,17 @@ export async function completeLongPathValidation(
   // that fires when continuing into the (charge-driven) first hearing step.
   const chargesSummaryPage = new ChargesSummaryPage(page);
   await expectStep(page, "/case-registration/charges-summary");
-  await chargesSummaryPage.errorValidations();
+  await submitEmptyAndAssertErrors(
+    page,
+    () => chargesSummaryPage.saveAndContinue(),
+    "charges-summary-error-summary",
+    [
+      {
+        testId: "add-more-charges-radio-link",
+        message: "Select whether you need to add another charge",
+      },
+    ],
+  );
   await chargesSummaryPage.selectAddMoreChargesNo();
   const courtsResponse = page.waitForResponse(
     (r) => /\/api\/v1\/courts\//.test(r.url()) && r.ok(),
@@ -253,7 +453,17 @@ export async function completeLongPathValidation(
   // First hearing: validate, then add real court + date.
   const firstHearingDetailsPage = new FirstHearingDetailsPage(page);
   await expectStep(page, "/case-registration/first-hearing");
-  await firstHearingDetailsPage.errorValidations();
+  await submitEmptyAndAssertErrors(
+    page,
+    () => firstHearingDetailsPage.saveAndContinue(),
+    "first-hearing-error-summary",
+    [
+      {
+        testId: "first-hearing-radio-link",
+        message: "Select if you need to add first hearing details",
+      },
+    ],
+  );
   const courts = (await (await courtsResponse).json()) as {
     description: string;
   }[];
@@ -279,7 +489,22 @@ export async function completeLongPathValidation(
   // Assignee: validate, then fill real prosecutor/caseworker/investigator.
   const caseAssigneePage = new CaseAssigneePage(page);
   await expectStep(page, "/case-registration/case-assignee");
-  await caseAssigneePage.errorValidations();
+  await submitEmptyAndAssertErrors(
+    page,
+    () => caseAssigneePage.saveAndContinue(),
+    "case-assignee-error-summary",
+    [
+      {
+        testId: "case-prosecutor-radio-link",
+        message: "Select whether you need to add a prosecutor and caseworker",
+      },
+      {
+        testId: "case-investigator-radio-link",
+        message:
+          "Select whether you need to add a police officer or investigator",
+      },
+    ],
+  );
   await fillAssignee(page, lookups);
 
   // Summary: assert details, submit to POST /api/v1/cases and assert the real
