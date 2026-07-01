@@ -51,4 +51,4 @@ export async function completeShortPathDuplicateUrn(
     wcu: WITNESS_CARE_UNIT,
     operationName,
   });
-} 
+}
