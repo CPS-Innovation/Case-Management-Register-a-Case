@@ -1,10 +1,9 @@
 import { type Page, expect } from "@playwright/test";
 import { ChargesSummaryPage as IntegrationChargesSummaryPage } from "../../integration-tests/pages/chargesSummaryPage";
 
-// Reuses the integration page object (identical selectors) and only overrides
-// the no-charges assertion: against the real backend the heading renders the
-// singular "You have added 0 charge" for zero charges, whereas the MSW-backed
-// integration suite expects the plural form.
+// Overrides only the no-charges assertion. The heading pluralizes on
+// chargesCount > 1, so zero always renders the singular "You have added 0
+// charge"; the integration base's expected plural "0 charges" is simply wrong.
 export class ChargesSummaryPage extends IntegrationChargesSummaryPage {
   private readonly currentPage: Page;
 

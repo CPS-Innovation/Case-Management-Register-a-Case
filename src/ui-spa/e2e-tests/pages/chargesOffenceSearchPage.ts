@@ -19,12 +19,17 @@ export class ChargesOffenceSearchPage extends IntegrationChargesOffenceSearchPag
 
   private async submitSearch(searchText: string): Promise<void> {
     await this.addOffenceSearchText(searchText);
+    // Match regardless of status so a non-2xx fails on the assertion, not a hang.
     const offencesResponse = this.currentPage.waitForResponse(
-      (r) => /\/api\/v1\/offences/.test(r.url()) && r.ok(),
+      (r) => /\/api\/v1\/offences/.test(r.url()),
       { timeout: 30_000 },
     );
     await this.searchOffence();
-    await offencesResponse;
+    const response = await offencesResponse;
+    expect(
+      response.ok(),
+      `offence search for "${searchText}" returned ${response.status()}`,
+    ).toBe(true);
   }
 
   async searchAndExpectNoResults(searchText: string): Promise<void> {
