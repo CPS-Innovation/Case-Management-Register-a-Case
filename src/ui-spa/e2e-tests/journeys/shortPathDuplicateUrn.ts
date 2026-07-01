@@ -22,7 +22,11 @@ export async function completeShortPathDuplicateUrn(
   { operationName }: ShortPathDuplicateUrnOptions = {},
 ): Promise<void> {
   const existingUrn = generateUniqueUrn();
-  const freeUrn = generateUniqueUrn();
+
+  let freeUrn = generateUniqueUrn();
+  while (freeUrn.uniqueReference === existingUrn.uniqueReference) {
+    freeUrn = generateUniqueUrn();
+  }
 
   await startAtHomePage(page, { operationName, hasSuspect: false });
   await enterAreasAndCaseDetails(page, existingUrn);
@@ -37,7 +41,6 @@ export async function completeShortPathDuplicateUrn(
   await expect(page.getByTestId("urn-error-text-link")).toHaveText(
     "URN already exists, please change reference text and try again",
   );
-
   await detailsPage.enterUrnUniqueReference(freeUrn.uniqueReference);
   await detailsPage.saveAndContinue();
 
@@ -48,4 +51,4 @@ export async function completeShortPathDuplicateUrn(
     wcu: WITNESS_CARE_UNIT,
     operationName,
   });
-}
+} 
