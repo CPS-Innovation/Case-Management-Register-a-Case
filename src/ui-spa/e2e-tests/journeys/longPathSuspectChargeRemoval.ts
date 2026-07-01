@@ -143,6 +143,12 @@ export async function completeLongPathSuspectChargeRemoval(
   await chargesSummaryPage.selectAddMoreChargesNo();
   await chargesSummaryPage.saveAndContinue();
   await expectStep(page, "/case-registration/case-monitoring-codes");
+  // Confirm the tracker recorded the step we just landed on, so the negative
+  // assertion below fails loud if framenavigated ever stops firing.
+  expect(
+    visited,
+    "navigation tracker did not record the monitoring-codes step",
+  ).toContain("/case-registration/case-monitoring-codes");
   expect(
     visited,
     "flow should not have navigated to the first hearing page",

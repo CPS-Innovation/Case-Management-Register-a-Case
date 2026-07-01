@@ -46,20 +46,12 @@ public class RegisterCase(ILogger<RegisterCase> logger, IMdsService mdsService, 
             return new BadRequestObjectResult(caseRegistrationRequest.ValidationErrors);
         }
 
-        try
-        {
-            var result = await _mdsService.RegisterCaseAsync(
+        var result = await _mdsService.RegisterCaseAsync(
             _mdsArgFactory.CreateRegisterCaseArg(
                 context.CmsAuthValues,
                 context.CorrelationId,
                 caseRegistrationRequest.Value));
 
-            return new OkObjectResult(result);
-        }
-        catch (Exception ex)
-        {
-            _logger.LogError("Case registration failed. CorrelationId: {CorrelationId}, Error: {Message}", context.CorrelationId, ex.Message);
-            return new BadRequestObjectResult($"Case registration failed. Error: {ex.Message}");
-        }
+        return new OkObjectResult(result);
     }
 }
