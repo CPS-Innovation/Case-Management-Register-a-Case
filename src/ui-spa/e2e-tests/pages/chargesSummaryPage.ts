@@ -1,8 +1,9 @@
 import { type Page, expect } from "@playwright/test";
 import { ChargesSummaryPage as IntegrationChargesSummaryPage } from "../../integration-tests/pages/chargesSummaryPage";
 
-// Overrides only the no-charges assertion: the heading pluralizes on
-// chargesCount > 1, so zero renders the singular "You have added 0 charge".
+// Overrides only the no-charges assertion. The heading pluralizes on
+// chargesCount > 1, so zero always renders the singular "You have added 0
+// charge"; the integration base's expected plural "0 charges" is simply wrong.
 export class ChargesSummaryPage extends IntegrationChargesSummaryPage {
   private readonly currentPage: Page;
 
