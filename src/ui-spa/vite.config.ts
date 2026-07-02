@@ -13,7 +13,10 @@ const devStyleCspPlugin: Plugin = {
   name: "dev-style-csp-unsafe-inline",
   apply: "serve",
   transformIndexHtml(html) {
-    return html.replace("style-src 'self';", "style-src 'self' 'unsafe-inline';");
+    return html.replace(
+      "style-src 'self';",
+      "style-src 'self' 'unsafe-inline';",
+    );
   },
 };
 
@@ -39,25 +42,25 @@ export default defineConfig(({ command, mode }) => {
       react(),
       svgr(),
       isIstanbulCoverage &&
-      istanbul({
-        include: ["src/**/*.{ts,tsx,js,jsx}"],
-        exclude: [
-          "src/**/*.{test,spec}.ts",
-          "src/**/*.{test,spec}.tsx",
-          "src/mocks",
-          "src/common/types",
-          "src/auth/mock",
-          "src/auth/no-auth",
-          "src/auth/index.ts",
-          "src/auth/userDetails.ts",
-          "src/config.ts",
-          "src/types.d.ts",
-          "src/vite-env.d.ts",
-          "src/main.tsx",
-        ],
-        requireEnv: false,
-        forceBuildInstrument: true,
-      }),
+        istanbul({
+          include: ["src/**/*.{ts,tsx,js,jsx}"],
+          exclude: [
+            "src/**/*.{test,spec}.ts",
+            "src/**/*.{test,spec}.tsx",
+            "src/mocks",
+            "src/common/types",
+            "src/auth/mock",
+            "src/auth/no-auth",
+            "src/auth/index.ts",
+            "src/auth/userDetails.ts",
+            "src/config.ts",
+            "src/types.d.ts",
+            "src/vite-env.d.ts",
+            "src/main.tsx",
+          ],
+          requireEnv: false,
+          forceBuildInstrument: true,
+        }),
     ].filter(Boolean),
     test: {
       silent: true,
