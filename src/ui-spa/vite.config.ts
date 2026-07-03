@@ -28,18 +28,7 @@ export default defineConfig(({ command, mode }) => {
   // Fail fast if the gateway base URL is missing for a production build.
   if (isProdBuild) {
     const env = loadEnv(mode, process.cwd(), "");
-    console.log(
-      "[debug] loadEnv VITE_GATEWAY_BASE_URL =",
-      JSON.stringify(env.VITE_GATEWAY_BASE_URL),
-    );
-    console.log(
-      "[debug] process.env.VITE_GATEWAY_BASE_URL =",
-      JSON.stringify(process.env.VITE_GATEWAY_BASE_URL),
-    );
-    console.log(
-      "[debug] VITE_ keys in process.env:",
-      Object.keys(process.env).filter((k) => k.startsWith("VITE_")),
-    );
+
     if (!env.VITE_GATEWAY_BASE_URL) {
       throw new Error(
         "VITE_GATEWAY_BASE_URL is not set. It must be provided for a production build so the CSP connect-src and gateway API calls resolve correctly.",
