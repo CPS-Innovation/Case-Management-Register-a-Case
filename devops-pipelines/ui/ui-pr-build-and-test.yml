@@ -52,7 +52,9 @@ stages:
               command: 'custom'
               customCommand: 'run build'
               workingDir: '$(workingDir)'
-              
+            env:
+              VITE_GATEWAY_BASE_URL: 'https://pr-build-placeholder.example'
+
 # ---------- UNIT TESTS (Vitest) ----------
           - task: Npm@1
             displayName: 'Run UI Unit Tests with Coverage'
