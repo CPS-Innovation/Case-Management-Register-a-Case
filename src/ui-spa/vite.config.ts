@@ -28,6 +28,7 @@ export default defineConfig(({ command, mode }) => {
   // Fail fast if the gateway base URL is missing for a production build.
   if (isProdBuild) {
     const env = loadEnv(mode, process.cwd(), "");
+    console.log("VITE_GATEWAY_BASE_URL", env.VITE_GATEWAY_BASE_URL);
     if (!env.VITE_GATEWAY_BASE_URL) {
       throw new Error(
         "VITE_GATEWAY_BASE_URL is not set. It must be provided for a production build so the CSP connect-src and gateway API calls resolve correctly.",
@@ -42,25 +43,25 @@ export default defineConfig(({ command, mode }) => {
       react(),
       svgr(),
       isIstanbulCoverage &&
-        istanbul({
-          include: ["src/**/*.{ts,tsx,js,jsx}"],
-          exclude: [
-            "src/**/*.{test,spec}.ts",
-            "src/**/*.{test,spec}.tsx",
-            "src/mocks",
-            "src/common/types",
-            "src/auth/mock",
-            "src/auth/no-auth",
-            "src/auth/index.ts",
-            "src/auth/userDetails.ts",
-            "src/config.ts",
-            "src/types.d.ts",
-            "src/vite-env.d.ts",
-            "src/main.tsx",
-          ],
-          requireEnv: false,
-          forceBuildInstrument: true,
-        }),
+      istanbul({
+        include: ["src/**/*.{ts,tsx,js,jsx}"],
+        exclude: [
+          "src/**/*.{test,spec}.ts",
+          "src/**/*.{test,spec}.tsx",
+          "src/mocks",
+          "src/common/types",
+          "src/auth/mock",
+          "src/auth/no-auth",
+          "src/auth/index.ts",
+          "src/auth/userDetails.ts",
+          "src/config.ts",
+          "src/types.d.ts",
+          "src/vite-env.d.ts",
+          "src/main.tsx",
+        ],
+        requireEnv: false,
+        forceBuildInstrument: true,
+      }),
     ].filter(Boolean),
     test: {
       silent: true,
