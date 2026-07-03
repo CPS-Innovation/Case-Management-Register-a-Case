@@ -100,7 +100,7 @@
       "options": {
         "cwd": "${workspaceFolder}/src/ui-spa",
         "env": {
-          "VITE_GATEWAY_BASE_URL": "http://localhost:7071",
+          "VITE_GATEWAY_BASE_URL": "http://localhost:7072",
           "VITE_MOCK_API_SOURCE": "",
           "VITE_MOCK_AUTH": ""
         }

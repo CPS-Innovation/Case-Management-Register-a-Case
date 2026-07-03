@@ -1,0 +1,9 @@
+/*
+ * Anti-clickjacking guard. Hides the app root until frame-buster.js confirms
+ * the page is not being framed and removes the stylesheet link.
+ * Only root element is hidden so the <noscript> guidance remains visible
+ * to users with JavaScript disabled, who would otherwise get a blank page.
+ */
+#root {
+  display: none !important;
+}

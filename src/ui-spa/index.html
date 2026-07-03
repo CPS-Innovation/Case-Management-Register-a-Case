@@ -1,14 +1,21 @@
 <!doctype html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <link rel="icon" type="image/svg+xml" href="/assets/images/favicon.svg" />
-    <title>GOV.UK - Case Management Register a Case</title>
-  </head>
-  <body class="govuk-template__body js-enabled">
-    <noscript>You need to enable JavaScript to run this app.</noscript>
-    <div id="root"></div>
-    <script type="module" src="/src/main.tsx"></script>
-  </body>
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta http-equiv="Content-Security-Policy"
+    content="default-src 'self'; script-src 'self'; style-src 'self'; connect-src 'self' https://login.microsoftonline.com %VITE_GATEWAY_BASE_URL%; frame-src https://login.microsoftonline.com; img-src 'self' data:; object-src 'none'; base-uri 'self'; form-action 'self'" />
+  <link id="antiClickjack" rel="stylesheet" href="/anti-clickjack.css" />
+  <script src="/frame-buster.js"></script>
+  <link rel="icon" type="image/svg+xml" href="/assets/images/favicon.svg" />
+  <title>GOV.UK - Case Management Register a Case</title>
+</head>
+
+<body class="govuk-template__body js-enabled">
+  <noscript>You need to enable JavaScript to run this app.</noscript>
+  <div id="root"></div>
+  <script type="module" src="/src/main.tsx"></script>
+</body>
+
 </html>

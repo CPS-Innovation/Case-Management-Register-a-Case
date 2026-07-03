@@ -1,17 +1,45 @@
 /// <reference types="vitest" />
-import { defineConfig } from "vite";
+import { defineConfig, loadEnv, type Plugin } from "vite";
 import react from "@vitejs/plugin-react";
 import svgr from "vite-plugin-svgr";
 import istanbul from "vite-plugin-istanbul";
+
+// During `vite dev`, Vite injects application CSS as inline <style> elements
+// (HMR). The committed CSP intentionally omits 'unsafe-inline' from style-src so
+// production (which ships external stylesheets) stays locked down and clears
+// SonarCloud Web:S7039. This dev-only plugin re-adds 'unsafe-inline' so styling
+// still works while running the dev server.
+const devStyleCspPlugin: Plugin = {
+  name: "dev-style-csp-unsafe-inline",
+  apply: "serve",
+  transformIndexHtml(html) {
+    return html.replace(
+      "style-src 'self';",
+      "style-src 'self' 'unsafe-inline';",
+    );
+  },
+};
 
 export default defineConfig(({ command, mode }) => {
   const isIstanbulCoverage = process.env.ISTANBUL_COVERAGE === "1";
   const isProdBuild = command === "build" && mode === "production";
   const buildSourceMap = isIstanbulCoverage || !isProdBuild;
 
+  // Fail fast if the gateway base URL is missing for a production build.
+  if (isProdBuild) {
+    const env = loadEnv(mode, process.cwd(), "");
+
+    if (!env.VITE_GATEWAY_BASE_URL) {
+      throw new Error(
+        "VITE_GATEWAY_BASE_URL is not set. It must be provided for a production build so the CSP connect-src and gateway API calls resolve correctly.",
+      );
+    }
+  }
+
   return {
     build: { sourcemap: buildSourceMap },
     plugins: [
+      devStyleCspPlugin,
       react(),
       svgr(),
       isIstanbulCoverage &&
