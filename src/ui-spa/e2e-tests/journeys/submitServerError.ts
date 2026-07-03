@@ -51,6 +51,13 @@ export async function completeSubmitServerError(
   await buildCaseUpToSummary(page, urn, operationName);
 
   const summaryPage = new CaseRegistrationSummaryPage(page);
+  await summaryPage.verifyCaseDetailsElements({
+    area: AREA,
+    urn: urn.formatted,
+    registeringUnit: REGISTERING_UNIT,
+    wcu: WITNESS_CARE_UNIT,
+    operationName,
+  });
   const failedResponse = page.waitForResponse(
     (r) => r.url().endsWith("/api/v1/cases") && r.request().method() === "POST",
   );
