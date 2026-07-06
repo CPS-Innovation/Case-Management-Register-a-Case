@@ -3,6 +3,7 @@ using System.Text;
 using System.Text.Json;
 using System.Threading.Tasks;
 using AutoFixture;
+using Cps.CaseManagement.Api.Constants;
 using Cps.CaseManagement.Api.Context;
 using Cps.CaseManagement.Api.Functions;
 using Cps.CaseManagement.Api.Helpers;
@@ -130,6 +131,42 @@ public class RegisterCaseTest
         Assert.IsType<OkObjectResult>(result);
         _mdsArgFactoryMock.Verify(f => f.CreateRegisterCaseArg(It.IsAny<string>(), It.IsAny<Guid>(), It.IsAny<CaseRegistrationRequest>()), Times.Once);
         _mdsServiceMock.Verify(c => c.RegisterCaseAsync(It.IsAny<MdsRegisterCaseArg>()), Times.Once);
+    }
+
+    [Fact]
+    public async Task Run_WithValidRequest_NormalizesDefendantsBeforeForwarding()
+    {
+        // Arrange
+        var caseDetails = CreateValidCaseRegistrationRequest();
+        caseDetails.Defendants!.First().Gender = string.Empty;
+        var correlationId = _fixture.Create<Guid>();
+
+        CaseRegistrationRequest? capturedRequest = null;
+        _mdsArgFactoryMock
+            .Setup(f => f.CreateRegisterCaseArg(It.IsAny<string>(), It.IsAny<Guid>(), It.IsAny<CaseRegistrationRequest>()))
+            .Callback<string, Guid, CaseRegistrationRequest>((_, _, request) => capturedRequest = request);
+
+        _requestValidatorMock
+            .Setup(x => x.GetJsonBody<CaseRegistrationRequest, CaseRegistrationRequestValidator>(It.IsAny<HttpRequest>()))
+            .ReturnsAsync(new ValidatableRequest<CaseRegistrationRequest>
+            {
+                IsValid = true,
+                Value = caseDetails
+            });
+
+        _mdsServiceMock.Setup(x => x.RegisterCaseAsync(It.IsAny<MdsRegisterCaseArg>()))
+            .ReturnsAsync(new CaseRegistrationResponseDto { CaseId = 12345 });
+
+        var functionContext = FunctionContextStubHelper.CreateFunctionContextStub(correlationId, _fixture.Create<string>(), _fixture.Create<string>());
+        var httpRequest = CreateHttpRequestFromJson(caseDetails, correlationId);
+
+        // Act
+        await _function.Run(httpRequest, functionContext);
+
+        // Assert
+        Assert.NotNull(capturedRequest);
+        var defendant = Assert.Single(capturedRequest!.Defendants!);
+        Assert.Equal(CaseRegistrationDefaults.Gender, defendant.Gender);
     }
 
     private static HttpRequest CreateHttpRequestFromJson(object obj, Guid correlationId)

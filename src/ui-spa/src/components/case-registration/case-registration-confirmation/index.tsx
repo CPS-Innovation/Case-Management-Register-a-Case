@@ -9,7 +9,7 @@ const CaseRegistrationConfirmationPage = () => {
   } = useContext(CaseRegistrationFormContext);
   const urn = useMemo(
     () =>
-      `${formData.urnPoliceForceText}${formData.urnPoliceUnitText}${formData.urnUniqueReferenceText}/${formData.urnYearReferenceText}`,
+      `${formData.urnPoliceForceText}${formData.urnPoliceUnitText}${formData.urnUniqueReferenceText}${formData.urnYearReferenceText}`,
     [formData],
   );
   return (

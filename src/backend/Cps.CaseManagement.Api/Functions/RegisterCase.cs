@@ -46,6 +46,8 @@ public class RegisterCase(ILogger<RegisterCase> logger, IMdsService mdsService, 
             return new BadRequestObjectResult(caseRegistrationRequest.ValidationErrors);
         }
 
+        CaseRegistrationNormalizer.NormalizeDefendants(caseRegistrationRequest.Value);
+
         var result = await _mdsService.RegisterCaseAsync(
             _mdsArgFactory.CreateRegisterCaseArg(
                 context.CmsAuthValues,
