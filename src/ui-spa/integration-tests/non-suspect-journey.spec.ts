@@ -314,5 +314,5 @@ test("Should successfully complete non suspect journey", async ({
     page,
   );
   await caseRegistrationConfirmationPage.verifyUrl();
-  await caseRegistrationConfirmationPage.verifyPageElements("122112345/26");
+  await caseRegistrationConfirmationPage.verifyPageElements("12211234526");
 });
