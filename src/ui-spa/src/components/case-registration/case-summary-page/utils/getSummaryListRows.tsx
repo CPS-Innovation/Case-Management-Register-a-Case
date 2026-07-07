@@ -47,7 +47,7 @@ export const getCaseDetailsSummaryListRows = (
     navigate(url);
   };
 
-  const urn = `${formData.urnPoliceForceText}${formData.urnPoliceUnitText}${formData.urnUniqueReferenceText}/${formData.urnYearReferenceText}`;
+  const urn = `${formData.urnPoliceForceText}${formData.urnPoliceUnitText}${formData.urnUniqueReferenceText}${formData.urnYearReferenceText}`;
 
   const rows = [
     {

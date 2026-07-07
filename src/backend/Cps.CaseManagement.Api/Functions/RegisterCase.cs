@@ -1,6 +1,9 @@
 namespace Cps.CaseManagement.Api.Functions;
 
+using System.Collections.Generic;
+using System.Linq;
 using System.Net;
+using System.Threading.Tasks;
 using Cps.CaseManagement.Api.Attributes;
 using Cps.CaseManagement.Api.Constants;
 using Cps.CaseManagement.Api.Context;
@@ -46,6 +49,18 @@ public class RegisterCase(ILogger<RegisterCase> logger, IMdsService mdsService, 
             return new BadRequestObjectResult(caseRegistrationRequest.ValidationErrors);
         }
 
+        CaseRegistrationNormalizer.NormalizeDefendants(caseRegistrationRequest.Value);
+
+        // Normalization can inject a placeholder defendant that never passed through the request
+        // validator. Re-validate the normalized defendants so every rule on the defendant validator
+        // applies to it.
+        var defendantValidationErrors = await ValidateDefendantsAsync(caseRegistrationRequest.Value.Defendants);
+        if (defendantValidationErrors.Count > 0)
+        {
+            _logger.LogWarning("Normalized case registration request is invalid. CorrelationId: {CorrelationId}. Errors: {ValidationErrors}", context.CorrelationId, defendantValidationErrors);
+            return new BadRequestObjectResult(defendantValidationErrors);
+        }
+
         var result = await _mdsService.RegisterCaseAsync(
             _mdsArgFactory.CreateRegisterCaseArg(
                 context.CmsAuthValues,
@@ -53,5 +68,27 @@ public class RegisterCase(ILogger<RegisterCase> logger, IMdsService mdsService, 
                 caseRegistrationRequest.Value));
 
         return new OkObjectResult(result);
+    }
+
+    private static async Task<List<string>> ValidateDefendantsAsync(IEnumerable<CaseRegistrationDefendant>? defendants)
+    {
+        if (defendants is null)
+        {
+            return [];
+        }
+
+        var validator = new CaseRegistrationDefendantValidator();
+        var errors = new List<string>();
+
+        foreach (var defendant in defendants)
+        {
+            var result = await validator.ValidateAsync(defendant);
+            if (!result.IsValid)
+            {
+                errors.AddRange(result.Errors.Select(e => e.ErrorMessage));
+            }
+        }
+
+        return errors;
     }
 }
