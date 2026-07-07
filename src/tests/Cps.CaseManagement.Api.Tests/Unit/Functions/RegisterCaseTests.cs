@@ -204,6 +204,7 @@ public class RegisterCaseTest
             {
                 new CaseRegistrationDefendant
                 {
+                    IsDefendant = true,
                     Surname = "Smith",
                     Charges = new List<CaseRegistrationCharge>
                     {

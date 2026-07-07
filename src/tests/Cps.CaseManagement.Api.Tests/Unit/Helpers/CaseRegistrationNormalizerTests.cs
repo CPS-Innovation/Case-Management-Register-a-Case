@@ -18,6 +18,7 @@ public class CaseRegistrationNormalizerTests
             {
                 new CaseRegistrationDefendant
                 {
+                    IsDefendant = true,
                     Surname = "Smith",
                     Gender = string.Empty,
                     Ethnicity = " ",
@@ -33,6 +34,37 @@ public class CaseRegistrationNormalizerTests
         Assert.Equal(CaseRegistrationDefaults.Gender, defendant.Gender);
         Assert.Equal(CaseRegistrationDefaults.Ethnicity, defendant.Ethnicity);
         Assert.Equal(CaseRegistrationDefaults.Religion, defendant.Religion);
+        Assert.Equal(CaseRegistrationDefaults.Type, defendant.Type);
+    }
+
+    [Fact]
+    public void NormalizeDefendants_WithCompanyDefendant_DoesNotApplyDemographicDefaults()
+    {
+        var request = new CaseRegistrationRequest
+        {
+            Urn = new CaseRegistrationUrn(),
+            RegisteringAreaId = 1,
+            RegisteringUnitId = 2,
+            Defendants = new List<CaseRegistrationDefendant>
+            {
+                new CaseRegistrationDefendant
+                {
+                    IsDefendant = false,
+                    CompanyName = "Test Ltd",
+                    Gender = string.Empty,
+                    Ethnicity = string.Empty,
+                    Religion = string.Empty,
+                    Type = string.Empty,
+                }
+            }
+        };
+
+        CaseRegistrationNormalizer.NormalizeDefendants(request);
+
+        var defendant = Assert.Single(request.Defendants!);
+        Assert.Equal(string.Empty, defendant.Gender);
+        Assert.Equal(string.Empty, defendant.Ethnicity);
+        Assert.Equal(string.Empty, defendant.Religion);
         Assert.Equal(CaseRegistrationDefaults.Type, defendant.Type);
     }
 
@@ -100,6 +132,65 @@ public class CaseRegistrationNormalizerTests
             RegisteringUnitId = 2,
             OperationName = "Operation Nightingale",
             Defendants = null
+        };
+
+        CaseRegistrationNormalizer.NormalizeDefendants(request);
+
+        var defendant = Assert.Single(request.Defendants!);
+        Assert.Equal("Operation Nightingale", defendant.Surname);
+    }
+
+    [Theory]
+    [InlineData("")]
+    [InlineData("   ")]
+    public void NormalizeDefendants_WithNoDefendantsAndBlankOperationName_UsesFallbackSurname(string operationName)
+    {
+        var request = new CaseRegistrationRequest
+        {
+            Urn = new CaseRegistrationUrn(),
+            RegisteringAreaId = 1,
+            RegisteringUnitId = 2,
+            OperationName = operationName,
+            Defendants = new List<CaseRegistrationDefendant>()
+        };
+
+        CaseRegistrationNormalizer.NormalizeDefendants(request);
+
+        var defendant = Assert.Single(request.Defendants!);
+        Assert.Equal(CaseRegistrationDefaults.PlaceholderSurname, defendant.Surname);
+        Assert.False(string.IsNullOrWhiteSpace(defendant.Surname));
+    }
+
+    [Fact]
+    public void NormalizeDefendants_WithNoDefendantsAndOverlongOperationName_TruncatesSurname()
+    {
+        var operationName = new string('A', CaseRegistrationDefaults.SurnameMaxLength + 10);
+        var request = new CaseRegistrationRequest
+        {
+            Urn = new CaseRegistrationUrn(),
+            RegisteringAreaId = 1,
+            RegisteringUnitId = 2,
+            OperationName = operationName,
+            Defendants = new List<CaseRegistrationDefendant>()
+        };
+
+        CaseRegistrationNormalizer.NormalizeDefendants(request);
+
+        var defendant = Assert.Single(request.Defendants!);
+        Assert.Equal(CaseRegistrationDefaults.SurnameMaxLength, defendant.Surname!.Length);
+        Assert.Equal(operationName[..CaseRegistrationDefaults.SurnameMaxLength], defendant.Surname);
+    }
+
+    [Fact]
+    public void NormalizeDefendants_WithNoDefendantsAndPaddedOperationName_TrimsSurname()
+    {
+        var request = new CaseRegistrationRequest
+        {
+            Urn = new CaseRegistrationUrn(),
+            RegisteringAreaId = 1,
+            RegisteringUnitId = 2,
+            OperationName = "  Operation Nightingale  ",
+            Defendants = new List<CaseRegistrationDefendant>()
         };
 
         CaseRegistrationNormalizer.NormalizeDefendants(request);

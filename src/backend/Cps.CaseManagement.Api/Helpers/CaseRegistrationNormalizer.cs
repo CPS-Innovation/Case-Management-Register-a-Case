@@ -14,7 +14,7 @@ public static class CaseRegistrationNormalizer
                 new CaseRegistrationDefendant
                 {
                     IsDefendant = true,
-                    Surname = request.OperationName,
+                    Surname = BuildPlaceholderSurname(request.OperationName),
                     IsNotYetCharged = true,
                     Gender = CaseRegistrationDefaults.Gender,
                     Ethnicity = CaseRegistrationDefaults.Ethnicity,
@@ -27,19 +27,22 @@ public static class CaseRegistrationNormalizer
 
         foreach (var defendant in request.Defendants)
         {
-            if (string.IsNullOrWhiteSpace(defendant.Gender))
+            if (defendant.IsDefendant)
             {
-                defendant.Gender = CaseRegistrationDefaults.Gender;
-            }
+                if (string.IsNullOrWhiteSpace(defendant.Gender))
+                {
+                    defendant.Gender = CaseRegistrationDefaults.Gender;
+                }
 
-            if (string.IsNullOrWhiteSpace(defendant.Ethnicity))
-            {
-                defendant.Ethnicity = CaseRegistrationDefaults.Ethnicity;
-            }
+                if (string.IsNullOrWhiteSpace(defendant.Ethnicity))
+                {
+                    defendant.Ethnicity = CaseRegistrationDefaults.Ethnicity;
+                }
 
-            if (string.IsNullOrWhiteSpace(defendant.Religion))
-            {
-                defendant.Religion = CaseRegistrationDefaults.Religion;
+                if (string.IsNullOrWhiteSpace(defendant.Religion))
+                {
+                    defendant.Religion = CaseRegistrationDefaults.Religion;
+                }
             }
 
             if (string.IsNullOrWhiteSpace(defendant.Type))
@@ -47,5 +50,16 @@ public static class CaseRegistrationNormalizer
                 defendant.Type = CaseRegistrationDefaults.Type;
             }
         }
+    }
+
+    private static string BuildPlaceholderSurname(string? operationName)
+    {
+        var surname = string.IsNullOrWhiteSpace(operationName)
+            ? CaseRegistrationDefaults.PlaceholderSurname
+            : operationName.Trim();
+
+        return surname.Length > CaseRegistrationDefaults.SurnameMaxLength
+            ? surname[..CaseRegistrationDefaults.SurnameMaxLength]
+            : surname;
     }
 }
