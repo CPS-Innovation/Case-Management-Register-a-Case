@@ -1,5 +1,6 @@
 namespace Cps.CaseManagement.Api.Helpers;
 
+using System.Globalization;
 using Cps.CaseManagement.Api.Constants;
 using Cps.CaseManagement.MdsClient.Models.Entities;
 
@@ -43,11 +44,11 @@ public static class CaseRegistrationNormalizer
                 {
                     defendant.Religion = CaseRegistrationDefaults.Religion;
                 }
-            }
 
-            if (string.IsNullOrWhiteSpace(defendant.Type))
-            {
-                defendant.Type = CaseRegistrationDefaults.Type;
+                if (string.IsNullOrWhiteSpace(defendant.Type))
+                {
+                    defendant.Type = CaseRegistrationDefaults.Type;
+                }
             }
         }
     }
@@ -58,8 +59,31 @@ public static class CaseRegistrationNormalizer
             ? CaseRegistrationDefaults.PlaceholderSurname
             : operationName.Trim();
 
-        return surname.Length > CaseRegistrationDefaults.SurnameMaxLength
-            ? surname[..CaseRegistrationDefaults.SurnameMaxLength]
-            : surname;
+        return TruncateToTextElements(surname, CaseRegistrationDefaults.SurnameMaxLength);
+    }
+
+    // Truncate on a element boundary so we never split a character sequence
+    private static string TruncateToTextElements(string value, int maxLength)
+    {
+        if (value.Length <= maxLength)
+        {
+            return value;
+        }
+
+        var enumerator = StringInfo.GetTextElementEnumerator(value);
+        var length = 0;
+
+        while (enumerator.MoveNext())
+        {
+            var element = (string)enumerator.Current;
+            if (length + element.Length > maxLength)
+            {
+                break;
+            }
+
+            length += element.Length;
+        }
+
+        return value[..length];
     }
 }

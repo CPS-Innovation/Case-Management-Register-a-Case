@@ -169,6 +169,75 @@ public class RegisterCaseTest
         Assert.Equal(CaseRegistrationDefaults.Gender, defendant.Gender);
     }
 
+    [Fact]
+    public async Task Run_WithNormalizedDefendantFailingValidation_ReturnsBadRequestAndDoesNotForward()
+    {
+        // The initial request passes GetJsonBody, but a defendant is invalid after normalization
+        // (empty surname). The handler re-validates the normalized defendants and must reject it
+        // rather than forwarding a request CMS would refuse.
+        var caseDetails = CreateValidCaseRegistrationRequest();
+        caseDetails.Defendants!.First().Surname = string.Empty;
+        var correlationId = _fixture.Create<Guid>();
+
+        _requestValidatorMock
+            .Setup(x => x.GetJsonBody<CaseRegistrationRequest, CaseRegistrationRequestValidator>(It.IsAny<HttpRequest>()))
+            .ReturnsAsync(new ValidatableRequest<CaseRegistrationRequest>
+            {
+                IsValid = true,
+                Value = caseDetails
+            });
+
+        var functionContext = FunctionContextStubHelper.CreateFunctionContextStub(correlationId, _fixture.Create<string>(), _fixture.Create<string>());
+        var httpRequest = CreateHttpRequestFromJson(caseDetails, correlationId);
+
+        // Act
+        var result = await _function.Run(httpRequest, functionContext);
+
+        // Assert
+        var badRequest = Assert.IsType<BadRequestObjectResult>(result);
+        Assert.NotEmpty((IEnumerable<string>)badRequest.Value!);
+        _mdsServiceMock.Verify(c => c.RegisterCaseAsync(It.IsAny<MdsRegisterCaseArg>()), Times.Never);
+    }
+
+    [Fact]
+    public async Task Run_WithNoDefendants_ValidatesInjectedPlaceholderAndForwards()
+    {
+        // No defendants supplied: normalization injects a placeholder that must pass the
+        // defendant validator before the request is forwarded.
+        var caseDetails = CreateValidCaseRegistrationRequest();
+        caseDetails.Defendants = new List<CaseRegistrationDefendant>();
+        caseDetails.OperationName = "Operation Nightingale";
+        var correlationId = _fixture.Create<Guid>();
+
+        CaseRegistrationRequest? capturedRequest = null;
+        _mdsArgFactoryMock
+            .Setup(f => f.CreateRegisterCaseArg(It.IsAny<string>(), It.IsAny<Guid>(), It.IsAny<CaseRegistrationRequest>()))
+            .Callback<string, Guid, CaseRegistrationRequest>((_, _, request) => capturedRequest = request);
+
+        _requestValidatorMock
+            .Setup(x => x.GetJsonBody<CaseRegistrationRequest, CaseRegistrationRequestValidator>(It.IsAny<HttpRequest>()))
+            .ReturnsAsync(new ValidatableRequest<CaseRegistrationRequest>
+            {
+                IsValid = true,
+                Value = caseDetails
+            });
+
+        _mdsServiceMock.Setup(x => x.RegisterCaseAsync(It.IsAny<MdsRegisterCaseArg>()))
+            .ReturnsAsync(new CaseRegistrationResponseDto { CaseId = 12345 });
+
+        var functionContext = FunctionContextStubHelper.CreateFunctionContextStub(correlationId, _fixture.Create<string>(), _fixture.Create<string>());
+        var httpRequest = CreateHttpRequestFromJson(caseDetails, correlationId);
+
+        // Act
+        var result = await _function.Run(httpRequest, functionContext);
+
+        // Assert
+        Assert.IsType<OkObjectResult>(result);
+        Assert.NotNull(capturedRequest);
+        var defendant = Assert.Single(capturedRequest!.Defendants!);
+        Assert.Equal("Operation Nightingale", defendant.Surname);
+    }
+
     private static HttpRequest CreateHttpRequestFromJson(object obj, Guid correlationId)
     {
         var req = HttpRequestStubHelper.CreateHttpRequest(correlationId);

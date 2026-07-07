@@ -65,7 +65,7 @@ public class CaseRegistrationNormalizerTests
         Assert.Equal(string.Empty, defendant.Gender);
         Assert.Equal(string.Empty, defendant.Ethnicity);
         Assert.Equal(string.Empty, defendant.Religion);
-        Assert.Equal(CaseRegistrationDefaults.Type, defendant.Type);
+        Assert.Equal(string.Empty, defendant.Type);
     }
 
     [Fact]
@@ -179,6 +179,32 @@ public class CaseRegistrationNormalizerTests
         var defendant = Assert.Single(request.Defendants!);
         Assert.Equal(CaseRegistrationDefaults.SurnameMaxLength, defendant.Surname!.Length);
         Assert.Equal(operationName[..CaseRegistrationDefaults.SurnameMaxLength], defendant.Surname);
+    }
+
+    [Fact]
+    public void NormalizeDefendants_WithNoDefendantsAndSurrogatePairOnBoundary_DoesNotSplitSurrogate()
+    {
+        const string emoji = "\U0001F600";
+        var operationName = new string('A', CaseRegistrationDefaults.SurnameMaxLength - 1) + emoji;
+
+        var request = new CaseRegistrationRequest
+        {
+            Urn = new CaseRegistrationUrn(),
+            RegisteringAreaId = 1,
+            RegisteringUnitId = 2,
+            OperationName = operationName,
+            Defendants = new List<CaseRegistrationDefendant>()
+        };
+
+        CaseRegistrationNormalizer.NormalizeDefendants(request);
+
+        var defendant = Assert.Single(request.Defendants!);
+        var surname = defendant.Surname!;
+
+        // The emoji cannot fit whole within the limit, so it is dropped entirely rather than split.
+        Assert.Equal(CaseRegistrationDefaults.SurnameMaxLength - 1, surname.Length);
+        Assert.Equal(new string('A', CaseRegistrationDefaults.SurnameMaxLength - 1), surname);
+        Assert.DoesNotContain(surname, c => char.IsSurrogate(c));
     }
 
     [Fact]
