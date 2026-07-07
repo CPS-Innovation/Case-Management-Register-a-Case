@@ -208,6 +208,30 @@ public class CaseRegistrationNormalizerTests
     }
 
     [Fact]
+    public void NormalizeDefendants_WithNoDefendantsAndSingleOverlongGrapheme_FallsBackToPlaceholderSurname()
+    {
+        // A base character followed by a long run of combining marks forms one grapheme cluster
+        // longer than the max length. Truncating on a text-element boundary would otherwise yield
+        // an empty surname, so the normalizer must fall back to the placeholder.
+        var operationName = "e" + new string('\u0301', CaseRegistrationDefaults.SurnameMaxLength + 5);
+
+        var request = new CaseRegistrationRequest
+        {
+            Urn = new CaseRegistrationUrn(),
+            RegisteringAreaId = 1,
+            RegisteringUnitId = 2,
+            OperationName = operationName,
+            Defendants = new List<CaseRegistrationDefendant>()
+        };
+
+        CaseRegistrationNormalizer.NormalizeDefendants(request);
+
+        var defendant = Assert.Single(request.Defendants!);
+        Assert.Equal(CaseRegistrationDefaults.PlaceholderSurname, defendant.Surname);
+        Assert.False(string.IsNullOrWhiteSpace(defendant.Surname));
+    }
+
+    [Fact]
     public void NormalizeDefendants_WithNoDefendantsAndPaddedOperationName_TrimsSurname()
     {
         var request = new CaseRegistrationRequest

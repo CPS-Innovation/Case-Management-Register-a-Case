@@ -59,7 +59,13 @@ public static class CaseRegistrationNormalizer
             ? CaseRegistrationDefaults.PlaceholderSurname
             : operationName.Trim();
 
-        return TruncateToTextElements(surname, CaseRegistrationDefaults.SurnameMaxLength);
+        var truncated = TruncateToTextElements(surname, CaseRegistrationDefaults.SurnameMaxLength);
+
+        // Fall back to the placeholder if the truncated surname is empty so we never emit a blank
+        // surname that later validation would reject.
+        return string.IsNullOrEmpty(truncated)
+            ? CaseRegistrationDefaults.PlaceholderSurname
+            : truncated;
     }
 
     // Truncate on a element boundary so we never split a character sequence
