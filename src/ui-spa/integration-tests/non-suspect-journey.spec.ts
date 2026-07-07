@@ -106,7 +106,7 @@ test("Should successfully complete non suspect journey", async ({
   await caseRegistrationSummaryPage.verifyPageElements();
   await caseRegistrationSummaryPage.verifyCaseDetailsElements({
     area: "CAMBRIDGESHIRE",
-    urn: "122112345/26",
+    urn: "12211234526",
     registeringUnit: "NORTHERN CJU (Peterborough)",
     wcu: "Cambridgeshire Non Operational WCU",
     operationName: "thunderstruck",
@@ -230,7 +230,7 @@ test("Should successfully complete non suspect journey", async ({
   await caseRegistrationSummaryPage.verifyUrl();
   await caseRegistrationSummaryPage.verifyCaseDetailsElements({
     area: "Cheshire",
-    urn: "122112345/26",
+    urn: "12211234526",
     registeringUnit: "Chester MCU",
     wcu: "Chester Business WCU",
     operationName: "thunderstruck",
@@ -279,7 +279,7 @@ test("Should successfully complete non suspect journey", async ({
   await caseRegistrationSummaryPage.verifyUrl();
   await caseRegistrationSummaryPage.verifyCaseDetailsElements({
     area: "Cheshire",
-    urn: "122112345/26",
+    urn: "12211234526",
     registeringUnit: "Warrington CCU",
     wcu: "Chester Business WCU",
     operationName: "thunderstruck",

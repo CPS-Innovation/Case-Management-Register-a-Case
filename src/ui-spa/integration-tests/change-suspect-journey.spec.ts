@@ -61,7 +61,7 @@ test("Add a new suspect from summary page journey with no charges & change a new
   await caseRegistrationSummaryPage.verifyUrl();
   await caseRegistrationSummaryPage.verifyCaseDetailsElements({
     area: "CAMBRIDGESHIRE",
-    urn: "122112345/26",
+    urn: "12211234526",
     registeringUnit: "NORTHERN CJU (Peterborough)",
     wcu: "Cambridgeshire Non Operational WCU",
     operationName: "thunderstruck",
@@ -178,7 +178,7 @@ test("Add a new suspect from summary page journey with charges &  change a new s
   await caseRegistrationSummaryPage.verifyUrl();
   await caseRegistrationSummaryPage.verifyCaseDetailsElements({
     area: "CAMBRIDGESHIRE",
-    urn: "122112345/26",
+    urn: "12211234526",
     registeringUnit: "NORTHERN CJU (Peterborough)",
     wcu: "Cambridgeshire Non Operational WCU",
     operationName: "thunderstruck",
@@ -281,7 +281,7 @@ test("Add a new suspect from summary page journey with charges &  change a new s
   await caseRegistrationSummaryPage.verifyUrl();
   await caseRegistrationSummaryPage.verifyCaseDetailsElements({
     area: "CAMBRIDGESHIRE",
-    urn: "122112345/26",
+    urn: "12211234526",
     registeringUnit: "NORTHERN CJU (Peterborough)",
     wcu: "Cambridgeshire Non Operational WCU",
     operationName: "thunderstruck",
@@ -457,7 +457,7 @@ test("Add new charge from summary page journey", async ({ page }) => {
   await caseRegistrationSummaryPage.verifyUrl();
   await caseRegistrationSummaryPage.verifyCaseDetailsElements({
     area: "CAMBRIDGESHIRE",
-    urn: "122112345/26",
+    urn: "12211234526",
     registeringUnit: "NORTHERN CJU (Peterborough)",
     wcu: "Cambridgeshire Non Operational WCU",
     operationName: "thunderstruck",
@@ -605,7 +605,7 @@ test("Add new charge from summary page journey", async ({ page }) => {
   await caseRegistrationSummaryPage.verifyUrl();
   await caseRegistrationSummaryPage.verifyCaseDetailsElements({
     area: "CAMBRIDGESHIRE",
-    urn: "122112345/26",
+    urn: "12211234526",
     registeringUnit: "NORTHERN CJU (Peterborough)",
     wcu: "Cambridgeshire Non Operational WCU",
     operationName: "thunderstruck",

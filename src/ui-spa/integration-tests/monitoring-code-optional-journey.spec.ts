@@ -224,7 +224,7 @@ test("Monitoring code is optional if all the suspects have charges", async ({
   await caseRegistrationSummaryPage.verifyUrl();
   await caseRegistrationSummaryPage.verifyCaseDetailsElements({
     area: "CAMBRIDGESHIRE",
-    urn: "122112345/26",
+    urn: "12211234526",
     registeringUnit: "NORTHERN CJU (Peterborough)",
     wcu: "Cambridgeshire Non Operational WCU",
     operationName: "thunderstruck",
@@ -387,7 +387,7 @@ test("Monitoring code is not optional if at least one of the suspects has no cha
   await caseRegistrationSummaryPage.verifyUrl();
   await caseRegistrationSummaryPage.verifyCaseDetailsElements({
     area: "CAMBRIDGESHIRE",
-    urn: "122112345/26",
+    urn: "12211234526",
     registeringUnit: "NORTHERN CJU (Peterborough)",
     wcu: "Cambridgeshire Non Operational WCU",
     operationName: "thunderstruck",

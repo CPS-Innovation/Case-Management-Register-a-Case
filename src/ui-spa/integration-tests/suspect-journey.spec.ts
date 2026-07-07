@@ -582,7 +582,7 @@ test("Should successfully complete suspect journey", async ({ page }) => {
   await caseRegistrationSummaryPage.verifyUrl();
   await caseRegistrationSummaryPage.verifyCaseDetailsElements({
     area: "CAMBRIDGESHIRE",
-    urn: "122112345/26",
+    urn: "12211234526",
     registeringUnit: "NORTHERN CJU (Peterborough)",
     wcu: "Cambridgeshire Non Operational WCU",
     operationName: "thunderstruck",
