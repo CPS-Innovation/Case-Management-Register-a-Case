@@ -66,15 +66,15 @@ stages:
       slotName: 'stg'
       buildArtifact: $(buildArtifact)
 
-  # - template: ../templates/backend-deploy-stages.yml
-  #   parameters:
-  #     buildStageName: 'Build'
-  #     environment: 'prod'
-  #     requireValidation: true
-  #     notifyUsers: $(prodNotifyUsers)
-  #     approvers: $(prodApprovers)
-  #     agentPool: 'CMRC Prod Pool'
-  #     azureSubscription: 'Azure Pipeline: CMRC - Prod'
-  #     deployToSlot: true
-  #     slotName: 'stg'
-  #     buildArtifact: $(buildArtifact)
+  - template: ../templates/backend-deploy-stages.yml
+    parameters:
+      buildStageName: 'Build'
+      environment: 'prod'
+      requireValidation: true
+      notifyUsers: $(prodNotifyUsers)
+      approvers: $(prodApprovers)
+      agentPool: 'CMRC Prod Pool'
+      azureSubscription: 'Azure Pipeline: CMRC - Prod'
+      deployToSlot: true
+      slotName: 'stg'
+      buildArtifact: $(buildArtifact)

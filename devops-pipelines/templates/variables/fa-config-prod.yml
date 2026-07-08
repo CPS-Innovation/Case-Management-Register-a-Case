@@ -1,0 +1,5 @@
+# # Add any non-sensitive environment-specific app settings below (e.g. feature flags):
+
+variables:
+- name: placeholder-flag
+  value: false
