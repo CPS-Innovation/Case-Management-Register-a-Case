@@ -70,7 +70,7 @@ steps:
           },
           {
             "name": "AZURE_FUNCTIONS_ENVIRONMENT",
-            "value": "$(AzureFunctionsEnvironment)"
+            "value": "$(AzureFunctionsEnvironment)",
             "slotSetting": false
           }
         ]
