@@ -3,10 +3,9 @@ using System.Net.Http.Headers;
 using Cps.CaseManagement.MdsClient.Factories;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Polly;
-using Polly.Contrib.WaitAndRetry;
-using Polly.Retry;
+using Microsoft.Extensions.Http.Resilience;
 using Microsoft.Extensions.Options;
+using Polly;
 
 namespace Cps.CaseManagement.MdsClient.Extensions;
 
@@ -20,7 +19,7 @@ public static class IServiceCollectionExtension
         services.Configure<MdsOptions>(configuration.GetSection(nameof(MdsOptions)));
         services.AddHttpClient<MdsClient.Client.IMdsClient, MdsClient.Client.MdsClient>(AddMdsClient)
           .SetHandlerLifetime(TimeSpan.FromMinutes(5))
-          .AddPolicyHandler(GetRetryPolicy());
+          .AddResilienceHandler("mds-retry", ConfigureRetryHandler);
         services.AddTransient<IMdsRequestFactory, MdsRequestFactory>();
         services.AddTransient<IMdsArgFactory, MdsArgFactory>();
 
@@ -39,23 +38,35 @@ public static class IServiceCollectionExtension
         }
     }
 
-    private static AsyncRetryPolicy<HttpResponseMessage> GetRetryPolicy()
+    private static void ConfigureRetryHandler(ResiliencePipelineBuilder<HttpResponseMessage> builder)
     {
-        // https://learn.microsoft.com/en-us/dotnet/architecture/microservices/implement-resilient-applications/implement-http-call-retries-exponential-backoff-polly#add-a-jitter-strategy-to-the-retry-policy
-        var delay = Backoff.DecorrelatedJitterBackoffV2(
-            medianFirstRetryDelay: TimeSpan.FromSeconds(FirstRetryDelaySeconds),
-            retryCount: RetryAttempts);
+        // Exponential backoff with jitter uses Polly's DecorrelatedJitterBackoffV2 algorithm.
+        // https://www.pollydocs.org/strategies/retry.html
+        builder.AddRetry(new HttpRetryStrategyOptions
+        {
+            MaxRetryAttempts = RetryAttempts,
+            Delay = TimeSpan.FromSeconds(FirstRetryDelaySeconds),
+            BackoffType = DelayBackoffType.Exponential,
+            UseJitter = true,
+            ShouldHandle = args => ValueTask.FromResult(ShouldRetry(args.Outcome.Result))
+        });
+    }
 
-        static bool responseStatusCodePredicate(HttpResponseMessage response) =>
+    private static bool ShouldRetry(HttpResponseMessage? response)
+    {
+        if (response is null)
+        {
+            return false;
+        }
+
+        var responseStatusCodeMatch =
             response.StatusCode >= HttpStatusCode.InternalServerError
             || response.StatusCode == HttpStatusCode.NotFound;
 
-        static bool methodPredicate(HttpResponseMessage response) =>
+        var methodMatch =
             response.RequestMessage?.Method != HttpMethod.Post
             && response.RequestMessage?.Method != HttpMethod.Put;
 
-        return Policy
-            .HandleResult<HttpResponseMessage>(r => responseStatusCodePredicate(r) && methodPredicate(r))
-            .WaitAndRetryAsync(delay);
+        return responseStatusCodeMatch && methodMatch;
     }
 }

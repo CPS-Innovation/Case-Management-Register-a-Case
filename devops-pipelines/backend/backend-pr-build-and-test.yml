@@ -10,7 +10,7 @@ pr:
 
 variables:
   buildConfiguration: 'Release'
-  dotNetVersion: '8.x'
+  dotNetVersion: '10.x'
   testResultsDirectory: '$(Agent.TempDirectory)/TestResults'
 
 pool: 'CMRC PreProd Pool'
