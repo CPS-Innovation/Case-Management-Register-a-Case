@@ -67,5 +67,10 @@ steps:
             "name": "WEBSITE_USE_PLACEHOLDER_DOTNETISOLATED",
             "value": "1",
             "slotSetting": false
+          },
+          {
+            "name": "AZURE_FUNCTIONS_ENVIRONMENT",
+            "value": "$(AzureFunctionsEnvironment)"
+            "slotSetting": false
           }
         ]

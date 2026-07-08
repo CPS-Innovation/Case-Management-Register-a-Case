@@ -2,4 +2,4 @@
 
 variables:
 - name: AzureFunctionsEnvironment
-  value: "PreProd"
+  value: "Production"

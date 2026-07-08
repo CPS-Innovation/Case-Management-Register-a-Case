@@ -21,18 +21,18 @@ stages:
     parameters:
       environment: 'staging'
       requireValidation: true
-      notifyUsers: $(notifyUsers)
-      approvers: $(approvers)
+      notifyUsers: $(preprodNotifyUsers)
+      approvers: $(preprodApprovers)
       deployToSlot: true
       slotName: 'stg'
       
-  # - template: ../templates/ui-build-and-deploy-stages.yml
-  #   parameters:
-  #     environment: 'prod'
-  #     agentPool: 'CMRC Prod Pool'
-  #     requireValidation: true
-  #     notifyUsers: $(notifyUsers)
-  #     approvers: $(approvers)
-  #     azureSubscription: 'Azure Pipeline: CMRC - Prod'
-  #     deployToSlot: true
-  #     slotName: 'stg'
+  - template: ../templates/ui-build-and-deploy-stages.yml
+    parameters:
+      environment: 'prod'
+      requireValidation: true
+      notifyUsers: $(prodNotifyUsers)
+      approvers: $(prodApprovers)
+      agentPool: 'CMRC Prod Pool'
+      azureSubscription: 'Azure Pipeline: CMRC - Prod'
+      deployToSlot: true
+      slotName: 'stg'
