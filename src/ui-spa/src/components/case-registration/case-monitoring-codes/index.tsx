@@ -211,7 +211,14 @@ const CaseMonitoringCodesPage = () => {
         </div>
       )}
       <form onSubmit={handleSubmit}>
-        <div className={styles.inputWrapper}>
+        <div
+          className={pageStyles.inputWrapper}
+          style={
+            {
+              ["--rows"]: Math.ceil(caseMonitoringCodes.length / 2),
+            } as React.CSSProperties
+          }
+        >
           <Checkboxes
             fieldset={{
               legend: {
