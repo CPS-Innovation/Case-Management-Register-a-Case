@@ -146,13 +146,20 @@ const SuspectSummary: React.FC<SuspectSummaryProps> = ({
                       ? `/case-registration/case-summary`
                       : `/case-registration/suspect-summary`,
                   },
-                  visuallyHiddenText: "Edit Suspect Details",
+                  visuallyHiddenText: `suspect ${suspect.addSuspectRadio === "company" ? suspect.suspectCompanyNameText : formatNameUtil(suspect.suspectFirstNameText, suspect.suspectLastNameText)}`,
                 },
                 {
                   children: <span>Change</span>,
                   className: "govuk-link--no-visited-state",
                   to: `/case-registration/suspect-${index}/add-suspect`,
-                  visuallyHiddenText: "Edit Suspect Details",
+                  visuallyHiddenText: `suspect details for ${
+                    suspect.addSuspectRadio === "company"
+                      ? suspect.suspectCompanyNameText
+                      : formatNameUtil(
+                          suspect.suspectFirstNameText,
+                          suspect.suspectLastNameText,
+                        )
+                  }`,
                   onClick: (event: React.MouseEvent<HTMLAnchorElement>) =>
                     handleSuspectChangeClick(
                       event,

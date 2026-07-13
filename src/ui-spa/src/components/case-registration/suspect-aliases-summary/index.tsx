@@ -92,7 +92,7 @@ const SuspectAliasesSummaryPage = () => {
             children: <span>Remove</span>,
             to: "#",
             className: "govuk-link--no-visited-state",
-            visuallyHiddenText: "remove a suspect alias",
+            visuallyHiddenText: `alias ${formatNameUtil(alias.firstName, alias.lastName)}`,
             role: "button",
             onClick: () => handleRemoveAlias(index),
           },

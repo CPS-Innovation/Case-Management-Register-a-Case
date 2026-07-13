@@ -51,7 +51,7 @@ const ChargesSummary: React.FC<ChargesSummaryProps> = ({
                   ? `/case-registration/case-summary`
                   : `/case-registration/charges-summary`,
               },
-              visuallyHiddenText: "Remove Charge",
+              visuallyHiddenText: `charge ${charge.selectedOffence.description}`,
               className: "govuk-link--no-visited-state",
             },
           ],
