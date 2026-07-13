@@ -172,7 +172,7 @@ const SuspectAliasesSummaryPage = () => {
         )}
         <div className={styles.inputWrapper}>
           <Radios
-            className="govuk-radios--inline"
+            className="govuk-radios"
             fieldset={{
               legend: {
                 children: (
