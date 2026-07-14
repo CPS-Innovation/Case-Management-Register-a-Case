@@ -5,6 +5,7 @@ import { CaseRegistrationFormContext } from "../../../common/providers/CaseRegis
 import { type GeneralRadioValue } from "../../../common/reducers/caseRegistrationReducer";
 import useErrorSummaryList from "../../../common/hooks/useErrorSummaryList";
 import { useNavigate } from "react-router-dom";
+import PageContentWrapper from "../../common/PageContentWrapper";
 import styles from "../index.module.scss";
 
 const WantToAddCharges = () => {
@@ -118,63 +119,65 @@ const WantToAddCharges = () => {
   return (
     <div>
       <BackLink to={"/case-registration/suspect-summary"}>Back</BackLink>
-      {!!errorList.length && (
-        <div
-          ref={errorSummaryRef}
-          tabIndex={-1}
-          className={styles.errorSummaryWrapper}
-        >
-          <ErrorSummary
-            data-testid={"want-to-add-charges-error-summary"}
-            errorList={errorList}
-            titleChildren="There is a problem"
-          />
-        </div>
-      )}
-      <form onSubmit={handleSubmit}>
-        <div className={styles.inputWrapper}>
-          <Radios
-            fieldset={{
-              legend: {
-                children: (
-                  <h1>
-                    {suspects.length > 1
-                      ? `Do you want to add charges for any of the suspects?`
-                      : `Do you want to add charges for the suspect?`}
-                  </h1>
-                ),
-              },
-            }}
-            errorMessage={
-              formDataErrors["wantToAddChargesRadio"]
-                ? {
-                    children:
-                      formDataErrors["wantToAddChargesRadio"].inputErrorText,
-                  }
-                : undefined
-            }
-            items={[
-              {
-                id: `want-to-add-charges-radio-yes`,
-                children: "Yes",
-                value: "yes",
-                "data-testid": `want-to-add-charges-radio-yes`,
-              },
-              {
-                id: `want-to-add-charges-radio-no`,
-                children: "No",
-                value: "no",
-                "data-testid": `want-to-add-charges-radio-no`,
-              },
-            ]}
-            value={formData.wantToAddChargesRadio}
-            onChange={(value) => {
-              if (value) setFormValue(value);
-            }}
-          ></Radios>
-        </div>
-        <SaveAndCancel onSave={handleSubmit} disabled={disableBtns} />
-      </form>
+      <PageContentWrapper>
+        {!!errorList.length && (
+          <div
+            ref={errorSummaryRef}
+            tabIndex={-1}
+            className={styles.errorSummaryWrapper}
+          >
+            <ErrorSummary
+              data-testid={"want-to-add-charges-error-summary"}
+              errorList={errorList}
+              titleChildren="There is a problem"
+            />
+          </div>
+        )}
+        <form onSubmit={handleSubmit}>
+          <div className={styles.inputWrapper}>
+            <Radios
+              fieldset={{
+                legend: {
+                  children: (
+                    <h1>
+                      {suspects.length > 1
+                        ? `Do you want to add charges for any of the suspects?`
+                        : `Do you want to add charges for the suspect?`}
+                    </h1>
+                  ),
+                },
+              }}
+              errorMessage={
+                formDataErrors["wantToAddChargesRadio"]
+                  ? {
+                      children:
+                        formDataErrors["wantToAddChargesRadio"].inputErrorText,
+                    }
+                  : undefined
+              }
+              items={[
+                {
+                  id: `want-to-add-charges-radio-yes`,
+                  children: "Yes",
+                  value: "yes",
+                  "data-testid": `want-to-add-charges-radio-yes`,
+                },
+                {
+                  id: `want-to-add-charges-radio-no`,
+                  children: "No",
+                  value: "no",
+                  "data-testid": `want-to-add-charges-radio-no`,
+                },
+              ]}
+              value={formData.wantToAddChargesRadio}
+              onChange={(value) => {
+                if (value) setFormValue(value);
+              }}
+            ></Radios>
+          </div>
+          <SaveAndCancel onSave={handleSubmit} disabled={disableBtns} />
+        </form>
+      </PageContentWrapper>
     </div>
   );
 };

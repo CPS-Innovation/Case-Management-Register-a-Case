@@ -8,6 +8,7 @@ import { useNavigate, useParams } from "react-router-dom";
 import useErrorSummaryList from "../../../common/hooks/useErrorSummaryList";
 import useGetSuspectRoute from "../../../common/hooks/useGetSuspectRoute";
 import ErrorSummaryWrapper from "../../common/ErrorSummaryWrapper";
+import PageContentWrapper from "../../common/PageContentWrapper";
 import styles from "../index.module.scss";
 
 const SuspectDisabilityPage = () => {
@@ -113,58 +114,59 @@ const SuspectDisabilityPage = () => {
   return (
     <div>
       <BackLink to={previousRoute}>Back</BackLink>
-
-      <ErrorSummaryWrapper
-        errorList={errorList}
-        errorSummaryRef={errorSummaryRef}
-        dataTestId="suspect-disability-error-summary"
-      />
-      <form onSubmit={handleSubmit}>
-        <div className={styles.inputWrapper}>
-          <Radios
-            fieldset={{
-              legend: {
-                children: (
-                  <h1>
-                    {` Does ${formatNameUtil(
-                      suspectFirstNameText,
-                      suspectLastNameText,
-                    )} have a disability?`}
-                  </h1>
-                ),
-              },
-            }}
-            errorMessage={
-              disabilityFormDataErrors["suspectDisabilityRadio"]
-                ? {
-                    children:
-                      disabilityFormDataErrors["suspectDisabilityRadio"]
-                        .inputErrorText,
-                  }
-                : undefined
-            }
-            items={[
-              {
-                id: `suspect-disability-radio-yes`,
-                children: "Yes",
-                value: "yes",
-                "data-testid": `suspect-disability-radio-yes`,
-              },
-              {
-                id: `suspect-disability-radio-no`,
-                children: "No",
-                value: "no",
-                "data-testid": `suspect-disability-radio-no`,
-              },
-            ]}
-            value={disabilityFormData.suspectDisabilityRadio}
-            onChange={(value) => {
-              if (value) setFormValue(value);
-            }}
-          ></Radios>
-        </div>
-        <SaveAndCancel onSave={handleSubmit} disabled={disableBtns} />
-      </form>
+      <PageContentWrapper>
+        <ErrorSummaryWrapper
+          errorList={errorList}
+          errorSummaryRef={errorSummaryRef}
+          dataTestId="suspect-disability-error-summary"
+        />
+        <form onSubmit={handleSubmit}>
+          <div className={styles.inputWrapper}>
+            <Radios
+              fieldset={{
+                legend: {
+                  children: (
+                    <h1>
+                      {` Does ${formatNameUtil(
+                        suspectFirstNameText,
+                        suspectLastNameText,
+                      )} have a disability?`}
+                    </h1>
+                  ),
+                },
+              }}
+              errorMessage={
+                disabilityFormDataErrors["suspectDisabilityRadio"]
+                  ? {
+                      children:
+                        disabilityFormDataErrors["suspectDisabilityRadio"]
+                          .inputErrorText,
+                    }
+                  : undefined
+              }
+              items={[
+                {
+                  id: `suspect-disability-radio-yes`,
+                  children: "Yes",
+                  value: "yes",
+                  "data-testid": `suspect-disability-radio-yes`,
+                },
+                {
+                  id: `suspect-disability-radio-no`,
+                  children: "No",
+                  value: "no",
+                  "data-testid": `suspect-disability-radio-no`,
+                },
+              ]}
+              value={disabilityFormData.suspectDisabilityRadio}
+              onChange={(value) => {
+                if (value) setFormValue(value);
+              }}
+            ></Radios>
+          </div>
+          <SaveAndCancel onSave={handleSubmit} disabled={disableBtns} />
+        </form>
+      </PageContentWrapper>
     </div>
   );
 };

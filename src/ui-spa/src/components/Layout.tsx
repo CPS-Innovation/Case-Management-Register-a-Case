@@ -31,9 +31,8 @@ export default function RootLayout({
       <TitleAnnouncer />
       <Header />
       <div
-        id="main-content"
-        data-testid="main-content"
-        className={`govuk-width-container ${styles.mainContent}`}
+        data-testid="page-content"
+        className={`govuk-width-container ${styles.pageContent}`}
       >
         {children}
       </div>

@@ -22,6 +22,7 @@ import {
 import { useQuery } from "@tanstack/react-query";
 import useErrorSummaryList from "../../../common/hooks/useErrorSummaryList";
 import { useNavigate } from "react-router-dom";
+import PageContentWrapper from "../../common/PageContentWrapper";
 import pageStyles from "./index.module.scss";
 import styles from "../index.module.scss";
 
@@ -512,242 +513,250 @@ const CaseAssigneePage = () => {
             Back
           </BackLink>
         )}
-      {!!errorList.length && (
-        <div
-          ref={errorSummaryRef}
-          tabIndex={-1}
-          className={styles.errorSummaryWrapper}
-        >
-          <ErrorSummary
-            data-testid={"case-assignee-error-summary"}
-            errorList={errorList}
-            titleChildren="There is a problem"
-          />
-        </div>
-      )}
-      <h1>Who is working on the case?</h1>
-      <form onSubmit={handleSubmit}>
-        <div className={styles.inputWrapper}>
-          <Radios
-            fieldset={{
-              legend: {
-                children: (
-                  <span className="govuk-!-font-weight-bold">
-                    Do you want to add a prosecutor and caseworker?
-                  </span>
-                ),
-              },
-            }}
-            errorMessage={
-              formDataErrors["caseProsecutorRadio"]
-                ? {
-                    children:
-                      formDataErrors["caseProsecutorRadio"].inputErrorText,
-                  }
-                : undefined
-            }
-            items={[
-              {
-                id: "case-prosecutor-radio-yes",
-                children: "Yes",
-                value: "yes",
-                "data-testid": "case-prosecutor-radio-yes",
-                conditional: {
-                  children: [
-                    formData.caseProsecutorRadio === "yes" && (
-                      <AutoComplete
-                        key="case-prosecutor-text"
-                        id="case-prosecutor-text"
-                        inputClasses={"govuk-input--error"}
-                        source={caseProsecutorSuggest}
-                        confirmOnBlur={false}
-                        onConfirm={handleCaseProsecutorConfirm}
-                        defaultValue={formData.caseProsecutorText?.description}
-                        label={{
-                          children: <b>Prosecutor name</b>,
-                        }}
-                        errorMessage={
-                          formDataErrors["caseProsecutorText"]
-                            ? formDataErrors["caseProsecutorText"]
-                                .inputErrorText
-                            : undefined
-                        }
-                      />
-                    ),
-                    formData.caseProsecutorRadio === "yes" && (
-                      <AutoComplete
-                        key="case-caseworker-text"
-                        id="case-caseworker-text"
-                        inputClasses={"govuk-input--error"}
-                        source={caseCaseworkerSuggest}
-                        confirmOnBlur={false}
-                        onConfirm={handleCaseCaseworkerConfirm}
-                        defaultValue={formData.caseCaseworkerText?.description}
-                        label={{
-                          children: <b>Caseworker name</b>,
-                        }}
-                        errorMessage={
-                          formDataErrors["caseCaseworkerText"]
-                            ? formDataErrors["caseCaseworkerText"]
-                                .inputErrorText
-                            : undefined
-                        }
-                      />
-                    ),
-                  ],
+      <PageContentWrapper>
+        {!!errorList.length && (
+          <div
+            ref={errorSummaryRef}
+            tabIndex={-1}
+            className={styles.errorSummaryWrapper}
+          >
+            <ErrorSummary
+              data-testid={"case-assignee-error-summary"}
+              errorList={errorList}
+              titleChildren="There is a problem"
+            />
+          </div>
+        )}
+        <h1>Who is working on the case?</h1>
+        <form onSubmit={handleSubmit}>
+          <div className={styles.inputWrapper}>
+            <Radios
+              fieldset={{
+                legend: {
+                  children: (
+                    <span className="govuk-!-font-weight-bold">
+                      Do you want to add a prosecutor and caseworker?
+                    </span>
+                  ),
                 },
-              },
-              {
-                children: "No",
-                value: "no",
-                "data-testid": "case-prosecutor-radio-no",
-              },
-            ]}
-            value={formData.caseProsecutorRadio}
-            onChange={(value) => {
-              if (value) setFormValue("caseProsecutorRadio", value);
-            }}
-          ></Radios>
-          <Radios
-            fieldset={{
-              legend: {
-                children: (
-                  <span className="govuk-!-font-weight-bold">
-                    Do you want to add a police officer or investigator?
-                  </span>
-                ),
-              },
-            }}
-            errorMessage={
-              formDataErrors["caseInvestigatorRadio"]
-                ? {
-                    children:
-                      formDataErrors["caseInvestigatorRadio"].inputErrorText,
-                  }
-                : undefined
-            }
-            items={[
-              {
-                id: "case-investigator-radio-yes",
-                children: "Yes",
-                value: "yes",
-                "data-testid": "case-investigator-radio-yes",
-                conditional: {
-                  children: [
-                    <Select
-                      key="case-investigator-title-select"
-                      className="govuk-input--width-20 "
-                      label={{
-                        htmlFor: "case-investigator-title-select",
-                        children: (
-                          <span className="govuk-!-font-weight-bold">
-                            Rank (optional)
-                          </span>
-                        ),
-                        className: styles.investigatorTitleSelectLabel,
-                      }}
-                      id="case-investigator-title-select"
-                      data-testid="case-investigator-title-select"
-                      items={investigatorTitles.map((title) => ({
-                        value: title.shortCode,
-                        children: title.display,
-                        disabled: !title.shortCode,
-                      }))}
-                      formGroup={{
-                        className: styles.select,
-                      }}
-                      onChange={handleCaseInvestigatorTitleConfirm}
-                      value={
-                        formData.caseInvestigatorTitleSelect.shortCode ?? ""
-                      }
-                    />,
-                    <Input
-                      key="case-investigator-firstname-text"
-                      id="case-investigator-firstname-text"
-                      data-testid="case-investigator-firstname-text"
-                      className="govuk-input--width-20"
-                      label={{
-                        children: (
-                          <span className="govuk-!-font-weight-bold">
-                            First name (optional)
-                          </span>
-                        ),
-                      }}
-                      type="text"
-                      value={formData.caseInvestigatorFirstNameText}
-                      onChange={(value: string) => {
-                        setFormValue("caseInvestigatorFirstNameText", value);
-                      }}
-                    />,
-                    <Input
-                      key="case-investigator-lastname-text"
-                      id="case-investigator-lastname-text"
-                      data-testid="case-investigator-lastname-text"
-                      className="govuk-input--width-20"
-                      label={{
-                        children: (
-                          <span className="govuk-!-font-weight-bold">
-                            Last name
-                          </span>
-                        ),
-                      }}
-                      errorMessage={
-                        formDataErrors["caseInvestigatorLastNameText"]
-                          ? {
-                              children:
-                                formDataErrors["caseInvestigatorLastNameText"]
-                                  .inputErrorText,
-                            }
-                          : undefined
-                      }
-                      type="text"
-                      value={formData.caseInvestigatorLastNameText}
-                      onChange={(value: string) => {
-                        setFormValue("caseInvestigatorLastNameText", value);
-                      }}
-                    />,
-                    <Input
-                      key="case-investigator-shoulder-number-text"
-                      id="case-investigator-shoulder-number-text"
-                      data-testid="case-investigator-shoulder-number-text"
-                      className="govuk-input--width-20"
-                      label={{
-                        children: (
-                          <div className={pageStyles.shoulderNumberLabel}>
-                            {policeUnitLabel && <span>{policeUnitLabel}</span>}
+              }}
+              errorMessage={
+                formDataErrors["caseProsecutorRadio"]
+                  ? {
+                      children:
+                        formDataErrors["caseProsecutorRadio"].inputErrorText,
+                    }
+                  : undefined
+              }
+              items={[
+                {
+                  id: "case-prosecutor-radio-yes",
+                  children: "Yes",
+                  value: "yes",
+                  "data-testid": "case-prosecutor-radio-yes",
+                  conditional: {
+                    children: [
+                      formData.caseProsecutorRadio === "yes" && (
+                        <AutoComplete
+                          key="case-prosecutor-text"
+                          id="case-prosecutor-text"
+                          inputClasses={"govuk-input--error"}
+                          source={caseProsecutorSuggest}
+                          confirmOnBlur={false}
+                          onConfirm={handleCaseProsecutorConfirm}
+                          defaultValue={
+                            formData.caseProsecutorText?.description
+                          }
+                          label={{
+                            children: <b>Prosecutor name</b>,
+                          }}
+                          errorMessage={
+                            formDataErrors["caseProsecutorText"]
+                              ? formDataErrors["caseProsecutorText"]
+                                  .inputErrorText
+                              : undefined
+                          }
+                        />
+                      ),
+                      formData.caseProsecutorRadio === "yes" && (
+                        <AutoComplete
+                          key="case-caseworker-text"
+                          id="case-caseworker-text"
+                          inputClasses={"govuk-input--error"}
+                          source={caseCaseworkerSuggest}
+                          confirmOnBlur={false}
+                          onConfirm={handleCaseCaseworkerConfirm}
+                          defaultValue={
+                            formData.caseCaseworkerText?.description
+                          }
+                          label={{
+                            children: <b>Caseworker name</b>,
+                          }}
+                          errorMessage={
+                            formDataErrors["caseCaseworkerText"]
+                              ? formDataErrors["caseCaseworkerText"]
+                                  .inputErrorText
+                              : undefined
+                          }
+                        />
+                      ),
+                    ],
+                  },
+                },
+                {
+                  children: "No",
+                  value: "no",
+                  "data-testid": "case-prosecutor-radio-no",
+                },
+              ]}
+              value={formData.caseProsecutorRadio}
+              onChange={(value) => {
+                if (value) setFormValue("caseProsecutorRadio", value);
+              }}
+            ></Radios>
+            <Radios
+              fieldset={{
+                legend: {
+                  children: (
+                    <span className="govuk-!-font-weight-bold">
+                      Do you want to add a police officer or investigator?
+                    </span>
+                  ),
+                },
+              }}
+              errorMessage={
+                formDataErrors["caseInvestigatorRadio"]
+                  ? {
+                      children:
+                        formDataErrors["caseInvestigatorRadio"].inputErrorText,
+                    }
+                  : undefined
+              }
+              items={[
+                {
+                  id: "case-investigator-radio-yes",
+                  children: "Yes",
+                  value: "yes",
+                  "data-testid": "case-investigator-radio-yes",
+                  conditional: {
+                    children: [
+                      <Select
+                        key="case-investigator-title-select"
+                        className="govuk-input--width-20 "
+                        label={{
+                          htmlFor: "case-investigator-title-select",
+                          children: (
                             <span className="govuk-!-font-weight-bold">
-                              Shoulder number (optional)
+                              Rank (optional)
                             </span>
-                          </div>
-                        ),
-                      }}
-                      type="text"
-                      value={formData.caseInvestigatorShoulderNumberText}
-                      onChange={(value: string) => {
-                        setFormValue(
-                          "caseInvestigatorShoulderNumberText",
-                          value,
-                        );
-                      }}
-                    />,
-                  ],
+                          ),
+                          className: styles.investigatorTitleSelectLabel,
+                        }}
+                        id="case-investigator-title-select"
+                        data-testid="case-investigator-title-select"
+                        items={investigatorTitles.map((title) => ({
+                          value: title.shortCode,
+                          children: title.display,
+                          disabled: !title.shortCode,
+                        }))}
+                        formGroup={{
+                          className: styles.select,
+                        }}
+                        onChange={handleCaseInvestigatorTitleConfirm}
+                        value={
+                          formData.caseInvestigatorTitleSelect.shortCode ?? ""
+                        }
+                      />,
+                      <Input
+                        key="case-investigator-firstname-text"
+                        id="case-investigator-firstname-text"
+                        data-testid="case-investigator-firstname-text"
+                        className="govuk-input--width-20"
+                        label={{
+                          children: (
+                            <span className="govuk-!-font-weight-bold">
+                              First name (optional)
+                            </span>
+                          ),
+                        }}
+                        type="text"
+                        value={formData.caseInvestigatorFirstNameText}
+                        onChange={(value: string) => {
+                          setFormValue("caseInvestigatorFirstNameText", value);
+                        }}
+                      />,
+                      <Input
+                        key="case-investigator-lastname-text"
+                        id="case-investigator-lastname-text"
+                        data-testid="case-investigator-lastname-text"
+                        className="govuk-input--width-20"
+                        label={{
+                          children: (
+                            <span className="govuk-!-font-weight-bold">
+                              Last name
+                            </span>
+                          ),
+                        }}
+                        errorMessage={
+                          formDataErrors["caseInvestigatorLastNameText"]
+                            ? {
+                                children:
+                                  formDataErrors["caseInvestigatorLastNameText"]
+                                    .inputErrorText,
+                              }
+                            : undefined
+                        }
+                        type="text"
+                        value={formData.caseInvestigatorLastNameText}
+                        onChange={(value: string) => {
+                          setFormValue("caseInvestigatorLastNameText", value);
+                        }}
+                      />,
+                      <Input
+                        key="case-investigator-shoulder-number-text"
+                        id="case-investigator-shoulder-number-text"
+                        data-testid="case-investigator-shoulder-number-text"
+                        className="govuk-input--width-20"
+                        label={{
+                          children: (
+                            <div className={pageStyles.shoulderNumberLabel}>
+                              {policeUnitLabel && (
+                                <span>{policeUnitLabel}</span>
+                              )}
+                              <span className="govuk-!-font-weight-bold">
+                                Shoulder number (optional)
+                              </span>
+                            </div>
+                          ),
+                        }}
+                        type="text"
+                        value={formData.caseInvestigatorShoulderNumberText}
+                        onChange={(value: string) => {
+                          setFormValue(
+                            "caseInvestigatorShoulderNumberText",
+                            value,
+                          );
+                        }}
+                      />,
+                    ],
+                  },
                 },
-              },
-              {
-                id: "case-investigator-radio-no",
-                children: "No",
-                value: "no",
-                "data-testid": "case-investigator-radio-no",
-              },
-            ]}
-            value={formData.caseInvestigatorRadio}
-            onChange={(value) => {
-              if (value) setFormValue("caseInvestigatorRadio", value);
-            }}
-          ></Radios>
-        </div>
-        <SaveAndCancel onSave={handleSubmit} disabled={disableBtns} />
-      </form>
+                {
+                  id: "case-investigator-radio-no",
+                  children: "No",
+                  value: "no",
+                  "data-testid": "case-investigator-radio-no",
+                },
+              ]}
+              value={formData.caseInvestigatorRadio}
+              onChange={(value) => {
+                if (value) setFormValue("caseInvestigatorRadio", value);
+              }}
+            ></Radios>
+          </div>
+          <SaveAndCancel onSave={handleSubmit} disabled={disableBtns} />
+        </form>
+      </PageContentWrapper>
     </div>
   );
 };

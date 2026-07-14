@@ -10,6 +10,7 @@ import { useQuery } from "@tanstack/react-query";
 import { validateUrn } from "../../../apis/gateway-api";
 import useErrorSummaryList from "../../../common/hooks/useErrorSummaryList";
 import { useNavigate } from "react-router-dom";
+import PageContentWrapper from "../../common/PageContentWrapper";
 import styles from "../index.module.scss";
 import pageStyles from "./index.module.scss";
 
@@ -464,142 +465,146 @@ const CaseDetailsPage = () => {
           Back
         </BackLink>
       )}
-      <h1>Case details</h1>
-      {!!errorList.length && (
-        <div
-          ref={errorSummaryRef}
-          tabIndex={-1}
-          className={styles.errorSummaryWrapper}
-        >
-          <ErrorSummary
-            data-testid={"case-details-error-summary"}
-            errorList={errorList}
-            titleChildren="There is a problem"
-          />
-        </div>
-      )}
-      <form onSubmit={handleSubmit}>
-        <div className={styles.inputWrapper}>
-          <fieldset
-            className={`govuk-fieldset  govuk-form-group ${formDataErrors.urnErrorText?.errorSummaryText ? "govuk-form-group--error" : ""}`}
+      <PageContentWrapper>
+        <h1>Case details</h1>
+        {!!errorList.length && (
+          <div
+            ref={errorSummaryRef}
+            tabIndex={-1}
+            className={styles.errorSummaryWrapper}
           >
-            <legend className="govuk-fieldset__legend ">
-              <span className="govuk-!-font-weight-bold">What is the URN?</span>
-            </legend>
-            {formDataErrors.urnErrorText?.errorSummaryText && (
-              <p className="govuk-error-message">
-                <span className="govuk-visually-hidden">Error:</span>{" "}
-                {formDataErrors.urnErrorText?.errorSummaryText}
-              </p>
+            <ErrorSummary
+              data-testid={"case-details-error-summary"}
+              errorList={errorList}
+              titleChildren="There is a problem"
+            />
+          </div>
+        )}
+        <form onSubmit={handleSubmit}>
+          <div className={styles.inputWrapper}>
+            <fieldset
+              className={`govuk-fieldset  govuk-form-group ${formDataErrors.urnErrorText?.errorSummaryText ? "govuk-form-group--error" : ""}`}
+            >
+              <legend className="govuk-fieldset__legend ">
+                <span className="govuk-!-font-weight-bold">
+                  What is the URN?
+                </span>
+              </legend>
+              {formDataErrors.urnErrorText?.errorSummaryText && (
+                <p className="govuk-error-message">
+                  <span className="govuk-visually-hidden">Error:</span>{" "}
+                  {formDataErrors.urnErrorText?.errorSummaryText}
+                </p>
+              )}
+              <div className={pageStyles.urnInputsWrapper}>
+                <Input
+                  id="urn-police-force-text"
+                  maxLength={2}
+                  className={`govuk-input--width-2 ${formDataErrors.urnErrorText?.errorIds?.includes("urn-police-force-text") ? "govuk-input--error" : ""}`}
+                  data-testid="urn-police-force-text"
+                  label={{
+                    children: "Police force",
+                    className: "govuk-visually-hidden",
+                  }}
+                  value={formData.urnPoliceForceText}
+                  onChange={(val: string) =>
+                    handleUrnValueChange("urnPoliceForceText", val)
+                  }
+                />
+                <Input
+                  id="urn-police-unit-text"
+                  maxLength={2}
+                  className={`govuk-input--width-2 ${formDataErrors.urnErrorText?.errorIds?.includes("urn-police-unit-text") ? "govuk-input--error" : ""}`}
+                  data-testid="urn-police-unit-text"
+                  label={{
+                    children: "Police unit",
+                    className: "govuk-visually-hidden",
+                  }}
+                  value={formData.urnPoliceUnitText}
+                  onChange={(val: string) =>
+                    handleUrnValueChange("urnPoliceUnitText", val)
+                  }
+                />
+                <Input
+                  id="urn-unique-reference-text"
+                  maxLength={5}
+                  className={`govuk-input--width-5 ${formDataErrors.urnErrorText?.errorIds?.includes("urn-unique-reference-text") ? "govuk-input--error" : ""}`}
+                  data-testid="urn-unique-reference-text"
+                  label={{
+                    children: "Unique reference",
+                    className: "govuk-visually-hidden",
+                  }}
+                  value={formData.urnUniqueReferenceText}
+                  onChange={(val: string) =>
+                    handleUrnValueChange("urnUniqueReferenceText", val)
+                  }
+                />
+                <Input
+                  id="urn-year-reference-text"
+                  maxLength={2}
+                  className={`govuk-input--width-2 ${formDataErrors.urnErrorText?.errorIds?.includes("urn-year-reference-text") ? "govuk-input--error" : ""}`}
+                  data-testid="urn-year-reference-text"
+                  label={{
+                    children: "Year reference",
+                    className: "govuk-visually-hidden",
+                  }}
+                  value={formData.urnYearReferenceText}
+                  onChange={(val: string) =>
+                    handleUrnValueChange("urnYearReferenceText", val)
+                  }
+                />
+              </div>
+            </fieldset>
+
+            {!isAreaSensitive && (
+              <AutoComplete
+                id="registering-unit-text"
+                inputClasses={"govuk-input--error"}
+                source={registeringUnitSuggest}
+                confirmOnBlur={false}
+                onConfirm={handleRegisteringUnitConfirm}
+                defaultValue={formData.registeringUnitText?.description}
+                label={{
+                  children: (
+                    <span className="govuk-!-font-weight-bold">
+                      What is the registering unit?
+                    </span>
+                  ),
+                }}
+                errorMessage={
+                  formDataErrors["registeringUnitErrorText"]
+                    ? formDataErrors["registeringUnitErrorText"].inputErrorText
+                    : undefined
+                }
+              />
             )}
-            <div className={pageStyles.urnInputsWrapper}>
-              <Input
-                id="urn-police-force-text"
-                maxLength={2}
-                className={`govuk-input--width-2 ${formDataErrors.urnErrorText?.errorIds?.includes("urn-police-force-text") ? "govuk-input--error" : ""}`}
-                data-testid="urn-police-force-text"
-                label={{
-                  children: "Police force",
-                  className: "govuk-visually-hidden",
-                }}
-                value={formData.urnPoliceForceText}
-                onChange={(val: string) =>
-                  handleUrnValueChange("urnPoliceForceText", val)
-                }
-              />
-              <Input
-                id="urn-police-unit-text"
-                maxLength={2}
-                className={`govuk-input--width-2 ${formDataErrors.urnErrorText?.errorIds?.includes("urn-police-unit-text") ? "govuk-input--error" : ""}`}
-                data-testid="urn-police-unit-text"
-                label={{
-                  children: "Police unit",
-                  className: "govuk-visually-hidden",
-                }}
-                value={formData.urnPoliceUnitText}
-                onChange={(val: string) =>
-                  handleUrnValueChange("urnPoliceUnitText", val)
-                }
-              />
-              <Input
-                id="urn-unique-reference-text"
-                maxLength={5}
-                className={`govuk-input--width-5 ${formDataErrors.urnErrorText?.errorIds?.includes("urn-unique-reference-text") ? "govuk-input--error" : ""}`}
-                data-testid="urn-unique-reference-text"
-                label={{
-                  children: "Unique reference",
-                  className: "govuk-visually-hidden",
-                }}
-                value={formData.urnUniqueReferenceText}
-                onChange={(val: string) =>
-                  handleUrnValueChange("urnUniqueReferenceText", val)
-                }
-              />
-              <Input
-                id="urn-year-reference-text"
-                maxLength={2}
-                className={`govuk-input--width-2 ${formDataErrors.urnErrorText?.errorIds?.includes("urn-year-reference-text") ? "govuk-input--error" : ""}`}
-                data-testid="urn-year-reference-text"
-                label={{
-                  children: "Year reference",
-                  className: "govuk-visually-hidden",
-                }}
-                value={formData.urnYearReferenceText}
-                onChange={(val: string) =>
-                  handleUrnValueChange("urnYearReferenceText", val)
-                }
-              />
-            </div>
-          </fieldset>
 
-          {!isAreaSensitive && (
-            <AutoComplete
-              id="registering-unit-text"
-              inputClasses={"govuk-input--error"}
-              source={registeringUnitSuggest}
-              confirmOnBlur={false}
-              onConfirm={handleRegisteringUnitConfirm}
-              defaultValue={formData.registeringUnitText?.description}
-              label={{
-                children: (
-                  <span className="govuk-!-font-weight-bold">
-                    What is the registering unit?
-                  </span>
-                ),
-              }}
-              errorMessage={
-                formDataErrors["registeringUnitErrorText"]
-                  ? formDataErrors["registeringUnitErrorText"].inputErrorText
-                  : undefined
-              }
-            />
-          )}
-
-          {!!witnessCareUnits.length && (
-            <AutoComplete
-              id="witness-care-unit-text"
-              inputClasses={"govuk-input--error"}
-              source={witnessCareUnitSuggest}
-              confirmOnBlur={false}
-              onConfirm={handleWitnessCareUnitConfirm}
-              defaultValue={formData.witnessCareUnitText?.description}
-              label={{
-                children: (
-                  <span className="govuk-!-font-weight-bold">
-                    What is the witness care unit (WCU)?
-                  </span>
-                ),
-              }}
-              errorMessage={
-                formDataErrors["witnessCareUnitErrorText"]
-                  ? formDataErrors["witnessCareUnitErrorText"].inputErrorText
-                  : undefined
-              }
-            />
-          )}
-        </div>
-        <SaveAndCancel onSave={handleSubmit} disabled={disableBtns} />
-      </form>
+            {!!witnessCareUnits.length && (
+              <AutoComplete
+                id="witness-care-unit-text"
+                inputClasses={"govuk-input--error"}
+                source={witnessCareUnitSuggest}
+                confirmOnBlur={false}
+                onConfirm={handleWitnessCareUnitConfirm}
+                defaultValue={formData.witnessCareUnitText?.description}
+                label={{
+                  children: (
+                    <span className="govuk-!-font-weight-bold">
+                      What is the witness care unit (WCU)?
+                    </span>
+                  ),
+                }}
+                errorMessage={
+                  formDataErrors["witnessCareUnitErrorText"]
+                    ? formDataErrors["witnessCareUnitErrorText"].inputErrorText
+                    : undefined
+                }
+              />
+            )}
+          </div>
+          <SaveAndCancel onSave={handleSubmit} disabled={disableBtns} />
+        </form>
+      </PageContentWrapper>
     </div>
   );
 };

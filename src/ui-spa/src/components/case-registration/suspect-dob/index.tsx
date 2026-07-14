@@ -9,6 +9,7 @@ import useErrorSummaryList from "../../../common/hooks/useErrorSummaryList";
 import useGetSuspectRoute from "../../../common/hooks/useGetSuspectRoute";
 import ErrorSummaryWrapper from "../../common/ErrorSummaryWrapper";
 import { useNavigate, useParams } from "react-router-dom";
+import PageContentWrapper from "../../common/PageContentWrapper";
 import styles from "../index.module.scss";
 
 const SuspectDOBPage = () => {
@@ -188,82 +189,83 @@ const SuspectDOBPage = () => {
   return (
     <div>
       <BackLink to={previousRoute}>Back</BackLink>
-
-      <ErrorSummaryWrapper
-        errorList={errorList}
-        errorSummaryRef={errorSummaryRef}
-        dataTestId="suspect-dob-error-summary"
-      />
-      <form onSubmit={handleSubmit}>
-        <div className={styles.inputWrapper}>
-          <DateInput
-            errorMessage={
-              formDataErrors.suspectDOBDateError
-                ? {
-                    children:
-                      formDataErrors.suspectDOBDateError.errorSummaryText,
-                  }
-                : undefined
-            }
-            fieldset={{
-              legend: {
-                children: (
-                  <h1>{`What is  ${formatNameUtil(suspectFirstNameText, suspectLastNameText)}'s date of birth?`}</h1>
-                ),
-              },
-            }}
-            hint={{
-              children: <span>For example, 27 3 2007</span>,
-            }}
-            id="suspect-DOB-date"
-            data-testid="suspect-DOB-date"
-            items={[
-              {
-                id: "suspect-DOB-day-text",
-                className: `govuk-input--width-2 ${
-                  formDataErrors.suspectDOBDateError?.inputErrorFields.includes(
-                    "day",
-                  )
-                    ? "govuk-input--error"
-                    : ""
-                }`,
-                name: "day",
-                value: formData.suspectDOBDayText,
-                maxLength: 2,
-              },
-              {
-                id: "suspect-DOB-month-text",
-                className: `govuk-input--width-2 ${
-                  formDataErrors.suspectDOBDateError?.inputErrorFields.includes(
-                    "month",
-                  )
-                    ? "govuk-input--error"
-                    : ""
-                }`,
-                name: "month",
-                value: formData.suspectDOBMonthText,
-                maxLength: 2,
-              },
-              {
-                id: "suspect-DOB-year-text",
-                className: `govuk-input--width-4 ${
-                  formDataErrors.suspectDOBDateError?.inputErrorFields.includes(
-                    "year",
-                  )
-                    ? "govuk-input--error"
-                    : ""
-                }`,
-                name: "year",
-                value: formData.suspectDOBYearText,
-                maxLength: 4,
-              },
-            ]}
-            namePrefix="suspect-DOB"
-            onChange={setFormValue}
-          />
-        </div>
-        <SaveAndCancel onSave={handleSubmit} disabled={disableBtns} />
-      </form>
+      <PageContentWrapper>
+        <ErrorSummaryWrapper
+          errorList={errorList}
+          errorSummaryRef={errorSummaryRef}
+          dataTestId="suspect-dob-error-summary"
+        />
+        <form onSubmit={handleSubmit}>
+          <div className={styles.inputWrapper}>
+            <DateInput
+              errorMessage={
+                formDataErrors.suspectDOBDateError
+                  ? {
+                      children:
+                        formDataErrors.suspectDOBDateError.errorSummaryText,
+                    }
+                  : undefined
+              }
+              fieldset={{
+                legend: {
+                  children: (
+                    <h1>{`What is  ${formatNameUtil(suspectFirstNameText, suspectLastNameText)}'s date of birth?`}</h1>
+                  ),
+                },
+              }}
+              hint={{
+                children: <span>For example, 27 3 2007</span>,
+              }}
+              id="suspect-DOB-date"
+              data-testid="suspect-DOB-date"
+              items={[
+                {
+                  id: "suspect-DOB-day-text",
+                  className: `govuk-input--width-2 ${
+                    formDataErrors.suspectDOBDateError?.inputErrorFields.includes(
+                      "day",
+                    )
+                      ? "govuk-input--error"
+                      : ""
+                  }`,
+                  name: "day",
+                  value: formData.suspectDOBDayText,
+                  maxLength: 2,
+                },
+                {
+                  id: "suspect-DOB-month-text",
+                  className: `govuk-input--width-2 ${
+                    formDataErrors.suspectDOBDateError?.inputErrorFields.includes(
+                      "month",
+                    )
+                      ? "govuk-input--error"
+                      : ""
+                  }`,
+                  name: "month",
+                  value: formData.suspectDOBMonthText,
+                  maxLength: 2,
+                },
+                {
+                  id: "suspect-DOB-year-text",
+                  className: `govuk-input--width-4 ${
+                    formDataErrors.suspectDOBDateError?.inputErrorFields.includes(
+                      "year",
+                    )
+                      ? "govuk-input--error"
+                      : ""
+                  }`,
+                  name: "year",
+                  value: formData.suspectDOBYearText,
+                  maxLength: 4,
+                },
+              ]}
+              namePrefix="suspect-DOB"
+              onChange={setFormValue}
+            />
+          </div>
+          <SaveAndCancel onSave={handleSubmit} disabled={disableBtns} />
+        </form>
+      </PageContentWrapper>
     </div>
   );
 };

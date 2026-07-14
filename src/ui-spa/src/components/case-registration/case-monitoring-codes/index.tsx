@@ -10,6 +10,7 @@ import { isMonitoringCodeOptional } from "../../../common/utils/isMonitoringCode
 import useChargesCount from "../../../common/hooks/useChargesCount";
 import useErrorSummaryList from "../../../common/hooks/useErrorSummaryList";
 import { PRE_CHARGE_DECISION_CODE } from "../../../common/constants/general";
+import PageContentWrapper from "../../common/PageContentWrapper";
 import pageStyles from "./index.module.scss";
 import styles from "../index.module.scss";
 
@@ -197,69 +198,71 @@ const CaseMonitoringCodesPage = () => {
       <BackLink to={previousRoute} onClick={handleBackLinkClick}>
         Back
       </BackLink>
-      {!!errorList.length && (
-        <div
-          ref={errorSummaryRef}
-          tabIndex={-1}
-          className={styles.errorSummaryWrapper}
-        >
-          <ErrorSummary
-            data-testid={"monitoring-codes-error-summary"}
-            errorList={errorList}
-            titleChildren="There is a problem"
-          />
-        </div>
-      )}
-      <form onSubmit={handleSubmit}>
-        <div
-          className={pageStyles.inputWrapper}
-          style={
-            {
-              ["--rows"]: Math.ceil(caseMonitoringCodes.length / 2),
-            } as React.CSSProperties
-          }
-        >
-          <Checkboxes
-            fieldset={{
-              legend: {
-                children: <h1>Add monitoring codes</h1>,
-              },
-            }}
-            hint={
-              isOptional
-                ? {
-                    children:
-                      "These are optional. You can continue without adding monitoring codes.",
-                  }
-                : undefined
+      <PageContentWrapper>
+        {!!errorList.length && (
+          <div
+            ref={errorSummaryRef}
+            tabIndex={-1}
+            className={styles.errorSummaryWrapper}
+          >
+            <ErrorSummary
+              data-testid={"monitoring-codes-error-summary"}
+              errorList={errorList}
+              titleChildren="There is a problem"
+            />
+          </div>
+        )}
+        <form onSubmit={handleSubmit}>
+          <div
+            className={pageStyles.inputWrapper}
+            style={
+              {
+                ["--rows"]: Math.ceil(caseMonitoringCodes.length / 2),
+              } as React.CSSProperties
             }
-            errorMessage={
-              formDataErrors["caseMonitoringCodesCheckboxes"]
-                ? {
-                    children:
-                      formDataErrors["caseMonitoringCodesCheckboxes"]
-                        .errorSummaryText,
-                  }
-                : undefined
-            }
-            items={caseMonitoringCodes.map((monitoringCodes, index) => ({
-              id: `case-monitoring-codes-${index}`,
-              children: monitoringCodes.display,
-              value: monitoringCodes.code.toString(),
-              "data-testid": `case-monitoring-codes-${index}`,
-              checked: formData.caseMonitoringCodesCheckboxes?.includes(
-                monitoringCodes.code.toString(),
-              ),
-              disabled: !isOptional && monitoringCodes.code === "CSEA",
-            }))}
-            onChange={(event) => {
-              const { value } = event.target;
-              if (value) setFormValue(value);
-            }}
-          />
-        </div>
-        <SaveAndCancel onSave={handleSubmit} disabled={disableBtns} />
-      </form>
+          >
+            <Checkboxes
+              fieldset={{
+                legend: {
+                  children: <h1>Add monitoring codes</h1>,
+                },
+              }}
+              hint={
+                isOptional
+                  ? {
+                      children:
+                        "These are optional. You can continue without adding monitoring codes.",
+                    }
+                  : undefined
+              }
+              errorMessage={
+                formDataErrors["caseMonitoringCodesCheckboxes"]
+                  ? {
+                      children:
+                        formDataErrors["caseMonitoringCodesCheckboxes"]
+                          .errorSummaryText,
+                    }
+                  : undefined
+              }
+              items={caseMonitoringCodes.map((monitoringCodes, index) => ({
+                id: `case-monitoring-codes-${index}`,
+                children: monitoringCodes.display,
+                value: monitoringCodes.code.toString(),
+                "data-testid": `case-monitoring-codes-${index}`,
+                checked: formData.caseMonitoringCodesCheckboxes?.includes(
+                  monitoringCodes.code.toString(),
+                ),
+                disabled: !isOptional && monitoringCodes.code === "CSEA",
+              }))}
+              onChange={(event) => {
+                const { value } = event.target;
+                if (value) setFormValue(value);
+              }}
+            />
+          </div>
+          <SaveAndCancel onSave={handleSubmit} disabled={disableBtns} />
+        </form>
+      </PageContentWrapper>
     </div>
   );
 };

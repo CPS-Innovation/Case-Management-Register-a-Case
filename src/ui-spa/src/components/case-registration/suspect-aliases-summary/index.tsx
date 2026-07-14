@@ -7,6 +7,7 @@ import useErrorSummaryList from "../../../common/hooks/useErrorSummaryList";
 import useGetSuspectRoute from "../../../common/hooks/useGetSuspectRoute";
 import ErrorSummaryWrapper from "../../common/ErrorSummaryWrapper";
 import { useNavigate, useParams } from "react-router-dom";
+import PageContentWrapper from "../../common/PageContentWrapper";
 import styles from "../index.module.scss";
 import pageStyles from "./index.module.scss";
 
@@ -144,88 +145,89 @@ const SuspectAliasesSummaryPage = () => {
   return (
     <div className={pageStyles.caseSuspectAliasesSummaryPage}>
       <BackLink to={previousRoute}>Back</BackLink>
-
-      <ErrorSummaryWrapper
-        errorList={errorList}
-        errorSummaryRef={errorSummaryRef}
-        dataTestId={"suspect-aliases-summary-error-summary"}
-      />
-      <form onSubmit={handleSubmit}>
-        <h1>
-          {`Aliases for ${formatNameUtil(suspectFirstNameText, suspectLastNameText)}`}
-        </h1>
-        {!!suspectAliases.length && (
-          <div className={pageStyles.summaryListWrapper}>
-            <SummaryList
-              data-testid="suspect-aliases-summary-list"
-              rows={getAliasesSummaryListRows(suspectAliases)}
-            />
+      <PageContentWrapper>
+        <ErrorSummaryWrapper
+          errorList={errorList}
+          errorSummaryRef={errorSummaryRef}
+          dataTestId={"suspect-aliases-summary-error-summary"}
+        />
+        <form onSubmit={handleSubmit}>
+          <h1>
+            {`Aliases for ${formatNameUtil(suspectFirstNameText, suspectLastNameText)}`}
+          </h1>
+          {!!suspectAliases.length && (
+            <div className={pageStyles.summaryListWrapper}>
+              <SummaryList
+                data-testid="suspect-aliases-summary-list"
+                rows={getAliasesSummaryListRows(suspectAliases)}
+              />
+            </div>
+          )}
+          {!suspectAliases.length && (
+            <div
+              className={pageStyles.noAliasesText}
+              data-testid="suspect-no-aliases"
+            >
+              <span>There are no aliases</span>
+            </div>
+          )}
+          <div className={styles.inputWrapper}>
+            <Radios
+              className="govuk-radios"
+              fieldset={{
+                legend: {
+                  children: (
+                    <>
+                      {suspectAliases.length ? (
+                        <span className="govuk-!-font-weight-bold">
+                          {`Do you need to add another alias for ${formatNameUtil(
+                            suspectFirstNameText,
+                            suspectLastNameText,
+                          )}?`}
+                        </span>
+                      ) : (
+                        <span className="govuk-!-font-weight-bold">
+                          {`Do you need to add an alias for ${formatNameUtil(
+                            suspectFirstNameText,
+                            suspectLastNameText,
+                          )}?`}
+                        </span>
+                      )}
+                    </>
+                  ),
+                },
+              }}
+              errorMessage={
+                formDataErrors["addMoreAliasesRadio"]
+                  ? {
+                      children:
+                        formDataErrors["addMoreAliasesRadio"].inputErrorText,
+                    }
+                  : undefined
+              }
+              items={[
+                {
+                  id: `suspect-add-more-aliases-radio-yes`,
+                  children: "Yes",
+                  value: "yes",
+                  "data-testid": `suspect-add-more-aliases-radio-yes`,
+                },
+                {
+                  id: `suspect-add-more-aliases-radio-no`,
+                  children: "No",
+                  value: "no",
+                  "data-testid": `suspect-add-more-aliases-radio-no`,
+                },
+              ]}
+              value={addMoreAliasesRadio}
+              onChange={(value) => {
+                if (value) setAddMoreAliasesRadio(value);
+              }}
+            ></Radios>
           </div>
-        )}
-        {!suspectAliases.length && (
-          <div
-            className={pageStyles.noAliasesText}
-            data-testid="suspect-no-aliases"
-          >
-            <span>There are no aliases</span>
-          </div>
-        )}
-        <div className={styles.inputWrapper}>
-          <Radios
-            className="govuk-radios"
-            fieldset={{
-              legend: {
-                children: (
-                  <>
-                    {suspectAliases.length ? (
-                      <span className="govuk-!-font-weight-bold">
-                        {`Do you need to add another alias for ${formatNameUtil(
-                          suspectFirstNameText,
-                          suspectLastNameText,
-                        )}?`}
-                      </span>
-                    ) : (
-                      <span className="govuk-!-font-weight-bold">
-                        {`Do you need to add an alias for ${formatNameUtil(
-                          suspectFirstNameText,
-                          suspectLastNameText,
-                        )}?`}
-                      </span>
-                    )}
-                  </>
-                ),
-              },
-            }}
-            errorMessage={
-              formDataErrors["addMoreAliasesRadio"]
-                ? {
-                    children:
-                      formDataErrors["addMoreAliasesRadio"].inputErrorText,
-                  }
-                : undefined
-            }
-            items={[
-              {
-                id: `suspect-add-more-aliases-radio-yes`,
-                children: "Yes",
-                value: "yes",
-                "data-testid": `suspect-add-more-aliases-radio-yes`,
-              },
-              {
-                id: `suspect-add-more-aliases-radio-no`,
-                children: "No",
-                value: "no",
-                "data-testid": `suspect-add-more-aliases-radio-no`,
-              },
-            ]}
-            value={addMoreAliasesRadio}
-            onChange={(value) => {
-              if (value) setAddMoreAliasesRadio(value);
-            }}
-          ></Radios>
-        </div>
-        <SaveAndCancel onSave={handleSubmit} disabled={disableBtns} />
-      </form>
+          <SaveAndCancel onSave={handleSubmit} disabled={disableBtns} />
+        </form>
+      </PageContentWrapper>
     </div>
   );
 };

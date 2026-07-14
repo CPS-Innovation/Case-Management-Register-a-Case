@@ -9,6 +9,7 @@ import { formatNameUtil } from "../../../common/utils/formatNameUtil";
 import useErrorSummaryList from "../../../common/hooks/useErrorSummaryList";
 import useGetSuspectRoute from "../../../common/hooks/useGetSuspectRoute";
 import ErrorSummaryWrapper from "../../common/ErrorSummaryWrapper";
+import PageContentWrapper from "../../common/PageContentWrapper";
 import styles from "../index.module.scss";
 
 const SuspectEthnicityPage = () => {
@@ -161,40 +162,41 @@ const SuspectEthnicityPage = () => {
   return (
     <div>
       <BackLink to={previousRoute}>Back</BackLink>
-
-      <ErrorSummaryWrapper
-        errorList={errorList}
-        errorSummaryRef={errorSummaryRef}
-        dataTestId="suspect-ethnicity-error-summary"
-      />
-      <form onSubmit={handleSubmit}>
-        <div className={styles.inputWrapper}>
-          <Radios
-            fieldset={{
-              legend: {
-                children: (
-                  <h1>{`What is ${formatNameUtil(suspectFirstNameText, suspectLastNameText)}'s ethnicity?`}</h1>
-                ),
-              },
-            }}
-            errorMessage={
-              ethnicityFormDataErrors["suspectEthnicityRadio"]
-                ? {
-                    children:
-                      ethnicityFormDataErrors["suspectEthnicityRadio"]
-                        .inputErrorText,
-                  }
-                : undefined
-            }
-            items={ethnicityItems}
-            value={ethnicityFormData.suspectEthnicityRadio.shortCode || ""}
-            onChange={(value) => {
-              if (value) setFormValue(value);
-            }}
-          ></Radios>
-        </div>
-        <SaveAndCancel onSave={handleSubmit} disabled={disableBtns} />
-      </form>
+      <PageContentWrapper>
+        <ErrorSummaryWrapper
+          errorList={errorList}
+          errorSummaryRef={errorSummaryRef}
+          dataTestId="suspect-ethnicity-error-summary"
+        />
+        <form onSubmit={handleSubmit}>
+          <div className={styles.inputWrapper}>
+            <Radios
+              fieldset={{
+                legend: {
+                  children: (
+                    <h1>{`What is ${formatNameUtil(suspectFirstNameText, suspectLastNameText)}'s ethnicity?`}</h1>
+                  ),
+                },
+              }}
+              errorMessage={
+                ethnicityFormDataErrors["suspectEthnicityRadio"]
+                  ? {
+                      children:
+                        ethnicityFormDataErrors["suspectEthnicityRadio"]
+                          .inputErrorText,
+                    }
+                  : undefined
+              }
+              items={ethnicityItems}
+              value={ethnicityFormData.suspectEthnicityRadio.shortCode || ""}
+              onChange={(value) => {
+                if (value) setFormValue(value);
+              }}
+            ></Radios>
+          </div>
+          <SaveAndCancel onSave={handleSubmit} disabled={disableBtns} />
+        </form>
+      </PageContentWrapper>
     </div>
   );
 };

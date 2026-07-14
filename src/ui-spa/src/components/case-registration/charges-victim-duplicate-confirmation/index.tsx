@@ -5,6 +5,7 @@ import { CaseRegistrationFormContext } from "../../../common/providers/CaseRegis
 import { type VictimAdditionalDetailsValue } from "../../../common/reducers/caseRegistrationReducer";
 import { formatNameUtil } from "../../../common/utils/formatNameUtil";
 import { v4 as uuidv4 } from "uuid";
+import PageContentWrapper from "../../common/PageContentWrapper";
 import pageStyles from "./index.module.scss";
 
 const ChargesVictimDuplicateConfirmationPage = () => {
@@ -72,31 +73,33 @@ const ChargesVictimDuplicateConfirmationPage = () => {
   return (
     <div className={pageStyles.chargesVictimDuplicateConfirmationPage}>
       <BackLink to={backRoute}>Back</BackLink>
+      <PageContentWrapper>
+        <form onSubmit={handleSubmit}>
+          <h1>Check the victim name</h1>
 
-      <form onSubmit={handleSubmit}>
-        <h1>Check the victim name</h1>
+          <div>
+            <p>
+              This victim{" "}
+              <b>{formatNameUtil(victimFirstName, victimLastName)}</b> has
+              already been added.
+            </p>
 
-        <div>
-          <p>
-            This victim <b>{formatNameUtil(victimFirstName, victimLastName)}</b>{" "}
-            has already been added.
-          </p>
+            <p>
+              Save and continue if this is a different person, or cancel to go
+              back and check the details.
+            </p>
+          </div>
+          <div className={pageStyles.buttonWrapper}>
+            <Button type="submit" onClick={() => handleSubmit}>
+              Save and continue
+            </Button>
 
-          <p>
-            Save and continue if this is a different person, or cancel to go
-            back and check the details.
-          </p>
-        </div>
-        <div className={pageStyles.buttonWrapper}>
-          <Button type="submit" onClick={() => handleSubmit}>
-            Save and continue
-          </Button>
-
-          <Link to={backRoute} className="govuk-link--no-visited-state">
-            Cancel
-          </Link>
-        </div>
-      </form>
+            <Link to={backRoute} className="govuk-link--no-visited-state">
+              Cancel
+            </Link>
+          </div>
+        </form>
+      </PageContentWrapper>
     </div>
   );
 };

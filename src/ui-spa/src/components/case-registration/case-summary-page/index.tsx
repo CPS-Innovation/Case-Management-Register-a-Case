@@ -22,6 +22,7 @@ import { submitCaseRegistration, validateUrn } from "../../../apis/gateway-api";
 import { getPoliceUnit } from "../../../common/utils/getPoliceUnit";
 import SuspectSummary from "../suspect-summary/SuspectSummary";
 import { useNavigate } from "react-router-dom";
+import PageContentWrapper from "../../common/PageContentWrapper";
 import styles from "./index.module.scss";
 
 const CaseSummaryPage = () => {
@@ -219,56 +220,59 @@ const CaseSummaryPage = () => {
       {!disableSummaryActions && (
         <BackLink to="/case-registration/case-assignee">Back</BackLink>
       )}
+      <PageContentWrapper>
+        <h1>Check your answers before creating the case</h1>
 
-      <h1>Check your answers before creating the case</h1>
-
-      {!!errorList.length && (
-        <div
-          ref={errorSummaryRef}
-          tabIndex={-1}
-          className={styles.errorSummaryWrapper}
-        >
-          <ErrorSummary
-            data-testid={"case-summary-error-summary"}
-            errorList={errorList}
-            titleChildren="There is a problem"
-          />
-        </div>
-      )}
-      <form onSubmit={handleSubmit}>
-        <div data-testid="case-details-summary">
-          <h2>Case details</h2>
-          <SummaryList rows={caseDetailsSummaryListRows} />
-        </div>
-        {!!state.formData.suspects.length && (
-          <div data-testid="case-suspect-summary">
-            <h2>Suspects</h2>
-            <SuspectSummary
-              isCaseSummaryPage={true}
-              hideActions={disableSummaryActions}
+        {!!errorList.length && (
+          <div
+            ref={errorSummaryRef}
+            tabIndex={-1}
+            className={styles.errorSummaryWrapper}
+          >
+            <ErrorSummary
+              data-testid={"case-summary-error-summary"}
+              errorList={errorList}
+              titleChildren="There is a problem"
             />
           </div>
         )}
-        {!!chargesCount && (
-          <div data-testid="case-first-hearing-summary">
-            <h2>First hearing details</h2>
-            <SummaryList rows={caseFirstHearingSummaryListRows} />
+        <form onSubmit={handleSubmit}>
+          <div data-testid="case-details-summary">
+            <h2>Case details</h2>
+            <SummaryList rows={caseDetailsSummaryListRows} />
           </div>
-        )}
-        <div data-testid="case-complexity-and-monitoring-codes-summary">
-          <h2>Case complexity and monitoring codes</h2>
-          <SummaryList rows={caseComplexityAndMonitoringCodesSummaryListRows} />
-        </div>
-        <div data-testid="case-assignee-summary">
-          <h2>Working on the case</h2>
-          <SummaryList rows={whoseWorkingOnTheCaseSummaryListRows} />
-        </div>
-        <SaveAndCancel
-          onSave={handleSubmit}
-          isCaseSummaryPage={true}
-          disabled={disableSummaryActions}
-        />
-      </form>
+          {!!state.formData.suspects.length && (
+            <div data-testid="case-suspect-summary">
+              <h2>Suspects</h2>
+              <SuspectSummary
+                isCaseSummaryPage={true}
+                hideActions={disableSummaryActions}
+              />
+            </div>
+          )}
+          {!!chargesCount && (
+            <div data-testid="case-first-hearing-summary">
+              <h2>First hearing details</h2>
+              <SummaryList rows={caseFirstHearingSummaryListRows} />
+            </div>
+          )}
+          <div data-testid="case-complexity-and-monitoring-codes-summary">
+            <h2>Case complexity and monitoring codes</h2>
+            <SummaryList
+              rows={caseComplexityAndMonitoringCodesSummaryListRows}
+            />
+          </div>
+          <div data-testid="case-assignee-summary">
+            <h2>Working on the case</h2>
+            <SummaryList rows={whoseWorkingOnTheCaseSummaryListRows} />
+          </div>
+          <SaveAndCancel
+            onSave={handleSubmit}
+            isCaseSummaryPage={true}
+            disabled={disableSummaryActions}
+          />
+        </form>
+      </PageContentWrapper>
     </div>
   );
 };
