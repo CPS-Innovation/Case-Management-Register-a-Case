@@ -1,11 +1,12 @@
 import { PRIVATE_BETA_CONTACT_EMAIL } from "../../config";
 import Layout from "../../components/Layout";
+import PageContentWrapper from "../../components/common/PageContentWrapper";
 import styles from "./AccessErrorPage.module.scss";
 
 const AccessErrorPage: React.FC = () => {
   return (
     <Layout>
-      <div className="govuk-width-container">
+      <PageContentWrapper>
         <div className={styles.contentWrapper}>
           <h1>Access Error</h1>
           <p>
@@ -19,7 +20,7 @@ const AccessErrorPage: React.FC = () => {
             for assistance.
           </p>
         </div>
-      </div>
+      </PageContentWrapper>
     </Layout>
   );
 };
