@@ -15,6 +15,7 @@ import { isChargedWithAdultWarningActive } from "../../../common/utils/isCharged
 import { isValidOnOrBeforeDate } from "../../../common/utils/isValidOnOrBeforeDate";
 import { useNavigate, useParams } from "react-router-dom";
 import SaveAndCancel from "../../common/SaveAndCancel";
+import PageContentWrapper from "../../common/PageContentWrapper";
 import styles from "../index.module.scss";
 import pageStyles from "./index.module.scss";
 
@@ -321,173 +322,179 @@ const AddChargeDetailsPage = () => {
       >
         Back
       </BackLink>
-      {!!errorList.length && (
-        <div
-          ref={errorSummaryRef}
-          tabIndex={-1}
-          className={styles.errorSummaryWrapper}
-        >
-          <ErrorSummary
-            data-testid={"charges-details-error-summary"}
-            errorList={errorList}
-            titleChildren="There is a problem"
-          />
-        </div>
-      )}
-
-      <h1>Add charges</h1>
-      <div>
-        <h2 className="govuk-heading-s govuk-!-margin-bottom-2">
-          {suspectName}
-        </h2>
-        <h2 className="govuk-heading-s govuk-!-margin-bottom-2">
-          {suspectCharge.selectedOffence?.code} -{" "}
-          {suspectCharge.selectedOffence?.description}
-        </h2>
-      </div>
-      <hr className={pageStyles.resultsDivider} />
-      <form onSubmit={handleSubmit}>
-        <div
-          className={styles.inputWrapper}
-          data-testid="add-charge-details-dates-inputs"
-        >
-          <div className="govuk-form-group ">
-            <fieldset className="govuk-fieldset ">
-              <legend className="govuk-fieldset__legend ">
-                <span className="govuk-!-font-weight-bold">
-                  When was the offence?
-                </span>
-              </legend>
-              <div className={pageStyles.dateInputsWrapper}>
-                <DateInputNative
-                  key="offence-from-date-text"
-                  id="offence-from-date-text"
-                  data-testid="offence-from-date-text"
-                  className={pageStyles.dateInput}
-                  value={formData.offenceFromDate}
-                  aria-label="offence from date"
-                  onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
-                    handleDateChange("offenceFromDate", e.target.value)
-                  }
-                  errorMessage={
-                    formDataErrors["offenceFromDate"]
-                      ? formDataErrors["offenceFromDate"].inputErrorText
-                      : undefined
-                  }
-                />
-                {showDateRange && (
-                  <>
-                    <span className={pageStyles.dateRangeSeparator}> to </span>
-                    <DateInputNative
-                      key="offence-to-date-text"
-                      id="offence-to-date-text"
-                      data-testid="offence-to-date-text"
-                      aria-label="offence to date"
-                      className={pageStyles.dateInput}
-                      value={formData.offenceToDate}
-                      onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
-                        handleDateChange("offenceToDate", e.target.value)
-                      }
-                      errorMessage={
-                        formDataErrors["offenceToDate"]
-                          ? formDataErrors["offenceToDate"].inputErrorText
-                          : undefined
-                      }
-                    />
-                  </>
-                )}
-                <Button
-                  className="govuk-button--secondary"
-                  name="secondary"
-                  type="button"
-                  onClick={() => handleDateRangeButtonClick()}
-                >
-                  {showDateRange ? "Single date" : "Date range"}
-                </Button>
-              </div>
-            </fieldset>
+      <PageContentWrapper>
+        {!!errorList.length && (
+          <div
+            ref={errorSummaryRef}
+            tabIndex={-1}
+            className={styles.errorSummaryWrapper}
+          >
+            <ErrorSummary
+              data-testid={"charges-details-error-summary"}
+              errorList={errorList}
+              titleChildren="There is a problem"
+            />
           </div>
+        )}
 
-          <Radios
-            data-testid="add-victim-radio"
-            fieldset={{
-              legend: {
-                children: (
+        <h1>Add charges</h1>
+        <div>
+          <h2 className="govuk-heading-s govuk-!-margin-bottom-2">
+            {suspectName}
+          </h2>
+          <h2 className="govuk-heading-s govuk-!-margin-bottom-2">
+            {suspectCharge.selectedOffence?.code} -{" "}
+            {suspectCharge.selectedOffence?.description}
+          </h2>
+        </div>
+        <hr className={pageStyles.resultsDivider} />
+        <form onSubmit={handleSubmit}>
+          <div
+            className={styles.inputWrapper}
+            data-testid="add-charge-details-dates-inputs"
+          >
+            <div className="govuk-form-group ">
+              <fieldset className="govuk-fieldset ">
+                <legend className="govuk-fieldset__legend ">
                   <span className="govuk-!-font-weight-bold">
-                    Is there a victim?
+                    When was the offence?
                   </span>
-                ),
-              },
-            }}
-            errorMessage={
-              formDataErrors["addVictimRadio"]
-                ? {
-                    children: formDataErrors["addVictimRadio"].inputErrorText,
-                  }
-                : undefined
-            }
-            items={[
-              {
-                id: "add-victim-radio-yes",
-                children: "Yes",
-                value: "yes",
-                "data-testid": "add-victim-radio-yes",
-              },
-              {
-                id: "add-victim-radio-no",
-                children: "No",
-                value: "no",
-                "data-testid": "add-victim-radio-no",
-              },
-            ]}
-            value={formData.addVictimRadio || ""}
-            onChange={(value) => {
-              if (value) setFormValue("addVictimRadio", value);
-            }}
-          ></Radios>
-          {showChargedWithAdultWarning && (
+                </legend>
+                <div className={pageStyles.dateInputsWrapper}>
+                  <DateInputNative
+                    key="offence-from-date-text"
+                    id="offence-from-date-text"
+                    data-testid="offence-from-date-text"
+                    className={pageStyles.dateInput}
+                    value={formData.offenceFromDate}
+                    aria-label="offence from date"
+                    onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+                      handleDateChange("offenceFromDate", e.target.value)
+                    }
+                    errorMessage={
+                      formDataErrors["offenceFromDate"]
+                        ? formDataErrors["offenceFromDate"].inputErrorText
+                        : undefined
+                    }
+                  />
+                  {showDateRange && (
+                    <>
+                      <span className={pageStyles.dateRangeSeparator}>
+                        {" "}
+                        to{" "}
+                      </span>
+                      <DateInputNative
+                        key="offence-to-date-text"
+                        id="offence-to-date-text"
+                        data-testid="offence-to-date-text"
+                        aria-label="offence to date"
+                        className={pageStyles.dateInput}
+                        value={formData.offenceToDate}
+                        onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+                          handleDateChange("offenceToDate", e.target.value)
+                        }
+                        errorMessage={
+                          formDataErrors["offenceToDate"]
+                            ? formDataErrors["offenceToDate"].inputErrorText
+                            : undefined
+                        }
+                      />
+                    </>
+                  )}
+                  <Button
+                    className="govuk-button--secondary"
+                    name="secondary"
+                    type="button"
+                    onClick={() => handleDateRangeButtonClick()}
+                  >
+                    {showDateRange ? "Single date" : "Date range"}
+                  </Button>
+                </div>
+              </fieldset>
+            </div>
+
             <Radios
-              data-testid="charged-with-adult-radio"
+              data-testid="add-victim-radio"
               fieldset={{
                 legend: {
                   children: (
                     <span className="govuk-!-font-weight-bold">
-                      {`Is ${suspectName} charged with an adult?`}
+                      Is there a victim?
                     </span>
                   ),
                 },
               }}
               errorMessage={
-                formDataErrors["chargedWithAdultRadio"]
+                formDataErrors["addVictimRadio"]
                   ? {
-                      children:
-                        formDataErrors["chargedWithAdultRadio"].inputErrorText,
+                      children: formDataErrors["addVictimRadio"].inputErrorText,
                     }
                   : undefined
               }
               items={[
                 {
-                  id: "charged-with-adult-radio-yes",
+                  id: "add-victim-radio-yes",
                   children: "Yes",
                   value: "yes",
-                  "data-testid": "charged-with-adult-radio-yes",
+                  "data-testid": "add-victim-radio-yes",
                 },
                 {
-                  id: "charged-with-adult-radio-no",
+                  id: "add-victim-radio-no",
                   children: "No",
                   value: "no",
-                  "data-testid": "charged-with-adult-radio-no",
+                  "data-testid": "add-victim-radio-no",
                 },
               ]}
-              value={formData.chargedWithAdultRadio || ""}
+              value={formData.addVictimRadio || ""}
               onChange={(value) => {
-                if (value) setFormValue("chargedWithAdultRadio", value);
+                if (value) setFormValue("addVictimRadio", value);
               }}
             ></Radios>
-          )}
-        </div>
-        <SaveAndCancel onSave={handleSubmit} disabled={disableBtns} />
-      </form>
+            {showChargedWithAdultWarning && (
+              <Radios
+                data-testid="charged-with-adult-radio"
+                fieldset={{
+                  legend: {
+                    children: (
+                      <span className="govuk-!-font-weight-bold">
+                        {`Is ${suspectName} charged with an adult?`}
+                      </span>
+                    ),
+                  },
+                }}
+                errorMessage={
+                  formDataErrors["chargedWithAdultRadio"]
+                    ? {
+                        children:
+                          formDataErrors["chargedWithAdultRadio"]
+                            .inputErrorText,
+                      }
+                    : undefined
+                }
+                items={[
+                  {
+                    id: "charged-with-adult-radio-yes",
+                    children: "Yes",
+                    value: "yes",
+                    "data-testid": "charged-with-adult-radio-yes",
+                  },
+                  {
+                    id: "charged-with-adult-radio-no",
+                    children: "No",
+                    value: "no",
+                    "data-testid": "charged-with-adult-radio-no",
+                  },
+                ]}
+                value={formData.chargedWithAdultRadio || ""}
+                onChange={(value) => {
+                  if (value) setFormValue("chargedWithAdultRadio", value);
+                }}
+              ></Radios>
+            )}
+          </div>
+          <SaveAndCancel onSave={handleSubmit} disabled={disableBtns} />
+        </form>
+      </PageContentWrapper>
     </div>
   );
 };

@@ -7,6 +7,7 @@ import { sanitizeASNText } from "../../../common/utils/sanitizeASNText";
 import useErrorSummaryList from "../../../common/hooks/useErrorSummaryList";
 import useGetSuspectRoute from "../../../common/hooks/useGetSuspectRoute";
 import ErrorSummaryWrapper from "../../common/ErrorSummaryWrapper";
+import PageContentWrapper from "../../common/PageContentWrapper";
 import styles from "../index.module.scss";
 
 const SuspectASNPage = () => {
@@ -103,37 +104,38 @@ const SuspectASNPage = () => {
   return (
     <div>
       <BackLink to={previousRoute}>Back</BackLink>
-
-      <ErrorSummaryWrapper
-        errorList={errorList}
-        errorSummaryRef={errorSummaryRef}
-        dataTestId="suspect-asn-error-summary"
-      />
-      <form onSubmit={handleSubmit}>
-        <div className={styles.inputWrapper}>
-          <Input
-            key="suspect-asn-text"
-            id="suspect-asn-text"
-            data-testid="suspect-asn-text"
-            errorMessage={
-              asnFormDataErrors["suspectASNText"]
-                ? {
-                    children:
-                      asnFormDataErrors["suspectASNText"].inputErrorText,
-                  }
-                : undefined
-            }
-            className="govuk-input--width-20"
-            label={{
-              children: <h1>What is the Arrest Summons Number (ASN)?</h1>,
-            }}
-            type="text"
-            value={asnFormData.suspectASNText}
-            onChange={setFormValue}
-          />
-        </div>
-        <SaveAndCancel onSave={handleSubmit} disabled={disableBtns} />
-      </form>
+      <PageContentWrapper>
+        <ErrorSummaryWrapper
+          errorList={errorList}
+          errorSummaryRef={errorSummaryRef}
+          dataTestId="suspect-asn-error-summary"
+        />
+        <form onSubmit={handleSubmit}>
+          <div className={styles.inputWrapper}>
+            <Input
+              key="suspect-asn-text"
+              id="suspect-asn-text"
+              data-testid="suspect-asn-text"
+              errorMessage={
+                asnFormDataErrors["suspectASNText"]
+                  ? {
+                      children:
+                        asnFormDataErrors["suspectASNText"].inputErrorText,
+                    }
+                  : undefined
+              }
+              className="govuk-input--width-20"
+              label={{
+                children: <h1>What is the Arrest Summons Number (ASN)?</h1>,
+              }}
+              type="text"
+              value={asnFormData.suspectASNText}
+              onChange={setFormValue}
+            />
+          </div>
+          <SaveAndCancel onSave={handleSubmit} disabled={disableBtns} />
+        </form>
+      </PageContentWrapper>
     </div>
   );
 };

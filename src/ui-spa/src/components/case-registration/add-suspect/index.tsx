@@ -16,6 +16,7 @@ import {
 import { getNextSuspectJourneyRoute } from "../../../common/utils/getSuspectJourneyRoutes";
 import { sanitizeNameText } from "../../../common/utils/sanitizeNameText";
 import { useNavigate, useParams } from "react-router-dom";
+import PageContentWrapper from "../../common/PageContentWrapper";
 import styles from "../index.module.scss";
 
 const AddSuspectPage = () => {
@@ -272,160 +273,165 @@ const AddSuspectPage = () => {
       <BackLink to={previousRoute} onClick={handleBackLinkClick}>
         Back
       </BackLink>
-      {!!errorList.length && (
-        <div
-          ref={errorSummaryRef}
-          tabIndex={-1}
-          className={styles.errorSummaryWrapper}
-        >
-          <ErrorSummary
-            data-testid={"add-suspect-error-summary"}
-            errorList={errorList}
-            titleChildren="There is a problem"
-          />
-        </div>
-      )}
-      <form onSubmit={handleSubmit}>
-        <div className={styles.inputWrapper}>
-          <Radios
-            fieldset={{
-              legend: {
-                children: <h1>Add a suspect</h1>,
-              },
-            }}
-            hint={{
-              children: "Choose the type of suspect you want to add",
-            }}
-            errorMessage={
-              formDataErrors["addSuspectRadio"]
-                ? {
-                    children: formDataErrors["addSuspectRadio"].inputErrorText,
-                  }
-                : undefined
-            }
-            items={[
-              {
-                id: "add-suspect-radio-person",
-                children: "Person",
-                value: "person",
-                "data-testid": "add-suspect-radio-person",
-                conditional: {
-                  children: [
-                    <Input
-                      key="suspect-first-name-text"
-                      id="suspect-first-name-text"
-                      data-testid="suspect-first-name-text"
-                      className="govuk-input--width-20"
-                      label={{
-                        children: <b>First name (optional)</b>,
-                      }}
-                      type="text"
-                      value={formData.suspectFirstNameText}
-                      onChange={(value: string) => {
-                        setFormValue("suspectFirstNameText", value);
-                      }}
-                    />,
-                    <Input
-                      key="suspect-last-name-text"
-                      id="suspect-last-name-text"
-                      data-testid="suspect-last-name-text"
-                      className="govuk-input--width-20"
-                      label={{
-                        children: <b>Last name</b>,
-                      }}
-                      errorMessage={
-                        formDataErrors["suspectLastNameText"]
-                          ? {
-                              children:
-                                formDataErrors["suspectLastNameText"]
-                                  .inputErrorText,
-                            }
-                          : undefined
-                      }
-                      type="text"
-                      value={formData.suspectLastNameText}
-                      onChange={(value: string) => {
-                        setFormValue("suspectLastNameText", value);
-                      }}
-                    />,
-                    <Checkboxes
-                      key="case-additional-details-checkboxes"
-                      data-testid="suspect-additional-details-checkboxes"
-                      fieldset={{
-                        legend: {
-                          children: (
-                            <span className="govuk-!-font-weight-bold">
-                              Do you want to add any additional details about
-                              this suspect?
-                            </span>
-                          ),
-                        },
-                      }}
-                      hint={{
-                        children: "Select all that apply.",
-                      }}
-                      items={suspectAdditionalDetails.map((detail, index) => ({
-                        id: `case-additional-details-${index}`,
-                        children: detail,
-                        value: detail,
-                        "data-testid": `case-additional-details-${index}`,
-                        checked:
-                          formData.suspectAdditionalDetailsCheckboxes?.includes(
-                            detail,
-                          ),
-                      }))}
-                      onChange={(event) => {
-                        const { value } = event.target;
-                        if (value)
-                          handleAdditionalDetailsChange(
-                            value as SuspectAdditionalDetailValue,
-                          );
-                      }}
-                    />,
-                  ],
+      <PageContentWrapper>
+        {!!errorList.length && (
+          <div
+            ref={errorSummaryRef}
+            tabIndex={-1}
+            className={styles.errorSummaryWrapper}
+          >
+            <ErrorSummary
+              data-testid={"add-suspect-error-summary"}
+              errorList={errorList}
+              titleChildren="There is a problem"
+            />
+          </div>
+        )}
+        <form onSubmit={handleSubmit}>
+          <div className={styles.inputWrapper}>
+            <Radios
+              fieldset={{
+                legend: {
+                  children: <h1>Add a suspect</h1>,
                 },
-              },
-              {
-                children: "Company",
-                value: "company",
-                "data-testid": "add-suspect-company-name-text",
-                conditional: {
-                  children: [
-                    <Input
-                      key="suspect-company-name-text"
-                      id="suspect-company-name-text"
-                      data-testid="suspect-company-name-text"
-                      className="govuk-input--width-20"
-                      label={{
-                        children: <b>Company name</b>,
-                      }}
-                      errorMessage={
-                        formDataErrors["suspectCompanyNameText"]
-                          ? {
-                              children:
-                                formDataErrors["suspectCompanyNameText"]
-                                  .inputErrorText,
-                            }
-                          : undefined
-                      }
-                      type="text"
-                      value={formData.suspectCompanyNameText}
-                      onChange={(value: string) => {
-                        setFormValue("suspectCompanyNameText", value);
-                      }}
-                    />,
-                  ],
+              }}
+              hint={{
+                children: "Choose the type of suspect you want to add",
+              }}
+              errorMessage={
+                formDataErrors["addSuspectRadio"]
+                  ? {
+                      children:
+                        formDataErrors["addSuspectRadio"].inputErrorText,
+                    }
+                  : undefined
+              }
+              items={[
+                {
+                  id: "add-suspect-radio-person",
+                  children: "Person",
+                  value: "person",
+                  "data-testid": "add-suspect-radio-person",
+                  conditional: {
+                    children: [
+                      <Input
+                        key="suspect-first-name-text"
+                        id="suspect-first-name-text"
+                        data-testid="suspect-first-name-text"
+                        className="govuk-input--width-20"
+                        label={{
+                          children: <b>First name (optional)</b>,
+                        }}
+                        type="text"
+                        value={formData.suspectFirstNameText}
+                        onChange={(value: string) => {
+                          setFormValue("suspectFirstNameText", value);
+                        }}
+                      />,
+                      <Input
+                        key="suspect-last-name-text"
+                        id="suspect-last-name-text"
+                        data-testid="suspect-last-name-text"
+                        className="govuk-input--width-20"
+                        label={{
+                          children: <b>Last name</b>,
+                        }}
+                        errorMessage={
+                          formDataErrors["suspectLastNameText"]
+                            ? {
+                                children:
+                                  formDataErrors["suspectLastNameText"]
+                                    .inputErrorText,
+                              }
+                            : undefined
+                        }
+                        type="text"
+                        value={formData.suspectLastNameText}
+                        onChange={(value: string) => {
+                          setFormValue("suspectLastNameText", value);
+                        }}
+                      />,
+                      <Checkboxes
+                        key="case-additional-details-checkboxes"
+                        data-testid="suspect-additional-details-checkboxes"
+                        fieldset={{
+                          legend: {
+                            children: (
+                              <span className="govuk-!-font-weight-bold">
+                                Do you want to add any additional details about
+                                this suspect?
+                              </span>
+                            ),
+                          },
+                        }}
+                        hint={{
+                          children: "Select all that apply.",
+                        }}
+                        items={suspectAdditionalDetails.map(
+                          (detail, index) => ({
+                            id: `case-additional-details-${index}`,
+                            children: detail,
+                            value: detail,
+                            "data-testid": `case-additional-details-${index}`,
+                            checked:
+                              formData.suspectAdditionalDetailsCheckboxes?.includes(
+                                detail,
+                              ),
+                          }),
+                        )}
+                        onChange={(event) => {
+                          const { value } = event.target;
+                          if (value)
+                            handleAdditionalDetailsChange(
+                              value as SuspectAdditionalDetailValue,
+                            );
+                        }}
+                      />,
+                    ],
+                  },
                 },
-              },
-            ]}
-            value={formData.addSuspectRadio}
-            onChange={(value) => {
-              if (value) setFormValue("addSuspectRadio", value);
-            }}
-          ></Radios>
-        </div>
-        <SaveAndCancel onSave={handleSubmit} disabled={disableBtns} />
-      </form>
+                {
+                  children: "Company",
+                  value: "company",
+                  "data-testid": "add-suspect-company-name-text",
+                  conditional: {
+                    children: [
+                      <Input
+                        key="suspect-company-name-text"
+                        id="suspect-company-name-text"
+                        data-testid="suspect-company-name-text"
+                        className="govuk-input--width-20"
+                        label={{
+                          children: <b>Company name</b>,
+                        }}
+                        errorMessage={
+                          formDataErrors["suspectCompanyNameText"]
+                            ? {
+                                children:
+                                  formDataErrors["suspectCompanyNameText"]
+                                    .inputErrorText,
+                              }
+                            : undefined
+                        }
+                        type="text"
+                        value={formData.suspectCompanyNameText}
+                        onChange={(value: string) => {
+                          setFormValue("suspectCompanyNameText", value);
+                        }}
+                      />,
+                    ],
+                  },
+                },
+              ]}
+              value={formData.addSuspectRadio}
+              onChange={(value) => {
+                if (value) setFormValue("addSuspectRadio", value);
+              }}
+            ></Radios>
+          </div>
+          <SaveAndCancel onSave={handleSubmit} disabled={disableBtns} />
+        </form>
+      </PageContentWrapper>
     </div>
   );
 };

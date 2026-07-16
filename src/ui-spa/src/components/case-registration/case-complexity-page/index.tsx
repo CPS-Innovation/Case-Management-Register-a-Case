@@ -6,6 +6,7 @@ import { getCaseComplexities } from "../../../apis/gateway-api";
 import { useQuery } from "@tanstack/react-query";
 import useErrorSummaryList from "../../../common/hooks/useErrorSummaryList";
 import { useNavigate } from "react-router-dom";
+import PageContentWrapper from "../../common/PageContentWrapper";
 import styles from "../index.module.scss";
 
 const CaseComplexityPage = () => {
@@ -151,49 +152,51 @@ const CaseComplexityPage = () => {
       <BackLink to={previousRoute} onClick={handleBackLinkClick}>
         Back
       </BackLink>
-      {!!errorList.length && (
-        <div
-          ref={errorSummaryRef}
-          tabIndex={-1}
-          className={styles.errorSummaryWrapper}
-        >
-          <ErrorSummary
-            data-testid={"case-complexity-error-summary"}
-            errorList={errorList}
-            titleChildren="There is a problem"
-          />
-        </div>
-      )}
-      <form onSubmit={handleSubmit}>
-        <div className={styles.inputWrapper}>
-          <Radios
-            fieldset={{
-              legend: {
-                children: <h1>What is the case complexity?</h1>,
-              },
-            }}
-            errorMessage={
-              formDataErrors["caseComplexityRadio"]
-                ? {
-                    children:
-                      formDataErrors["caseComplexityRadio"].inputErrorText,
-                  }
-                : undefined
-            }
-            items={caseComplexities.map((complexity, index) => ({
-              id: `case-complexity-radio-${index}`,
-              children: complexity.description,
-              value: complexity.shortCode.toString(),
-              "data-testid": `case-complexity-radio-${index}`,
-            }))}
-            value={formData.caseComplexityRadio.shortCode}
-            onChange={(value) => {
-              if (value) setFormValue(value);
-            }}
-          ></Radios>
-        </div>
-        <SaveAndCancel onSave={handleSubmit} disabled={disableBtns} />
-      </form>
+      <PageContentWrapper>
+        {!!errorList.length && (
+          <div
+            ref={errorSummaryRef}
+            tabIndex={-1}
+            className={styles.errorSummaryWrapper}
+          >
+            <ErrorSummary
+              data-testid={"case-complexity-error-summary"}
+              errorList={errorList}
+              titleChildren="There is a problem"
+            />
+          </div>
+        )}
+        <form onSubmit={handleSubmit}>
+          <div className={styles.inputWrapper}>
+            <Radios
+              fieldset={{
+                legend: {
+                  children: <h1>What is the case complexity?</h1>,
+                },
+              }}
+              errorMessage={
+                formDataErrors["caseComplexityRadio"]
+                  ? {
+                      children:
+                        formDataErrors["caseComplexityRadio"].inputErrorText,
+                    }
+                  : undefined
+              }
+              items={caseComplexities.map((complexity, index) => ({
+                id: `case-complexity-radio-${index}`,
+                children: complexity.description,
+                value: complexity.shortCode.toString(),
+                "data-testid": `case-complexity-radio-${index}`,
+              }))}
+              value={formData.caseComplexityRadio.shortCode}
+              onChange={(value) => {
+                if (value) setFormValue(value);
+              }}
+            ></Radios>
+          </div>
+          <SaveAndCancel onSave={handleSubmit} disabled={disableBtns} />
+        </form>
+      </PageContentWrapper>
     </div>
   );
 };

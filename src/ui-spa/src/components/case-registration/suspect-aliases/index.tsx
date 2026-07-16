@@ -8,6 +8,7 @@ import { sanitizeNameText } from "../../../common/utils/sanitizeNameText";
 import useErrorSummaryList from "../../../common/hooks/useErrorSummaryList";
 import { useNavigate, useParams } from "react-router-dom";
 import ErrorSummaryWrapper from "../../common/ErrorSummaryWrapper";
+import PageContentWrapper from "../../common/PageContentWrapper";
 import styles from "../index.module.scss";
 import pageStyles from "./index.module.scss";
 
@@ -130,67 +131,68 @@ const SuspectAliasesPage = () => {
   return (
     <div className={pageStyles.caseSuspectAliasesPage}>
       <BackLink to={previousRoute}>Back</BackLink>
-
-      <ErrorSummaryWrapper
-        errorList={errorList}
-        errorSummaryRef={errorSummaryRef}
-        dataTestId={"suspect-aliases-error-summary"}
-      />
-      <form onSubmit={handleSubmit}>
-        <div className={pageStyles.headingWrapper}>
-          <h1>
-            {`What alias does ${formatNameUtil(suspectFirstNameText, suspectLastNameText)} use?`}
-          </h1>
-          <span className="govuk-hint">
-            You can add more aliases on the next page if needed
-          </span>
-        </div>
-        <div className={styles.inputWrapper}>
-          <Input
-            key="suspect-aliases-first-name-text"
-            id="suspect-aliases-first-name-text"
-            data-testid="suspect-aliases-first-name-text"
-            className="govuk-input--width-20"
-            label={{
-              children: (
-                <span className="govuk-!-font-weight-bold">First name</span>
-              ),
-            }}
-            hint={{ children: "Leave blank if you only have one name" }}
-            type="text"
-            value={firstName}
-            onChange={(value: string) => {
-              setFormValue("firstName", value);
-            }}
-          />
-          <Input
-            key="suspect-aliases-last-name-text"
-            id="suspect-aliases-last-name-text"
-            data-testid="suspect-aliases-last-name-text"
-            className="govuk-input--width-20"
-            errorMessage={
-              formDataErrors["suspectAliasesLastNameText"]
-                ? {
-                    children:
-                      formDataErrors["suspectAliasesLastNameText"]
-                        .errorSummaryText,
-                  }
-                : undefined
-            }
-            label={{
-              children: (
-                <span className="govuk-!-font-weight-bold">Last name</span>
-              ),
-            }}
-            type="text"
-            value={lastName}
-            onChange={(value: string) => {
-              setFormValue("lastName", value);
-            }}
-          />
-        </div>
-        <SaveAndCancel onSave={handleSubmit} disabled={disableBtns} />
-      </form>
+      <PageContentWrapper>
+        <ErrorSummaryWrapper
+          errorList={errorList}
+          errorSummaryRef={errorSummaryRef}
+          dataTestId={"suspect-aliases-error-summary"}
+        />
+        <form onSubmit={handleSubmit}>
+          <div className={pageStyles.headingWrapper}>
+            <h1>
+              {`What alias does ${formatNameUtil(suspectFirstNameText, suspectLastNameText)} use?`}
+            </h1>
+            <span className="govuk-hint">
+              You can add more aliases on the next page if needed
+            </span>
+          </div>
+          <div className={styles.inputWrapper}>
+            <Input
+              key="suspect-aliases-first-name-text"
+              id="suspect-aliases-first-name-text"
+              data-testid="suspect-aliases-first-name-text"
+              className="govuk-input--width-20"
+              label={{
+                children: (
+                  <span className="govuk-!-font-weight-bold">First name</span>
+                ),
+              }}
+              hint={{ children: "Leave blank if you only have one name" }}
+              type="text"
+              value={firstName}
+              onChange={(value: string) => {
+                setFormValue("firstName", value);
+              }}
+            />
+            <Input
+              key="suspect-aliases-last-name-text"
+              id="suspect-aliases-last-name-text"
+              data-testid="suspect-aliases-last-name-text"
+              className="govuk-input--width-20"
+              errorMessage={
+                formDataErrors["suspectAliasesLastNameText"]
+                  ? {
+                      children:
+                        formDataErrors["suspectAliasesLastNameText"]
+                          .errorSummaryText,
+                    }
+                  : undefined
+              }
+              label={{
+                children: (
+                  <span className="govuk-!-font-weight-bold">Last name</span>
+                ),
+              }}
+              type="text"
+              value={lastName}
+              onChange={(value: string) => {
+                setFormValue("lastName", value);
+              }}
+            />
+          </div>
+          <SaveAndCancel onSave={handleSubmit} disabled={disableBtns} />
+        </form>
+      </PageContentWrapper>
     </div>
   );
 };

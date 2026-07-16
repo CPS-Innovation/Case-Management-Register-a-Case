@@ -12,6 +12,7 @@ import { CaseRegistrationFormContext } from "../../../common/providers/CaseRegis
 import { useNavigate } from "react-router-dom";
 import useChargesCount from "../../../common/hooks/useChargesCount";
 import { formatNameUtil } from "../../../common/utils/formatNameUtil";
+import PageContentWrapper from "../../common/PageContentWrapper";
 import styles from "../index.module.scss";
 
 const AddChargeSuspectPage = () => {
@@ -149,46 +150,48 @@ const AddChargeSuspectPage = () => {
   return (
     <div>
       <BackLink to={previousRoute}>Back</BackLink>
-      {!!errorList.length && (
-        <div
-          ref={errorSummaryRef}
-          tabIndex={-1}
-          className={styles.errorSummaryWrapper}
-        >
-          <ErrorSummary
-            data-testid={"add-charge-suspect-error-summary"}
-            errorList={errorList}
-            titleChildren="There is a problem"
-          />
-        </div>
-      )}
-      <form onSubmit={handleSubmit}>
-        <div className={styles.inputWrapper}>
-          <Radios
-            fieldset={{
-              legend: {
-                children: (
-                  <h1>Which suspect to do you want to add charges for?</h1>
-                ),
-              },
-            }}
-            errorMessage={
-              formDataErrors["addChargeSuspectRadio"]
-                ? {
-                    children:
-                      formDataErrors["addChargeSuspectRadio"].inputErrorText,
-                  }
-                : undefined
-            }
-            items={suspectItems}
-            value={addChargeSuspectRadio.suspectId || ""}
-            onChange={(value) => {
-              if (value) setFormValue(value);
-            }}
-          ></Radios>
-        </div>
-        <SaveAndCancel onSave={handleSubmit} disabled={disableBtns} />
-      </form>
+      <PageContentWrapper>
+        {!!errorList.length && (
+          <div
+            ref={errorSummaryRef}
+            tabIndex={-1}
+            className={styles.errorSummaryWrapper}
+          >
+            <ErrorSummary
+              data-testid={"add-charge-suspect-error-summary"}
+              errorList={errorList}
+              titleChildren="There is a problem"
+            />
+          </div>
+        )}
+        <form onSubmit={handleSubmit}>
+          <div className={styles.inputWrapper}>
+            <Radios
+              fieldset={{
+                legend: {
+                  children: (
+                    <h1>Which suspect to do you want to add charges for?</h1>
+                  ),
+                },
+              }}
+              errorMessage={
+                formDataErrors["addChargeSuspectRadio"]
+                  ? {
+                      children:
+                        formDataErrors["addChargeSuspectRadio"].inputErrorText,
+                    }
+                  : undefined
+              }
+              items={suspectItems}
+              value={addChargeSuspectRadio.suspectId || ""}
+              onChange={(value) => {
+                if (value) setFormValue(value);
+              }}
+            ></Radios>
+          </div>
+          <SaveAndCancel onSave={handleSubmit} disabled={disableBtns} />
+        </form>
+      </PageContentWrapper>
     </div>
   );
 };

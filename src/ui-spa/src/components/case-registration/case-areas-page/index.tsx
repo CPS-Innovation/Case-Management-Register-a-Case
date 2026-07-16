@@ -6,6 +6,7 @@ import { getAreasOrDivisions } from "../../../common/utils/getAreasOrDivisions";
 import { getSelectedUnit } from "../../../common/utils/getSelectedUnit";
 import useErrorSummaryList from "../../../common/hooks/useErrorSummaryList";
 import { useNavigate } from "react-router-dom";
+import PageContentWrapper from "../../common/PageContentWrapper";
 import styles from "../index.module.scss";
 import pageStyles from "./index.module.scss";
 
@@ -183,41 +184,43 @@ const CaseAreasPage = () => {
       <BackLink to={previousRoute} onClick={handleBackLinkClick}>
         Back
       </BackLink>
-      {!!errorList.length && (
-        <div
-          ref={errorSummaryRef}
-          tabIndex={-1}
-          className={styles.errorSummaryWrapper}
-        >
-          <ErrorSummary
-            data-testid={"case-area-error-summary"}
-            errorList={errorList}
-            titleChildren="There is a problem"
-          />
-        </div>
-      )}
-      <form onSubmit={handleSubmit}>
-        <div className={styles.inputWrapper}>
-          <AutoComplete
-            id="area-or-division-text"
-            inputClasses={"govuk-input--error"}
-            label={{
-              children: <h1 tabIndex={-1}>What is the division or area?</h1>,
-            }}
-            source={areaSuggests}
-            confirmOnBlur={false}
-            onConfirm={handleAreaConfirm}
-            defaultValue={formData.areaOrDivisionText.description}
-            errorMessage={
-              formDataErrors["areaOrDivisionText"]
-                ? formDataErrors["areaOrDivisionText"].inputErrorText
-                : undefined
-            }
-          />
-        </div>
+      <PageContentWrapper>
+        {!!errorList.length && (
+          <div
+            ref={errorSummaryRef}
+            tabIndex={-1}
+            className={styles.errorSummaryWrapper}
+          >
+            <ErrorSummary
+              data-testid={"case-area-error-summary"}
+              errorList={errorList}
+              titleChildren="There is a problem"
+            />
+          </div>
+        )}
+        <form onSubmit={handleSubmit}>
+          <div className={styles.inputWrapper}>
+            <AutoComplete
+              id="area-or-division-text"
+              inputClasses={"govuk-input--error"}
+              label={{
+                children: <h1 tabIndex={-1}>What is the division or area?</h1>,
+              }}
+              source={areaSuggests}
+              confirmOnBlur={false}
+              onConfirm={handleAreaConfirm}
+              defaultValue={formData.areaOrDivisionText.description}
+              errorMessage={
+                formDataErrors["areaOrDivisionText"]
+                  ? formDataErrors["areaOrDivisionText"].inputErrorText
+                  : undefined
+              }
+            />
+          </div>
 
-        <SaveAndCancel onSave={handleSubmit} disabled={disableBtns} />
-      </form>
+          <SaveAndCancel onSave={handleSubmit} disabled={disableBtns} />
+        </form>
+      </PageContentWrapper>
     </div>
   );
 };

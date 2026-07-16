@@ -15,6 +15,7 @@ import { formatNameUtil } from "../../../common/utils/formatNameUtil";
 import useChargesCount from "../../../common/hooks/useChargesCount";
 import useErrorSummaryList from "../../../common/hooks/useErrorSummaryList";
 import { format } from "date-fns";
+import PageContentWrapper from "../../common/PageContentWrapper";
 import styles from "../index.module.scss";
 import pageStyles from "./index.module.scss";
 
@@ -268,142 +269,143 @@ const ChargesOffenceSearch = () => {
       <BackLink to={previousRoute} onClick={handleBackLinkClick}>
         Back
       </BackLink>
+      <PageContentWrapper>
+        <div>
+          {!!errorList.length && (
+            <div
+              ref={errorSummaryRef}
+              tabIndex={-1}
+              className={styles.errorSummaryWrapper}
+            >
+              <ErrorSummary
+                data-testid={"offence-search-error-summary"}
+                errorList={errorList}
+                titleChildren="There is a problem"
+              />
+            </div>
+          )}
+        </div>
 
-      <div>
-        {!!errorList.length && (
-          <div
-            ref={errorSummaryRef}
-            tabIndex={-1}
-            className={styles.errorSummaryWrapper}
-          >
-            <ErrorSummary
-              data-testid={"offence-search-error-summary"}
-              errorList={errorList}
-              titleChildren="There is a problem"
-            />
-          </div>
-        )}
-      </div>
+        <h1>Add a charge for {suspectName}</h1>
 
-      <h1>Add a charge for {suspectName}</h1>
-
-      <form onSubmit={handleSubmit}>
-        <div className={styles.inputWrapper}>
-          <div className={pageStyles.searchWrapper}>
-            <Input
-              id="offence-search-text"
-              data-testid="offence-search-text"
-              className="govuk-input--width-30"
-              disabled={isFetching}
-              label={{
-                children: <b>Search for an offence</b>,
-              }}
-              hint={{
-                children:
-                  "You can search by part of a CJS code, statute or by offence keyword",
-              }}
-              errorMessage={
-                formDataErrors["offenceSearchText"]
-                  ? {
-                      children:
-                        formDataErrors["offenceSearchText"].inputErrorText,
-                    }
-                  : undefined
-              }
-              type="text"
-              value={searchText}
-              onChange={(value: string) => {
-                handleFormChange(value);
-              }}
-            />
-            <div className={styles.btnWrapper}>
-              <Button
-                type="submit"
-                className={pageStyles.btnSearch}
+        <form onSubmit={handleSubmit}>
+          <div className={styles.inputWrapper}>
+            <div className={pageStyles.searchWrapper}>
+              <Input
+                id="offence-search-text"
+                data-testid="offence-search-text"
+                className="govuk-input--width-30"
                 disabled={isFetching}
-              >
-                Search
-              </Button>
+                label={{
+                  children: <b>Search for an offence</b>,
+                }}
+                hint={{
+                  children:
+                    "You can search by part of a CJS code, statute or by offence keyword",
+                }}
+                errorMessage={
+                  formDataErrors["offenceSearchText"]
+                    ? {
+                        children:
+                          formDataErrors["offenceSearchText"].inputErrorText,
+                      }
+                    : undefined
+                }
+                type="text"
+                value={searchText}
+                onChange={(value: string) => {
+                  handleFormChange(value);
+                }}
+              />
+              <div className={styles.btnWrapper}>
+                <Button
+                  type="submit"
+                  className={pageStyles.btnSearch}
+                  disabled={isFetching}
+                >
+                  Search
+                </Button>
+              </div>
+            </div>
+            <div>
+              {!isFetching && searchResults && (
+                <div data-testid="offence-search-results-wrapper">
+                  <p className={pageStyles.resultsCount}>
+                    {searchResults?.total} results for{" "}
+                    <strong>{currentOffenceSearchText}</strong>
+                  </p>
+
+                  <hr className={pageStyles.resultsDivider} />
+                  <div className={pageStyles.resultsPerPageSelectWrapper}>
+                    <Select
+                      key="results-per-page-select"
+                      className={"govuk-input--width-20"}
+                      label={{
+                        htmlFor: "results-per-page-select",
+                        children: <span>Display</span>,
+                        className: styles.investigatorTitleSelectLabel,
+                      }}
+                      id="results-per-page-select"
+                      data-testid="results-per-page-select"
+                      items={[
+                        {
+                          value: 20,
+                          children: "20 results per page",
+                        },
+                        {
+                          value: 50,
+                          children: "50 results per page",
+                        },
+                        {
+                          value: 100,
+                          children: "100 results per page",
+                        },
+                        {
+                          value: 1000,
+                          children: "1000 results per page",
+                        },
+                      ]}
+                      formGroup={{
+                        className: styles.select,
+                      }}
+                      onChange={(event) =>
+                        setResultsPerPage(parseInt(event.target.value))
+                      }
+                      value={resultsPerPage}
+                    />
+                  </div>
+
+                  {searchResults?.offences.length > 0 && (
+                    <Table
+                      caption="offence search results"
+                      captionClassName="govuk-visually-hidden"
+                      head={[
+                        {
+                          children: "CJS code",
+                        },
+                        {
+                          children: "Description",
+                        },
+
+                        {
+                          children: "Statute name and section",
+                        },
+                        {
+                          children: "Effective dates",
+                        },
+                        {
+                          children: "Actions",
+                        },
+                      ]}
+                      rows={getTableRowData()}
+                    />
+                  )}
+                </div>
+              )}
             </div>
           </div>
-          <div>
-            {!isFetching && searchResults && (
-              <div data-testid="offence-search-results-wrapper">
-                <p className={pageStyles.resultsCount}>
-                  {searchResults?.total} results for{" "}
-                  <strong>{currentOffenceSearchText}</strong>
-                </p>
-
-                <hr className={pageStyles.resultsDivider} />
-                <div className={pageStyles.resultsPerPageSelectWrapper}>
-                  <Select
-                    key="results-per-page-select"
-                    className={"govuk-input--width-20"}
-                    label={{
-                      htmlFor: "results-per-page-select",
-                      children: <span>Display</span>,
-                      className: styles.investigatorTitleSelectLabel,
-                    }}
-                    id="results-per-page-select"
-                    data-testid="results-per-page-select"
-                    items={[
-                      {
-                        value: 20,
-                        children: "20 results per page",
-                      },
-                      {
-                        value: 50,
-                        children: "50 results per page",
-                      },
-                      {
-                        value: 100,
-                        children: "100 results per page",
-                      },
-                      {
-                        value: 1000,
-                        children: "1000 results per page",
-                      },
-                    ]}
-                    formGroup={{
-                      className: styles.select,
-                    }}
-                    onChange={(event) =>
-                      setResultsPerPage(parseInt(event.target.value))
-                    }
-                    value={resultsPerPage}
-                  />
-                </div>
-
-                {searchResults?.offences.length > 0 && (
-                  <Table
-                    caption="offence search results"
-                    captionClassName="govuk-visually-hidden"
-                    head={[
-                      {
-                        children: "CJS code",
-                      },
-                      {
-                        children: "Description",
-                      },
-
-                      {
-                        children: "Statute name and section",
-                      },
-                      {
-                        children: "Effective dates",
-                      },
-                      {
-                        children: "Actions",
-                      },
-                    ]}
-                    rows={getTableRowData()}
-                  />
-                )}
-              </div>
-            )}
-          </div>
-        </div>
-      </form>
+        </form>
+      </PageContentWrapper>
     </div>
   );
 };

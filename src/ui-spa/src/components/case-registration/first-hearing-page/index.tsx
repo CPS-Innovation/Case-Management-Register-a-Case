@@ -11,6 +11,7 @@ import { isOnOrAfterChargeDates } from "../../../common/utils/chargeDatesUtil";
 import { isMonitoringCodeOptional } from "../../../common/utils/isMonitoringCodeOptional";
 import { PRE_CHARGE_DECISION_CODE } from "../../../common/constants/general";
 import useErrorSummaryList from "../../../common/hooks/useErrorSummaryList";
+import PageContentWrapper from "../../common/PageContentWrapper";
 import styles from "../index.module.scss";
 const FirstHearingPage = () => {
   type ErrorText = {
@@ -300,104 +301,106 @@ const FirstHearingPage = () => {
             Back
           </BackLink>
         )}
-      {!!errorList.length && (
-        <div
-          ref={errorSummaryRef}
-          tabIndex={-1}
-          className={styles.errorSummaryWrapper}
-        >
-          <ErrorSummary
-            data-testid={"first-hearing-error-summary"}
-            errorList={errorList}
-            titleChildren="There is a problem"
-          />
-        </div>
-      )}
-      <form onSubmit={handleSubmit}>
-        <div className={styles.inputWrapper}>
-          <Radios
-            fieldset={{
-              legend: {
-                children: <h1>Do you have details of the first hearing?</h1>,
-              },
-            }}
-            errorMessage={
-              formDataErrors["firstHearingRadio"]
-                ? {
-                    children:
-                      formDataErrors["firstHearingRadio"].inputErrorText,
-                  }
-                : undefined
-            }
-            items={[
-              {
-                id: "first-hearing-radio-yes",
-                children: "Yes",
-                value: "yes",
-                "data-testid": "first-hearing-radio-yes",
-                conditional: {
-                  children: [
-                    formData.firstHearingRadio === "yes" && (
-                      <AutoComplete
-                        key="first-hearing-court-location-text"
-                        id="first-hearing-court-location-text"
-                        inputClasses={"govuk-input--error"}
-                        source={courtLocationsSuggest}
-                        confirmOnBlur={false}
-                        onConfirm={handleCourtLocationConfirm}
-                        defaultValue={
-                          formData.firstHearingCourtLocationText?.description
+      <PageContentWrapper>
+        {!!errorList.length && (
+          <div
+            ref={errorSummaryRef}
+            tabIndex={-1}
+            className={styles.errorSummaryWrapper}
+          >
+            <ErrorSummary
+              data-testid={"first-hearing-error-summary"}
+              errorList={errorList}
+              titleChildren="There is a problem"
+            />
+          </div>
+        )}
+        <form onSubmit={handleSubmit}>
+          <div className={styles.inputWrapper}>
+            <Radios
+              fieldset={{
+                legend: {
+                  children: <h1>Do you have details of the first hearing?</h1>,
+                },
+              }}
+              errorMessage={
+                formDataErrors["firstHearingRadio"]
+                  ? {
+                      children:
+                        formDataErrors["firstHearingRadio"].inputErrorText,
+                    }
+                  : undefined
+              }
+              items={[
+                {
+                  id: "first-hearing-radio-yes",
+                  children: "Yes",
+                  value: "yes",
+                  "data-testid": "first-hearing-radio-yes",
+                  conditional: {
+                    children: [
+                      formData.firstHearingRadio === "yes" && (
+                        <AutoComplete
+                          key="first-hearing-court-location-text"
+                          id="first-hearing-court-location-text"
+                          inputClasses={"govuk-input--error"}
+                          source={courtLocationsSuggest}
+                          confirmOnBlur={false}
+                          onConfirm={handleCourtLocationConfirm}
+                          defaultValue={
+                            formData.firstHearingCourtLocationText?.description
+                          }
+                          label={{
+                            children: (
+                              <span className="govuk-!-font-weight-bold">
+                                Court location
+                              </span>
+                            ),
+                          }}
+                          errorMessage={
+                            formDataErrors["firstHearingCourtLocationText"]
+                              ? formDataErrors["firstHearingCourtLocationText"]
+                                  .inputErrorText
+                              : undefined
+                          }
+                        />
+                      ),
+                      <DateInputNative
+                        key="first-hearing-date-text"
+                        id="first-hearing-date-text"
+                        label={
+                          <span className="govuk-!-font-weight-bold">Date</span>
                         }
-                        label={{
-                          children: (
-                            <span className="govuk-!-font-weight-bold">
-                              Court location
-                            </span>
-                          ),
-                        }}
+                        value={formData.firstHearingDateText}
+                        onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+                          handleDateChange(e.target.value)
+                        }
                         errorMessage={
-                          formDataErrors["firstHearingCourtLocationText"]
-                            ? formDataErrors["firstHearingCourtLocationText"]
+                          formDataErrors["firstHearingDateText"]
+                            ? formDataErrors["firstHearingDateText"]
                                 .inputErrorText
                             : undefined
                         }
-                      />
-                    ),
-                    <DateInputNative
-                      key="first-hearing-date-text"
-                      id="first-hearing-date-text"
-                      label={
-                        <span className="govuk-!-font-weight-bold">Date</span>
-                      }
-                      value={formData.firstHearingDateText}
-                      onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
-                        handleDateChange(e.target.value)
-                      }
-                      errorMessage={
-                        formDataErrors["firstHearingDateText"]
-                          ? formDataErrors["firstHearingDateText"]
-                              .inputErrorText
-                          : undefined
-                      }
-                      hint={<span>For example, 17/05/2024</span>}
-                    />,
-                  ],
+                        hint={<span>For example, 17/05/2024</span>}
+                      />,
+                    ],
+                  },
                 },
-              },
-              {
-                children: "No",
-                value: "no",
-                "data-testid": "radio-operation-name-no",
-              },
-            ]}
-            value={formData.firstHearingRadio}
-            onChange={(value) => {
-              if (value) setFormValue("firstHearingRadio", value);
-            }}
-          ></Radios>
-        </div>
-        <SaveAndCancel onSave={handleSubmit} disabled={disableBtns} />
-      </form>
+                {
+                  children: "No",
+                  value: "no",
+                  "data-testid": "radio-operation-name-no",
+                },
+              ]}
+              value={formData.firstHearingRadio}
+              onChange={(value) => {
+                if (value) setFormValue("firstHearingRadio", value);
+              }}
+            ></Radios>
+          </div>
+          <SaveAndCancel onSave={handleSubmit} disabled={disableBtns} />
+        </form>
+      </PageContentWrapper>
     </div>
   );
 };

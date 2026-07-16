@@ -15,6 +15,7 @@ import { sanitizeNameText } from "../../../common/utils/sanitizeNameText";
 import { DEFAULT_VICTIM_ADDITIONAL_DETAIL_VALUE } from "../../../common/constants/general";
 import { useNavigate, useParams } from "react-router-dom";
 import { v4 as uuidv4 } from "uuid";
+import PageContentWrapper from "../../common/PageContentWrapper";
 import styles from "../index.module.scss";
 import pageStyles from "./index.module.scss";
 
@@ -461,71 +462,73 @@ const AddChargeVictimPage = () => {
       >
         Back
       </BackLink>
-      {!!errorList.length && (
-        <div
-          ref={errorSummaryRef}
-          tabIndex={-1}
-          className={styles.errorSummaryWrapper}
-        >
-          <ErrorSummary
-            data-testid={"add-charge-victim-error-summary"}
-            errorList={errorList}
-            titleChildren="There is a problem"
-          />
+      <PageContentWrapper>
+        {!!errorList.length && (
+          <div
+            ref={errorSummaryRef}
+            tabIndex={-1}
+            className={styles.errorSummaryWrapper}
+          >
+            <ErrorSummary
+              data-testid={"add-charge-victim-error-summary"}
+              errorList={errorList}
+              titleChildren="There is a problem"
+            />
+          </div>
+        )}
+
+        <h1>Add a victim to this charge</h1>
+        <div>
+          <h2 className="govuk-heading-s govuk-!-margin-bottom-2">
+            {suspectName}
+          </h2>
+          <h2 className="govuk-heading-s govuk-!-margin-bottom-2">
+            {suspectCharge.selectedOffence?.code} -{" "}
+            {suspectCharge.selectedOffence?.description}
+          </h2>
         </div>
-      )}
-
-      <h1>Add a victim to this charge</h1>
-      <div>
-        <h2 className="govuk-heading-s govuk-!-margin-bottom-2">
-          {suspectName}
-        </h2>
-        <h2 className="govuk-heading-s govuk-!-margin-bottom-2">
-          {suspectCharge.selectedOffence?.code} -{" "}
-          {suspectCharge.selectedOffence?.description}
-        </h2>
-      </div>
-      <hr className={pageStyles.resultsDivider} />
-      <form onSubmit={handleSubmit}>
-        <div className={styles.inputWrapper}>
-          {state.formData.victimsList.length !== 0 && (
-            <Radios
-              fieldset={{
-                legend: {
-                  children: (
-                    <span className="govuk-!-font-weight-bold">
-                      Select or add a victim
-                    </span>
-                  ),
-                },
-              }}
-              errorMessage={
-                formDataErrors["selectedVictimRadio"]
-                  ? {
-                      children:
-                        formDataErrors["selectedVictimRadio"].inputErrorText,
-                    }
-                  : undefined
-              }
-              items={availableVictimItems}
-              value={victimDetails.selectedVictimRadio}
-              onChange={(value) => {
-                if (value) setFormValue("selectedVictimRadio", value);
-              }}
-            ></Radios>
-          )}
-
-          <>
-            {state.formData.victimsList.length === 0 && (
-              <>
-                {renderNewVictimFields()}
-                <div>{renderVictimAdditionalDetails("victim-new")}</div>
-              </>
+        <hr className={pageStyles.resultsDivider} />
+        <form onSubmit={handleSubmit}>
+          <div className={styles.inputWrapper}>
+            {state.formData.victimsList.length !== 0 && (
+              <Radios
+                fieldset={{
+                  legend: {
+                    children: (
+                      <span className="govuk-!-font-weight-bold">
+                        Select or add a victim
+                      </span>
+                    ),
+                  },
+                }}
+                errorMessage={
+                  formDataErrors["selectedVictimRadio"]
+                    ? {
+                        children:
+                          formDataErrors["selectedVictimRadio"].inputErrorText,
+                      }
+                    : undefined
+                }
+                items={availableVictimItems}
+                value={victimDetails.selectedVictimRadio}
+                onChange={(value) => {
+                  if (value) setFormValue("selectedVictimRadio", value);
+                }}
+              ></Radios>
             )}
-          </>
-        </div>
-        <SaveAndCancel onSave={handleSubmit} disabled={disableBtns} />
-      </form>
+
+            <>
+              {state.formData.victimsList.length === 0 && (
+                <>
+                  {renderNewVictimFields()}
+                  <div>{renderVictimAdditionalDetails("victim-new")}</div>
+                </>
+              )}
+            </>
+          </div>
+          <SaveAndCancel onSave={handleSubmit} disabled={disableBtns} />
+        </form>
+      </PageContentWrapper>
     </div>
   );
 };

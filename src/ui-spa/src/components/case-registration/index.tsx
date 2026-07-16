@@ -14,6 +14,7 @@ import { sanitizeOperationNameText } from "../../common/utils/sanitizeOperationN
 import { DEFAULT_COMPLEXITY_DESCRIPTION } from "../../common/constants/general";
 import useErrorSummaryList from "../../common/hooks/useErrorSummaryList";
 import { useNavigate } from "react-router-dom";
+import PageContentWrapper from "../common/PageContentWrapper";
 import styles from "./index.module.scss";
 
 const CaseRegistrationPage = () => {
@@ -321,120 +322,122 @@ const CaseRegistrationPage = () => {
 
   return (
     <div>
-      <h1>Register a case</h1>
-      {!!errorList.length && (
-        <div
-          ref={errorSummaryRef}
-          tabIndex={-1}
-          className={styles.errorSummaryWrapper}
-        >
-          <ErrorSummary
-            data-testid={"case-registration-error-summary"}
-            errorList={errorList}
-            titleChildren="There is a problem"
-          />
-        </div>
-      )}
-      <form onSubmit={handleSubmit}>
-        <div className={styles.inputWrapper}>
-          <Radios
-            fieldset={{
-              legend: {
-                children: (
-                  <span className="govuk-!-font-weight-bold">{`Do you have an operation name?`}</span>
-                ),
-              },
-            }}
-            errorMessage={
-              formDataErrors["operationNameRadio"]
-                ? {
-                    children:
-                      formDataErrors["operationNameRadio"].inputErrorText,
-                  }
-                : undefined
-            }
-            items={[
-              {
-                id: "operation-name-radio-yes",
-                children: "Yes",
-                value: "yes",
-                "data-testid": "operation-name-radio-yes",
-                conditional: {
-                  children: [
-                    <Input
-                      key="operation-name-text"
-                      id="operation-name-text"
-                      data-testid="operation-name-text"
-                      errorMessage={
-                        formDataErrors["operationNameText"]
-                          ? {
-                              children:
-                                formDataErrors["operationNameText"]
-                                  .inputErrorText,
-                            }
-                          : undefined
-                      }
-                      className="govuk-input--width-20"
-                      label={{
-                        children: "Operation name",
-                      }}
-                      type="text"
-                      value={formData.operationNameText}
-                      onChange={(value: string) => {
-                        setFormValue("operationNameText", value);
-                      }}
-                    />,
-                  ],
+      <PageContentWrapper>
+        <h1>Register a case</h1>
+        {!!errorList.length && (
+          <div
+            ref={errorSummaryRef}
+            tabIndex={-1}
+            className={styles.errorSummaryWrapper}
+          >
+            <ErrorSummary
+              data-testid={"case-registration-error-summary"}
+              errorList={errorList}
+              titleChildren="There is a problem"
+            />
+          </div>
+        )}
+        <form onSubmit={handleSubmit}>
+          <div className={styles.inputWrapper}>
+            <Radios
+              fieldset={{
+                legend: {
+                  children: (
+                    <span className="govuk-!-font-weight-bold">{`Do you have an operation name?`}</span>
+                  ),
                 },
-              },
-              {
-                children: "No",
-                value: "no",
-                "data-testid": "operation-name-radio-no",
-              },
-            ]}
-            value={formData.operationNameRadio}
-            onChange={(value) => {
-              if (value) setFormValue("operationNameRadio", value);
-            }}
-          ></Radios>
-          <Radios
-            fieldset={{
-              legend: {
-                children: (
-                  <span className="govuk-!-font-weight-bold">{`Do you have any suspect details?`}</span>
-                ),
-              },
-            }}
-            errorMessage={
-              formDataErrors["suspectDetailsRadio"]
-                ? {
-                    children:
-                      formDataErrors["suspectDetailsRadio"].inputErrorText,
-                  }
-                : undefined
-            }
-            items={[
-              {
-                children: "Yes",
-                value: "yes",
-                "data-testid": "suspect-details-radio-yes",
-                id: "suspect-details-radio-yes",
-              },
-              {
-                children: "No",
-                value: "no",
-                "data-testid": "suspect-details-radio-no",
-              },
-            ]}
-            value={formData.suspectDetailsRadio}
-            onChange={(value) => {
-              if (value) setFormValue("suspectDetailsRadio", value);
-            }}
-          ></Radios>
-        </div>
-        <SaveAndCancel onSave={handleSubmit} disabled={disableBtns} />
-      </form>
+              }}
+              errorMessage={
+                formDataErrors["operationNameRadio"]
+                  ? {
+                      children:
+                        formDataErrors["operationNameRadio"].inputErrorText,
+                    }
+                  : undefined
+              }
+              items={[
+                {
+                  id: "operation-name-radio-yes",
+                  children: "Yes",
+                  value: "yes",
+                  "data-testid": "operation-name-radio-yes",
+                  conditional: {
+                    children: [
+                      <Input
+                        key="operation-name-text"
+                        id="operation-name-text"
+                        data-testid="operation-name-text"
+                        errorMessage={
+                          formDataErrors["operationNameText"]
+                            ? {
+                                children:
+                                  formDataErrors["operationNameText"]
+                                    .inputErrorText,
+                              }
+                            : undefined
+                        }
+                        className="govuk-input--width-20"
+                        label={{
+                          children: "Operation name",
+                        }}
+                        type="text"
+                        value={formData.operationNameText}
+                        onChange={(value: string) => {
+                          setFormValue("operationNameText", value);
+                        }}
+                      />,
+                    ],
+                  },
+                },
+                {
+                  children: "No",
+                  value: "no",
+                  "data-testid": "operation-name-radio-no",
+                },
+              ]}
+              value={formData.operationNameRadio}
+              onChange={(value) => {
+                if (value) setFormValue("operationNameRadio", value);
+              }}
+            ></Radios>
+            <Radios
+              fieldset={{
+                legend: {
+                  children: (
+                    <span className="govuk-!-font-weight-bold">{`Do you have any suspect details?`}</span>
+                  ),
+                },
+              }}
+              errorMessage={
+                formDataErrors["suspectDetailsRadio"]
+                  ? {
+                      children:
+                        formDataErrors["suspectDetailsRadio"].inputErrorText,
+                    }
+                  : undefined
+              }
+              items={[
+                {
+                  children: "Yes",
+                  value: "yes",
+                  "data-testid": "suspect-details-radio-yes",
+                  id: "suspect-details-radio-yes",
+                },
+                {
+                  children: "No",
+                  value: "no",
+                  "data-testid": "suspect-details-radio-no",
+                },
+              ]}
+              value={formData.suspectDetailsRadio}
+              onChange={(value) => {
+                if (value) setFormValue("suspectDetailsRadio", value);
+              }}
+            ></Radios>
+          </div>
+          <SaveAndCancel onSave={handleSubmit} disabled={disableBtns} />
+        </form>
+      </PageContentWrapper>
     </div>
   );
 };

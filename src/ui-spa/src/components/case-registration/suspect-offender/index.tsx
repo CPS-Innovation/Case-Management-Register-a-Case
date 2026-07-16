@@ -12,6 +12,7 @@ import { isChargedWithAdultWarningActive } from "../../../common/utils/isCharged
 import useErrorSummaryList from "../../../common/hooks/useErrorSummaryList";
 import useGetSuspectRoute from "../../../common/hooks/useGetSuspectRoute";
 import ErrorSummaryWrapper from "../../common/ErrorSummaryWrapper";
+import PageContentWrapper from "../../common/PageContentWrapper";
 import styles from "../index.module.scss";
 
 const SuspectOffenderPage = () => {
@@ -249,42 +250,43 @@ const SuspectOffenderPage = () => {
   return (
     <div>
       <BackLink to={previousRoute}>Back</BackLink>
-
-      <ErrorSummaryWrapper
-        errorList={errorList}
-        errorSummaryRef={errorSummaryRef}
-        dataTestId="suspect-offender-types-error-summary"
-      />
-      <form onSubmit={handleSubmit}>
-        <div className={styles.inputWrapper}>
-          <Radios
-            fieldset={{
-              legend: {
-                children: (
-                  <h1>
-                    {`What type of offender is ${formatNameUtil(suspectFirstNameText, suspectLastNameText)}?`}
-                  </h1>
-                ),
-              },
-            }}
-            errorMessage={
-              formDataErrors["suspectOffenderTypesRadio"]
-                ? {
-                    children:
-                      formDataErrors["suspectOffenderTypesRadio"]
-                        .inputErrorText,
-                  }
-                : undefined
-            }
-            items={offenderItems}
-            value={formData.suspectOffenderTypesRadio.shortCode ?? ""}
-            onChange={(value) => {
-              if (value) setFormValue(value);
-            }}
-          ></Radios>
-        </div>
-        <SaveAndCancel onSave={handleSubmit} disabled={disableBtns} />
-      </form>
+      <PageContentWrapper>
+        <ErrorSummaryWrapper
+          errorList={errorList}
+          errorSummaryRef={errorSummaryRef}
+          dataTestId="suspect-offender-types-error-summary"
+        />
+        <form onSubmit={handleSubmit}>
+          <div className={styles.inputWrapper}>
+            <Radios
+              fieldset={{
+                legend: {
+                  children: (
+                    <h1>
+                      {`What type of offender is ${formatNameUtil(suspectFirstNameText, suspectLastNameText)}?`}
+                    </h1>
+                  ),
+                },
+              }}
+              errorMessage={
+                formDataErrors["suspectOffenderTypesRadio"]
+                  ? {
+                      children:
+                        formDataErrors["suspectOffenderTypesRadio"]
+                          .inputErrorText,
+                    }
+                  : undefined
+              }
+              items={offenderItems}
+              value={formData.suspectOffenderTypesRadio.shortCode ?? ""}
+              onChange={(value) => {
+                if (value) setFormValue(value);
+              }}
+            ></Radios>
+          </div>
+          <SaveAndCancel onSave={handleSubmit} disabled={disableBtns} />
+        </form>
+      </PageContentWrapper>
     </div>
   );
 };

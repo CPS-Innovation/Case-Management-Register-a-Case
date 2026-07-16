@@ -3,6 +3,7 @@ import { Radios, Button, ErrorSummary } from "../../govuk";
 import { type GeneralRadioValue } from "../../../common/reducers/caseRegistrationReducer";
 import { HOME_PAGE_URL } from "../../../config";
 import { useNavigate, useLocation } from "react-router-dom";
+import PageContentWrapper from "../../common/PageContentWrapper";
 import styles from "../index.module.scss";
 
 const CancelCaseRegistrationConfirmationPage = () => {
@@ -97,59 +98,63 @@ const CancelCaseRegistrationConfirmationPage = () => {
 
   return (
     <div>
-      {!!errorList.length && (
-        <div
-          ref={errorSummaryRef}
-          tabIndex={-1}
-          className={styles.errorSummaryWrapper}
-        >
-          <ErrorSummary
-            data-testid={"cancel-case-registration-error-summary"}
-            errorList={errorList}
-            titleChildren="There is a problem"
-          />
-        </div>
-      )}
-      <form onSubmit={handleSubmit}>
-        <div className={styles.inputWrapper}>
-          <Radios
-            fieldset={{
-              legend: {
-                children: <h1>Are you sure you want to cancel?</h1>,
-              },
-            }}
-            errorMessage={
-              formDataErrors["cancelRegistrationRadio"]
-                ? {
-                    children:
-                      formDataErrors["cancelRegistrationRadio"].inputErrorText,
-                  }
-                : undefined
-            }
-            items={[
-              {
-                id: "cancel-registration-radio-yes",
-                children: "Yes, cancel registration and delete the information",
-                value: "yes",
-                "data-testid": "cancel-registration-radio-yes",
-              },
-              {
-                id: "cancel-registration-radio-no",
-                children: "No, go back and continue registration",
-                value: "no",
-                "data-testid": "cancel-registration-radio-no",
-              },
-            ]}
-            value={formData.cancelRegistrationRadio}
-            onChange={(value) => {
-              if (value) setFormValue(value);
-            }}
-          ></Radios>
-        </div>
-        <Button type="submit" onClick={() => handleSubmit}>
-          Continue
-        </Button>
-      </form>
+      <PageContentWrapper>
+        {!!errorList.length && (
+          <div
+            ref={errorSummaryRef}
+            tabIndex={-1}
+            className={styles.errorSummaryWrapper}
+          >
+            <ErrorSummary
+              data-testid={"cancel-case-registration-error-summary"}
+              errorList={errorList}
+              titleChildren="There is a problem"
+            />
+          </div>
+        )}
+        <form onSubmit={handleSubmit}>
+          <div className={styles.inputWrapper}>
+            <Radios
+              fieldset={{
+                legend: {
+                  children: <h1>Are you sure you want to cancel?</h1>,
+                },
+              }}
+              errorMessage={
+                formDataErrors["cancelRegistrationRadio"]
+                  ? {
+                      children:
+                        formDataErrors["cancelRegistrationRadio"]
+                          .inputErrorText,
+                    }
+                  : undefined
+              }
+              items={[
+                {
+                  id: "cancel-registration-radio-yes",
+                  children:
+                    "Yes, cancel registration and delete the information",
+                  value: "yes",
+                  "data-testid": "cancel-registration-radio-yes",
+                },
+                {
+                  id: "cancel-registration-radio-no",
+                  children: "No, go back and continue registration",
+                  value: "no",
+                  "data-testid": "cancel-registration-radio-no",
+                },
+              ]}
+              value={formData.cancelRegistrationRadio}
+              onChange={(value) => {
+                if (value) setFormValue(value);
+              }}
+            ></Radios>
+          </div>
+          <Button type="submit" onClick={() => handleSubmit}>
+            Continue
+          </Button>
+        </form>
+      </PageContentWrapper>
     </div>
   );
 };

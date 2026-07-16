@@ -9,6 +9,7 @@ import { formatNameUtil } from "../../../common/utils/formatNameUtil";
 import useErrorSummaryList from "../../../common/hooks/useErrorSummaryList";
 import useGetSuspectRoute from "../../../common/hooks/useGetSuspectRoute";
 import ErrorSummaryWrapper from "../../common/ErrorSummaryWrapper";
+import PageContentWrapper from "../../common/PageContentWrapper";
 import styles from "../index.module.scss";
 
 const SuspectReligionPage = () => {
@@ -160,43 +161,44 @@ const SuspectReligionPage = () => {
   return (
     <div>
       <BackLink to={previousRoute}>Back</BackLink>
-
-      <ErrorSummaryWrapper
-        errorList={errorList}
-        errorSummaryRef={errorSummaryRef}
-        dataTestId={"suspect-religion-error-summary"}
-      />
-      <form onSubmit={handleSubmitReligion}>
-        <div className={styles.inputWrapper}>
-          <Radios
-            fieldset={{
-              legend: {
-                children: (
-                  <h1>
-                    {`What is ${formatNameUtil(suspectFirstNameText, suspectLastNameText)}'s
+      <PageContentWrapper>
+        <ErrorSummaryWrapper
+          errorList={errorList}
+          errorSummaryRef={errorSummaryRef}
+          dataTestId={"suspect-religion-error-summary"}
+        />
+        <form onSubmit={handleSubmitReligion}>
+          <div className={styles.inputWrapper}>
+            <Radios
+              fieldset={{
+                legend: {
+                  children: (
+                    <h1>
+                      {`What is ${formatNameUtil(suspectFirstNameText, suspectLastNameText)}'s
                     religion?`}
-                  </h1>
-                ),
-              },
-            }}
-            errorMessage={
-              religionFormDataErrors["suspectReligionRadio"]
-                ? {
-                    children:
-                      religionFormDataErrors["suspectReligionRadio"]
-                        .inputErrorText,
-                  }
-                : undefined
-            }
-            items={religionItems}
-            value={religionFormData.suspectReligionRadio.shortCode || ""}
-            onChange={(value) => {
-              if (value) setFormValue(value);
-            }}
-          ></Radios>
-        </div>
-        <SaveAndCancel onSave={handleSubmitReligion} disabled={disableBtns} />
-      </form>
+                    </h1>
+                  ),
+                },
+              }}
+              errorMessage={
+                religionFormDataErrors["suspectReligionRadio"]
+                  ? {
+                      children:
+                        religionFormDataErrors["suspectReligionRadio"]
+                          .inputErrorText,
+                    }
+                  : undefined
+              }
+              items={religionItems}
+              value={religionFormData.suspectReligionRadio.shortCode || ""}
+              onChange={(value) => {
+                if (value) setFormValue(value);
+              }}
+            ></Radios>
+          </div>
+          <SaveAndCancel onSave={handleSubmitReligion} disabled={disableBtns} />
+        </form>
+      </PageContentWrapper>
     </div>
   );
 };

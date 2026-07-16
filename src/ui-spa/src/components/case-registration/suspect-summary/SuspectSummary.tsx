@@ -89,6 +89,14 @@ const SuspectSummary: React.FC<SuspectSummaryProps> = ({
 
       navigate(url);
     };
+    const suspectName =
+      suspect.addSuspectRadio === "company"
+        ? suspect.suspectCompanyNameText
+        : formatNameUtil(
+            suspect.suspectFirstNameText,
+            suspect.suspectLastNameText,
+          );
+
     return [
       {
         key: {
@@ -146,13 +154,13 @@ const SuspectSummary: React.FC<SuspectSummaryProps> = ({
                       ? `/case-registration/case-summary`
                       : `/case-registration/suspect-summary`,
                   },
-                  visuallyHiddenText: "Edit Suspect Details",
+                  visuallyHiddenText: `suspect ${suspectName}`,
                 },
                 {
                   children: <span>Change</span>,
                   className: "govuk-link--no-visited-state",
                   to: `/case-registration/suspect-${index}/add-suspect`,
-                  visuallyHiddenText: "Edit Suspect Details",
+                  visuallyHiddenText: `suspect details for ${suspectName}`,
                   onClick: (event: React.MouseEvent<HTMLAnchorElement>) =>
                     handleSuspectChangeClick(
                       event,
