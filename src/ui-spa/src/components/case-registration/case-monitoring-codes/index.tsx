@@ -214,7 +214,7 @@ const CaseMonitoringCodesPage = () => {
         )}
         <form onSubmit={handleSubmit}>
           <div
-            className={pageStyles.inputWrapper}
+            className={styles.inputWrapper}
             style={
               {
                 ["--rows"]: Math.ceil(caseMonitoringCodes.length / 2),

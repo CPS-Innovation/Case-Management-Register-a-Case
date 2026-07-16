@@ -161,7 +161,6 @@ const ChargesSummaryPage = () => {
 
           <div className={styles.inputWrapper}>
             <Radios
-              className="govuk-radios"
               fieldset={{
                 legend: {
                   children: (
