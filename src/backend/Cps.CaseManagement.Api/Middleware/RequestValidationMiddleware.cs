@@ -23,7 +23,7 @@ public sealed partial class RequestValidationMiddleware(IAuthorizationValidator 
         if (RouteBlockerHelper.IsProduction && RouteBlockerHelper.IsBlockedRoute(httpRequestData.Url.AbsolutePath))
         {
             var response = httpRequestData.CreateResponse(HttpStatusCode.NotFound);
-            await response.WriteStringAsync("Not Found");
+            await response.WriteStringAsync("Not Found", context.CancellationToken);
             context.GetInvocationResult().Value = response;
             return;
         }
