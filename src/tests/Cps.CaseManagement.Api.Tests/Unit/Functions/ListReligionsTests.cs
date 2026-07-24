@@ -1,5 +1,4 @@
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Logging;
 using Moq;
 using AutoFixture;
 using Cps.CaseManagement.Api.Functions;
@@ -13,7 +12,6 @@ namespace Cps.CaseManagement.Api.Tests.Unit.Functions;
 
 public class ListReligionsTests
 {
-    private readonly Mock<ILogger<ListReligions>> _loggerMock;
     private readonly Mock<IMdsService> _mdsClientMock;
     private readonly Mock<IMdsArgFactory> _mdsArgFactoryMock;
     private readonly Fixture _fixture;
@@ -21,11 +19,10 @@ public class ListReligionsTests
 
     public ListReligionsTests()
     {
-        _loggerMock = new Mock<ILogger<ListReligions>>();
         _mdsClientMock = new Mock<IMdsService>();
         _mdsArgFactoryMock = new Mock<IMdsArgFactory>();
         _fixture = new Fixture();
-        _function = new ListReligions(_loggerMock.Object, _mdsClientMock.Object, _mdsArgFactoryMock.Object);
+        _function = new ListReligions(_mdsClientMock.Object, _mdsArgFactoryMock.Object);
     }
 
     [Fact]

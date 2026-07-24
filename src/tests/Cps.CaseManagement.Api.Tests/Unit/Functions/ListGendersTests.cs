@@ -1,7 +1,6 @@
 namespace Cps.CaseManagement.Api.Tests.Unit.Functions;
 
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Logging;
 using Moq;
 using AutoFixture;
 using Cps.CaseManagement.Api.Functions;
@@ -13,7 +12,6 @@ using Cps.CaseManagement.Api.Models.Dto;
 
 public class ListGendersTests
 {
-    private readonly Mock<ILogger<ListGenders>> _loggerMock;
     private readonly Mock<IMdsService> _mdsServiceMock;
     private readonly Mock<IMdsArgFactory> _mdsArgFactoryMock;
     private readonly Fixture _fixture;
@@ -21,11 +19,10 @@ public class ListGendersTests
 
     public ListGendersTests()
     {
-        _loggerMock = new Mock<ILogger<ListGenders>>();
         _mdsServiceMock = new Mock<IMdsService>();
         _mdsArgFactoryMock = new Mock<IMdsArgFactory>();
         _fixture = new Fixture();
-        _function = new ListGenders(_loggerMock.Object, _mdsServiceMock.Object, _mdsArgFactoryMock.Object);
+        _function = new ListGenders(_mdsServiceMock.Object, _mdsArgFactoryMock.Object);
     }
 
     [Fact]

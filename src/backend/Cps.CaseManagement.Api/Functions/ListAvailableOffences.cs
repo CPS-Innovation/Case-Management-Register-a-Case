@@ -13,14 +13,12 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Azure.Functions.Worker;
 using Microsoft.Azure.WebJobs.Extensions.OpenApi.Core.Attributes;
-using Microsoft.Extensions.Logging;
 using Microsoft.OpenApi.Models;
 
-public class ListAvailableOffences(ILogger<ListAvailableOffences> logger,
+public class ListAvailableOffences(
   IMdsService mdsService,
   IMdsArgFactory mdsArgFactory)
 {
-    private readonly ILogger<ListAvailableOffences> _logger = logger;
     private readonly IMdsService _mdsService = mdsService;
     private readonly IMdsArgFactory _mdsArgFactory = mdsArgFactory;
 

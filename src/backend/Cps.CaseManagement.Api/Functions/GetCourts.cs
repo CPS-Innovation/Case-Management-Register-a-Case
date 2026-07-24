@@ -11,13 +11,11 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Azure.Functions.Worker;
 using Microsoft.Azure.WebJobs.Extensions.OpenApi.Core.Attributes;
-using Microsoft.Extensions.Logging;
 
-public class GetCourts(ILogger<GetCourts> logger,
+public class GetCourts(
   IMdsService mdsService,
   IMdsArgFactory mdsArgFactory)
 {
-  private readonly ILogger<GetCourts> _logger = logger;
   private readonly IMdsService _mdsService = mdsService;
   private readonly IMdsArgFactory _mdsArgFactory = mdsArgFactory;
 
