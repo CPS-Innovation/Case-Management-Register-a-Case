@@ -1,5 +1,6 @@
 namespace Cps.CaseManagement.Api.Validators;
 
+using Cps.CaseManagement.Api.Constants;
 using Cps.CaseManagement.MdsClient.Models.Entities;
 using FluentValidation;
 
@@ -7,6 +8,6 @@ public class CaseRegistrationMonitoringCodeValidator : AbstractValidator<CaseReg
 {
     public CaseRegistrationMonitoringCodeValidator()
     {
-        this.RuleFor(x => x.Code).NotEmpty();
+        this.RuleFor(x => x.Code).NotEmpty().MaximumLength(CaseRegistrationDefaults.MonitoringCodeMaxLength);
     }
 }
