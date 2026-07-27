@@ -14,7 +14,7 @@ variables:
 - name: 'buildConfiguration'
   value: 'Release'
 - name: 'dotNetVersion'
-  value: '8.x'
+  value: '10.x'
 - name: 'buildArtifact'
   value: 'cmrc-main-api-drop'
 
