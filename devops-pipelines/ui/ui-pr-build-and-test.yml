@@ -12,7 +12,7 @@ pool: 'CMRC PreProd Pool'
 
 variables:
   - name: nodeVersion
-    value: '20.x'
+    value: '24.x'
   - name: workingDir
     value: src/ui-spa
   - name: covDir
