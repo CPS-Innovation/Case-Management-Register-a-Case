@@ -9,9 +9,11 @@ using Cps.CaseManagement.Api.Functions;
 using Cps.CaseManagement.Api.Helpers;
 using Cps.CaseManagement.Api.Models.Dto;
 using Cps.CaseManagement.Api.Services;
+using Cps.CaseManagement.Api.TelemetryEvents;
 using Cps.CaseManagement.Api.Tests.Helpers;
 using Cps.CaseManagement.Api.Validators;
 using Cps.CaseManagement.Domain.Models;
+using Cps.CaseManagement.Infrastructure.Telemetry;
 using Cps.CaseManagement.MdsClient.Client;
 using Cps.CaseManagement.MdsClient.Factories;
 using Cps.CaseManagement.MdsClient.Models.Args;
@@ -33,6 +35,7 @@ public class RegisterCaseTest
     private readonly Mock<IMdsService> _mdsServiceMock;
     private readonly Mock<IMdsArgFactory> _mdsArgFactoryMock;
     private readonly Mock<IRequestValidator> _requestValidatorMock;
+    private readonly Mock<ITelemetryClient> _telemetryClientMock;
     private readonly Fixture _fixture;
     private readonly RegisterCase _function;
 
@@ -42,8 +45,9 @@ public class RegisterCaseTest
         _mdsServiceMock = new Mock<IMdsService>();
         _mdsArgFactoryMock = new Mock<IMdsArgFactory>();
         _requestValidatorMock = new Mock<IRequestValidator>();
+        _telemetryClientMock = new Mock<ITelemetryClient>();
         _fixture = new Fixture();
-        _function = new RegisterCase(_loggerMock.Object, _mdsServiceMock.Object, _mdsArgFactoryMock.Object, _requestValidatorMock.Object);
+        _function = new RegisterCase(_loggerMock.Object, _mdsServiceMock.Object, _mdsArgFactoryMock.Object, _requestValidatorMock.Object, _telemetryClientMock.Object);
     }
 
     [Fact]
@@ -72,6 +76,7 @@ public class RegisterCaseTest
         // Assert
         var badRequest = Assert.IsType<BadRequestObjectResult>(result);
         Assert.Equal(validationErrors.Count, ((IEnumerable<string>)badRequest!.Value!).Count());
+        _telemetryClientMock.Verify(t => t.TrackEvent(It.IsAny<BaseTelemetryEvent>()), Times.Never);
     }
 
     [Fact]
@@ -101,6 +106,7 @@ public class RegisterCaseTest
         Assert.Equal("Error", exception.Message);
         _mdsServiceMock.Verify(c => c.RegisterCaseAsync(It.IsAny<MdsRegisterCaseArg>()), Times.Once);
         _requestValidatorMock.Verify(v => v.GetJsonBody<CaseRegistrationRequest, CaseRegistrationRequestValidator>(It.IsAny<HttpRequest>()), Times.Once);
+        _telemetryClientMock.Verify(t => t.TrackEvent(It.IsAny<BaseTelemetryEvent>()), Times.Never);
     }
 
     [Fact]
@@ -109,6 +115,8 @@ public class RegisterCaseTest
         // Arrange
         var caseDetails = CreateValidCaseRegistrationRequest();
         var correlationId = _fixture.Create<Guid>();
+        var username = _fixture.Create<string>();
+        var expectedResponse = new CaseRegistrationResponseDto { CaseId = 12345, Urn = "12AB1234567" };
 
         _requestValidatorMock
             .Setup(x => x.GetJsonBody<CaseRegistrationRequest, CaseRegistrationRequestValidator>(It.IsAny<HttpRequest>()))
@@ -119,9 +127,9 @@ public class RegisterCaseTest
             });
 
         _mdsServiceMock.Setup(x => x.RegisterCaseAsync(It.IsAny<MdsRegisterCaseArg>()))
-            .ReturnsAsync(new CaseRegistrationResponseDto { CaseId = 12345 });
+            .ReturnsAsync(expectedResponse);
 
-        var functionContext = FunctionContextStubHelper.CreateFunctionContextStub(correlationId, _fixture.Create<string>(), _fixture.Create<string>());
+        var functionContext = FunctionContextStubHelper.CreateFunctionContextStub(correlationId, _fixture.Create<string>(), username);
         var httpRequest = CreateHttpRequestFromJson(caseDetails, correlationId);
 
         // Act
@@ -131,6 +139,13 @@ public class RegisterCaseTest
         Assert.IsType<OkObjectResult>(result);
         _mdsArgFactoryMock.Verify(f => f.CreateRegisterCaseArg(It.IsAny<string>(), It.IsAny<Guid>(), It.IsAny<CaseRegistrationRequest>()), Times.Once);
         _mdsServiceMock.Verify(c => c.RegisterCaseAsync(It.IsAny<MdsRegisterCaseArg>()), Times.Once);
+        _telemetryClientMock.Verify(
+            t => t.TrackEvent(It.Is<CaseRegisteredEvent>(e =>
+                e.Urn == expectedResponse.Urn &&
+                e.CaseId == expectedResponse.CaseId &&
+                e.Username == username &&
+                e.CorrelationId == correlationId)),
+            Times.Once);
     }
 
     [Fact]
@@ -197,6 +212,7 @@ public class RegisterCaseTest
         var badRequest = Assert.IsType<BadRequestObjectResult>(result);
         Assert.NotEmpty((IEnumerable<string>)badRequest.Value!);
         _mdsServiceMock.Verify(c => c.RegisterCaseAsync(It.IsAny<MdsRegisterCaseArg>()), Times.Never);
+        _telemetryClientMock.Verify(t => t.TrackEvent(It.IsAny<BaseTelemetryEvent>()), Times.Never);
     }
 
     [Fact]

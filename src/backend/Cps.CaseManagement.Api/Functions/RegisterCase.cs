@@ -10,7 +10,9 @@ using Cps.CaseManagement.Api.Context;
 using Cps.CaseManagement.Api.Helpers;
 using Cps.CaseManagement.Api.Models.Dto;
 using Cps.CaseManagement.Api.Services;
+using Cps.CaseManagement.Api.TelemetryEvents;
 using Cps.CaseManagement.Api.Validators;
+using Cps.CaseManagement.Infrastructure.Telemetry;
 using Cps.CaseManagement.MdsClient.Factories;
 using Cps.CaseManagement.MdsClient.Models.Entities;
 using Microsoft.AspNetCore.Http;
@@ -19,12 +21,13 @@ using Microsoft.Azure.Functions.Worker;
 using Microsoft.Azure.WebJobs.Extensions.OpenApi.Core.Attributes;
 using Microsoft.Extensions.Logging;
 
-public class RegisterCase(ILogger<RegisterCase> logger, IMdsService mdsService, IMdsArgFactory mdsArgFactory, IRequestValidator requestValidator)
+public class RegisterCase(ILogger<RegisterCase> logger, IMdsService mdsService, IMdsArgFactory mdsArgFactory, IRequestValidator requestValidator, ITelemetryClient telemetryClient)
 {
     private readonly ILogger<RegisterCase> _logger = logger;
     private readonly IMdsService _mdsService = mdsService;
     private readonly IMdsArgFactory _mdsArgFactory = mdsArgFactory;
     private readonly IRequestValidator _requestValidator = requestValidator;
+    private readonly ITelemetryClient _telemetryClient = telemetryClient;
 
     [Function(nameof(RegisterCase))]
     [OpenApiOperation(operationId: nameof(RegisterCase), tags: ["MDS"], Description = "Registers a case in CMS.")]
@@ -66,6 +69,15 @@ public class RegisterCase(ILogger<RegisterCase> logger, IMdsService mdsService, 
                 context.CmsAuthValues,
                 context.CorrelationId,
                 caseRegistrationRequest.Value));
+
+        _telemetryClient.TrackEvent(new CaseRegisteredEvent
+        {
+            CorrelationId = context.CorrelationId,
+            EventTimestamp = DateTime.UtcNow,
+            Urn = result.Urn,
+            CaseId = result.CaseId,
+            Username = context.Username
+        });
 
         return new OkObjectResult(result);
     }

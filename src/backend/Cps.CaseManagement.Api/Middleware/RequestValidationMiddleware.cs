@@ -7,6 +7,7 @@ using Cps.CaseManagement.Api.Context;
 using Cps.CaseManagement.Api.Exceptions;
 using Cps.CaseManagement.Api.Helpers;
 using Cps.CaseManagement.Api.Validators;
+using Cps.CaseManagement.Infrastructure.Telemetry;
 
 namespace Cps.CaseManagement.Api.Middleware;
 
@@ -22,7 +23,7 @@ public sealed partial class RequestValidationMiddleware(IAuthorizationValidator 
         if (RouteBlockerHelper.IsProduction && RouteBlockerHelper.IsBlockedRoute(httpRequestData.Url.AbsolutePath))
         {
             var response = httpRequestData.CreateResponse(HttpStatusCode.NotFound);
-            await response.WriteStringAsync("Not Found");
+            await response.WriteStringAsync("Not Found", context.CancellationToken);
             context.GetInvocationResult().Value = response;
             return;
         }
@@ -32,13 +33,21 @@ public sealed partial class RequestValidationMiddleware(IAuthorizationValidator 
         var (isAuthenticated, username) = await Authenticate(httpRequestData);
 
         context.SetRequestContext(correlationId, cmsAuthValues, username);
+        TelemetryRequestContext.Set(username, correlationId);
 
-        if (!isAuthenticated && !_unauthenticatedRoutes.Contains(httpRequestData.Url.AbsolutePath))
+        try
         {
-            throw new CpsAuthenticationException();
-        }
+            if (!isAuthenticated && !_unauthenticatedRoutes.Contains(httpRequestData.Url.AbsolutePath))
+            {
+                throw new CpsAuthenticationException();
+            }
 
-        await next(context);
+            await next(context);
+        }
+        finally
+        {
+            TelemetryRequestContext.Clear();
+        }
     }
 
     private static Guid EstablishCorrelation(HttpRequestData httpRequestData)
