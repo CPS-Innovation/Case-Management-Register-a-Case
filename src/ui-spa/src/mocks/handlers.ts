@@ -58,7 +58,6 @@ export const setupHandlers = (baseUrl: string, apiMockSource: string) => {
         : courtLocationsPlaywright;
       await delay(RESPONSE_DELAY);
       return HttpResponse.json(results);
-      // return new HttpResponse(null, { status: 500 });
     }),
     http.get(`${baseUrl}/api/v1/complexities`, async () => {
       const results = isDevMock()
@@ -129,7 +128,6 @@ export const setupHandlers = (baseUrl: string, apiMockSource: string) => {
     http.post(`${baseUrl}/api/v1/cases`, async () => {
       await delay(RESPONSE_DELAY);
       return HttpResponse.json({ caseId: 12345 });
-      // return new HttpResponse(null, { status: 500 });
     }),
     http.get(`${baseUrl}/api/v1/offences`, async () => {
       const results = isDevMock() ? offencesDev : offencesPlaywright;
