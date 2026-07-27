@@ -9,7 +9,6 @@ public class TelemetryClient(IAppInsightsTelemetryClient telemetryClient) : ITel
     protected readonly IAppInsightsTelemetryClient _telemetryClient = telemetryClient;
 
     private const string ExceptionMessageKey = "exceptionMessage";
-    private const string ExceptionStackTraceKey = "exceptionStackTrace";
     private const string PageNameKey = "pageName";
     private const string SeverityLevelKey = "severityLevel";
     private const string MessageKey = "message";

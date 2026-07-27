@@ -1,7 +1,6 @@
 namespace Cps.CaseManagement.Api.Tests.Unit.Functions;
 
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Logging;
 using Moq;
 using AutoFixture;
 using Cps.CaseManagement.Api.Functions;
@@ -15,7 +14,6 @@ using Cps.CaseManagement.Api.Models.Dto;
 
 public class ListAvailableOffencesTests
 {
-    private readonly Mock<ILogger<ListAvailableOffences>> _loggerMock;
     private readonly Mock<IMdsService> _mdsServiceMock;
     private readonly Mock<IMdsArgFactory> _mdsArgFactoryMock;
     private readonly IFixture _fixture;
@@ -26,7 +24,6 @@ public class ListAvailableOffencesTests
 
     public ListAvailableOffencesTests()
     {
-        _loggerMock = new Mock<ILogger<ListAvailableOffences>>();
         _mdsServiceMock = new Mock<IMdsService>();
         _mdsArgFactoryMock = new Mock<IMdsArgFactory>();
         _fixture = new Fixture();
@@ -39,7 +36,6 @@ public class ListAvailableOffencesTests
         _username = _fixture.Create<string>();
 
         _function = new ListAvailableOffences(
-            _loggerMock.Object,
             _mdsServiceMock.Object,
             _mdsArgFactoryMock.Object);
     }

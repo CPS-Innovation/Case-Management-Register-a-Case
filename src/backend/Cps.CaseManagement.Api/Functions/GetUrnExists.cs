@@ -10,13 +10,11 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Azure.Functions.Worker;
 using Microsoft.Azure.WebJobs.Extensions.OpenApi.Core.Attributes;
-using Microsoft.Extensions.Logging;
 
-public class GetUrnExists(ILogger<GetUrnExists> logger,
+public class GetUrnExists(
   IMdsService mdsService,
   IMdsArgFactory mdsArgFactory)
 {
-  private readonly ILogger<GetUrnExists> _logger = logger;
   private readonly IMdsService _mdsService = mdsService;
   private readonly IMdsArgFactory _mdsArgFactory = mdsArgFactory;
 
