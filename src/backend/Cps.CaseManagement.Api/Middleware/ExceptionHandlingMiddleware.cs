@@ -29,7 +29,7 @@ public class ExceptionHandlingMiddleware : IFunctionsWorkerMiddleware
             var statusCode = exception switch
             {
                 ArgumentNullException or BadRequestException _ => HttpStatusCode.BadRequest,
-                CmsUnauthorizedException or CpsAuthenticationException _ => HttpStatusCode.Unauthorized,
+                CmsUnauthorizedException or CpsAuthenticationException or CmsAuthValuesException _ => HttpStatusCode.Unauthorized,
                 MdsClientException mds => mds.StatusCode,
                 _ => HttpStatusCode.InternalServerError,
             };
