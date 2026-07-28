@@ -40,9 +40,10 @@ public static class CaseRegistrationDefaults
     public const int ModeOfTrialMaxLength = 50;
 
     /// <summary>
-    /// Defensive upper bound for positive int IDs (area, unit, court, prosecutor, WCU).
+    /// Upper bound for positive int IDs (area, unit, court, prosecutor, WCU).
+    /// MDS/CMS identifiers can exceed 6 digits.
     /// </summary>
-    public const int IdMaxValue = 999_999;
+    public const int IdMaxValue = int.MaxValue;
 
     public const int MinAgeYears = 10;
     public const int MaxAgeYears = 120;

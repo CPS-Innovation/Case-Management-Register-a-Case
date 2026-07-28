@@ -707,21 +707,21 @@ public class CaseRegistrationRequestValidatorTests
     }
 
     [Fact]
-    public void RegisteringAreaId_AboveMax_ShouldFail()
+    public void RegisteringAreaId_LargeId_ShouldPass()
     {
         var req = GetValidRequest();
-        req.RegisteringAreaId = CaseRegistrationDefaults.IdMaxValue + 1;
+        req.RegisteringAreaId = 2_856_101;
         var result = _validator.TestValidate(req);
-        result.ShouldHaveValidationErrorFor(x => x.RegisteringAreaId);
+        result.ShouldNotHaveValidationErrorFor(x => x.RegisteringAreaId);
     }
 
     [Fact]
-    public void RegisteringUnitId_AboveMax_ShouldFail()
+    public void RegisteringUnitId_LargeId_ShouldPass()
     {
         var req = GetValidRequest();
-        req.RegisteringUnitId = CaseRegistrationDefaults.IdMaxValue + 1;
+        req.RegisteringUnitId = 2_856_101;
         var result = _validator.TestValidate(req);
-        result.ShouldHaveValidationErrorFor(x => x.RegisteringUnitId);
+        result.ShouldNotHaveValidationErrorFor(x => x.RegisteringUnitId);
     }
 
     [Fact]
@@ -747,16 +747,16 @@ public class CaseRegistrationRequestValidatorTests
     }
 
     [Fact]
-    public void OptionalIds_AboveMax_ShouldFail()
+    public void OptionalIds_LargeIds_ShouldPass()
     {
         var req = GetValidRequest();
-        req.AllocatedWcuId = CaseRegistrationDefaults.IdMaxValue + 1;
-        req.CourtLocationId = CaseRegistrationDefaults.IdMaxValue + 1;
-        req.ProsecutorId = CaseRegistrationDefaults.IdMaxValue + 1;
+        req.AllocatedWcuId = 2_856_101;
+        req.CourtLocationId = 2_029_012;
+        req.ProsecutorId = 2_856_101;
         var result = _validator.TestValidate(req);
-        result.ShouldHaveValidationErrorFor(x => x.AllocatedWcuId);
-        result.ShouldHaveValidationErrorFor(x => x.CourtLocationId);
-        result.ShouldHaveValidationErrorFor(x => x.ProsecutorId);
+        result.ShouldNotHaveValidationErrorFor(x => x.AllocatedWcuId);
+        result.ShouldNotHaveValidationErrorFor(x => x.CourtLocationId);
+        result.ShouldNotHaveValidationErrorFor(x => x.ProsecutorId);
     }
 
     [Fact]
