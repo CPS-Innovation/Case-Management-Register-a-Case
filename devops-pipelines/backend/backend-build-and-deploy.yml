@@ -53,7 +53,7 @@ stages:
         appName: 'fa-cmrc-api-dev'
         environment: 'dev'
         postmanCollectionPath: '$(System.DefaultWorkingDirectory)/src/backend/postman/RegisterCaseAPITests.postman_collection.json'
-        nodeVersion: '20.x'
+        nodeVersion: '24.x'
 
   - template: ../templates/backend-deploy-stages.yml
     parameters:

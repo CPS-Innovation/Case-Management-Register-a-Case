@@ -1,5 +1,6 @@
 namespace Cps.CaseManagement.Api.Tests.Unit.Validators;
 
+using Cps.CaseManagement.Api.Constants;
 using Cps.CaseManagement.Api.Validators;
 using Cps.CaseManagement.MdsClient.Models.Entities;
 using FluentValidation.TestHelper;
@@ -705,4 +706,229 @@ public class CaseRegistrationRequestValidatorTests
         result.ShouldNotHaveValidationErrorFor(x => x.MonitoringCodes);
     }
 
+    [Fact]
+    public void RegisteringAreaId_LargeId_ShouldPass()
+    {
+        var req = GetValidRequest();
+        req.RegisteringAreaId = 2_856_101;
+        var result = _validator.TestValidate(req);
+        result.ShouldNotHaveValidationErrorFor(x => x.RegisteringAreaId);
+    }
+
+    [Fact]
+    public void RegisteringUnitId_LargeId_ShouldPass()
+    {
+        var req = GetValidRequest();
+        req.RegisteringUnitId = 2_856_101;
+        var result = _validator.TestValidate(req);
+        result.ShouldNotHaveValidationErrorFor(x => x.RegisteringUnitId);
+    }
+
+    [Fact]
+    public void RegisteringUnitId_Negative_ShouldFail()
+    {
+        var req = GetValidRequest();
+        req.RegisteringUnitId = -1;
+        var result = _validator.TestValidate(req);
+        result.ShouldHaveValidationErrorFor(x => x.RegisteringUnitId);
+    }
+
+    [Fact]
+    public void OptionalIds_Zero_ShouldPass()
+    {
+        var req = GetValidRequest();
+        req.AllocatedWcuId = 0;
+        req.CourtLocationId = 0;
+        req.ProsecutorId = 0;
+        var result = _validator.TestValidate(req);
+        result.ShouldNotHaveValidationErrorFor(x => x.AllocatedWcuId);
+        result.ShouldNotHaveValidationErrorFor(x => x.CourtLocationId);
+        result.ShouldNotHaveValidationErrorFor(x => x.ProsecutorId);
+    }
+
+    [Fact]
+    public void OptionalIds_LargeIds_ShouldPass()
+    {
+        var req = GetValidRequest();
+        req.AllocatedWcuId = 2_856_101;
+        req.CourtLocationId = 2_029_012;
+        req.ProsecutorId = 2_856_101;
+        var result = _validator.TestValidate(req);
+        result.ShouldNotHaveValidationErrorFor(x => x.AllocatedWcuId);
+        result.ShouldNotHaveValidationErrorFor(x => x.CourtLocationId);
+        result.ShouldNotHaveValidationErrorFor(x => x.ProsecutorId);
+    }
+
+    [Fact]
+    public void OperationName_TooLong_ShouldFail()
+    {
+        var req = GetValidRequest();
+        req.OperationName = new string('A', CaseRegistrationDefaults.OperationNameMaxLength + 1);
+        var result = _validator.TestValidate(req);
+        result.ShouldHaveValidationErrorFor(x => x.OperationName);
+    }
+
+    [Fact]
+    public void OicSurname_TooLong_ShouldFail()
+    {
+        var req = GetValidRequest();
+        req.OicSurname = new string('A', CaseRegistrationDefaults.SurnameMaxLength + 1);
+        var result = _validator.TestValidate(req);
+        result.ShouldHaveValidationErrorFor(x => x.OicSurname);
+    }
+
+    [Fact]
+    public void HearingDate_OutsideWindow_ShouldFail()
+    {
+        var req = GetValidRequest();
+        req.HearingDate = DateTime.Today.AddYears(-(CaseRegistrationDefaults.HearingDateYearsWindow + 1));
+        var result = _validator.TestValidate(req);
+        result.ShouldHaveValidationErrorFor(x => x.HearingDate);
+    }
+
+    [Fact]
+    public void Defendant_DateOfBirth_ThousandsOfYearsAgo_ShouldFail()
+    {
+        var req = GetValidRequest();
+        var defendants = req.Defendants!.ToList();
+        defendants[0].DateOfBirth = new DateTime(1, 1, 1);
+        req.Defendants = defendants;
+        var result = _validator.TestValidate(req);
+        result.ShouldHaveValidationErrorFor("Defendants[0].DateOfBirth");
+    }
+
+    [Fact]
+    public void Defendant_DateOfBirth_Future_ShouldFail()
+    {
+        var req = GetValidRequest();
+        var defendants = req.Defendants!.ToList();
+        defendants[0].DateOfBirth = DateTime.Today.AddDays(1);
+        req.Defendants = defendants;
+        var result = _validator.TestValidate(req);
+        result.ShouldHaveValidationErrorFor("Defendants[0].DateOfBirth");
+    }
+
+    [Fact]
+    public void Defendant_DateOfBirth_AgeBelowMinimum_ShouldFail()
+    {
+        var req = GetValidRequest();
+        var defendants = req.Defendants!.ToList();
+        defendants[0].DateOfBirth = DateTime.Today.AddYears(-(CaseRegistrationDefaults.MinAgeYears - 1));
+        req.Defendants = defendants;
+        var result = _validator.TestValidate(req);
+        result.ShouldHaveValidationErrorFor("Defendants[0].DateOfBirth");
+    }
+
+    [Fact]
+    public void Defendant_DateOfBirth_AgeAboveMaximum_ShouldFail()
+    {
+        var req = GetValidRequest();
+        var defendants = req.Defendants!.ToList();
+        defendants[0].DateOfBirth = DateTime.Today.AddYears(-(CaseRegistrationDefaults.MaxAgeYears + 1));
+        req.Defendants = defendants;
+        var result = _validator.TestValidate(req);
+        result.ShouldHaveValidationErrorFor("Defendants[0].DateOfBirth");
+    }
+
+    [Fact]
+    public void Defendant_DateOfBirth_ValidAge_ShouldPass()
+    {
+        var req = GetValidRequest();
+        var defendants = req.Defendants!.ToList();
+        defendants[0].DateOfBirth = DateTime.Today.AddYears(-30);
+        req.Defendants = defendants;
+        var result = _validator.TestValidate(req);
+        result.ShouldNotHaveValidationErrorFor("Defendants[0].DateOfBirth");
+    }
+
+    [Fact]
+    public void Defendant_Firstname_TooLong_ShouldFail()
+    {
+        var req = GetValidRequest();
+        var defendants = req.Defendants!.ToList();
+        defendants[0].Firstname = new string('A', CaseRegistrationDefaults.NameMaxLength + 1);
+        req.Defendants = defendants;
+        var result = _validator.TestValidate(req);
+        result.ShouldHaveValidationErrorFor("Defendants[0].Firstname");
+    }
+
+    [Fact]
+    public void Defendant_Asn_TooLong_ShouldFail()
+    {
+        var req = GetValidRequest();
+        var defendants = req.Defendants!.ToList();
+        defendants[0].JsonPropertyNameArrestSummonsNumber = new string('A', CaseRegistrationDefaults.AsnMaxLength + 1);
+        req.Defendants = defendants;
+        var result = _validator.TestValidate(req);
+        result.ShouldHaveValidationErrorFor("Defendants[0].JsonPropertyNameArrestSummonsNumber");
+    }
+
+    [Fact]
+    public void Defendant_Alias_SurnameTooLong_ShouldFail()
+    {
+        var req = GetValidRequest();
+        var defendants = req.Defendants!.ToList();
+        defendants[0].Aliases =
+        [
+            new CaseRegistrationDefendantAlias(0, new string('A', CaseRegistrationDefaults.SurnameMaxLength + 1), "John")
+        ];
+        req.Defendants = defendants;
+        var result = _validator.TestValidate(req);
+        result.ShouldHaveValidationErrorFor("Defendants[0].Aliases[0].Surname");
+    }
+
+    [Fact]
+    public void Victim_SurnameTooLong_ShouldFail()
+    {
+        var req = GetValidRequest();
+        req.Victims =
+        [
+            new CaseRegistrationVictim
+            {
+                Surname = new string('A', CaseRegistrationDefaults.SurnameMaxLength + 1),
+                Forename = "Jane"
+            }
+        ];
+        var result = _validator.TestValidate(req);
+        result.ShouldHaveValidationErrorFor("Victims[0].Surname");
+    }
+
+    [Fact]
+    public void Charge_DateTo_BeforeDateFrom_ShouldFail()
+    {
+        var req = GetValidRequest();
+        var defendants = req.Defendants!.ToList();
+        var charges = defendants[0].Charges!.ToList();
+        charges[0].DateFrom = DateTime.Today.AddDays(-1);
+        charges[0].DateTo = DateTime.Today.AddDays(-2);
+        defendants[0].Charges = charges;
+        req.Defendants = defendants;
+        var result = _validator.TestValidate(req);
+        result.ShouldHaveValidationErrorFor("Defendants[0].Charges[0].DateTo");
+    }
+
+    [Fact]
+    public void Charge_OffenceLocation_AddressTooLong_ShouldFail()
+    {
+        var req = GetValidRequest();
+        var defendants = req.Defendants!.ToList();
+        var charges = defendants[0].Charges!.ToList();
+        charges[0].OffenceLocation = new CaseRegistrationOffenceLocation
+        {
+            AddressLine1 = new string('A', CaseRegistrationDefaults.AddressLineMaxLength + 1)
+        };
+        defendants[0].Charges = charges;
+        req.Defendants = defendants;
+        var result = _validator.TestValidate(req);
+        result.ShouldHaveValidationErrorFor("Defendants[0].Charges[0].OffenceLocation.AddressLine1");
+    }
+
+    [Fact]
+    public void MonitoringCode_Code_TooLong_ShouldFail()
+    {
+        var req = GetValidRequest();
+        req.MonitoringCodes = [new CaseRegistrationMonitoringCode(new string('A', CaseRegistrationDefaults.MonitoringCodeMaxLength + 1), true)];
+        var result = _validator.TestValidate(req);
+        result.ShouldHaveValidationErrorFor("MonitoringCodes[0].Code");
+    }
 }
