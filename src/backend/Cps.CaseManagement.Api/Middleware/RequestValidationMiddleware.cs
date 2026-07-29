@@ -14,6 +14,7 @@ namespace Cps.CaseManagement.Api.Middleware;
 public sealed partial class RequestValidationMiddleware(IAuthorizationValidator authorizationValidator) : IFunctionsWorkerMiddleware
 {
     private readonly string[] _unauthenticatedRoutes = ["/api/status", "/api/tactical/login", "/api/swagger/ui", "/api/swagger.json", "/api/v1/init"];
+    private readonly string[] _cmsAuthOptionalRoutes = ["/api/v1/telemetry"];
 
     public async Task Invoke(FunctionContext context, FunctionExecutionDelegate next)
     {
@@ -28,8 +29,18 @@ public sealed partial class RequestValidationMiddleware(IAuthorizationValidator 
             return;
         }
 
-        var correlationId = EstablishCorrelation(httpRequestData);
+        var path = httpRequestData.Url.AbsolutePath;
+        var isUnauthenticatedRoute = _unauthenticatedRoutes.Contains(path);
+        var requiresCmsAuth = !isUnauthenticatedRoute && !_cmsAuthOptionalRoutes.Contains(path);
+
+        var correlationId = EstablishCorrelation(httpRequestData, requireNonEmpty: !isUnauthenticatedRoute || path == "/api/v1/init");
         var cmsAuthValues = EstablishCmsAuthValues(httpRequestData);
+
+        if (requiresCmsAuth)
+        {
+            CmsAuthValuesValidator.Validate(cmsAuthValues);
+        }
+
         var (isAuthenticated, username) = await Authenticate(httpRequestData);
 
         context.SetRequestContext(correlationId, cmsAuthValues, username);
@@ -37,7 +48,7 @@ public sealed partial class RequestValidationMiddleware(IAuthorizationValidator 
 
         try
         {
-            if (!isAuthenticated && !_unauthenticatedRoutes.Contains(httpRequestData.Url.AbsolutePath))
+            if (!isAuthenticated && !isUnauthenticatedRoute)
             {
                 throw new CpsAuthenticationException();
             }
@@ -50,13 +61,19 @@ public sealed partial class RequestValidationMiddleware(IAuthorizationValidator 
         }
     }
 
-    private static Guid EstablishCorrelation(HttpRequestData httpRequestData)
+    private static Guid EstablishCorrelation(HttpRequestData httpRequestData, bool requireNonEmpty)
     {
         if (httpRequestData.Headers.TryGetValues(HttpHeaderKeys.CorrelationId, out var correlationIds)
             && correlationIds.Any()
-            && Guid.TryParse(correlationIds.First(), out var parsedCorrelationId))
+            && Guid.TryParse(correlationIds.First(), out var parsedCorrelationId)
+            && parsedCorrelationId != Guid.Empty)
         {
             return parsedCorrelationId;
+        }
+
+        if (requireNonEmpty)
+        {
+            throw new BadRequestException("Correlation-Id header is required and must be a non-empty GUID.", HttpHeaderKeys.CorrelationId);
         }
 
         return Guid.Empty;
