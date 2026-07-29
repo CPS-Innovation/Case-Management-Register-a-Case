@@ -9,7 +9,7 @@ import {
 import { Radios, ErrorSummary, BackLink } from "../../govuk";
 import SaveAndCancel from "../../common/SaveAndCancel";
 import { CaseRegistrationFormContext } from "../../../common/providers/CaseRegistrationProvider";
-import { useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router";
 import useChargesCount from "../../../common/hooks/useChargesCount";
 import { formatNameUtil } from "../../../common/utils/formatNameUtil";
 import PageContentWrapper from "../../common/PageContentWrapper";

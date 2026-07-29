@@ -5,7 +5,7 @@ import { CaseRegistrationFormContext } from "../../../common/providers/CaseRegis
 import { getGenders } from "../../../apis/gateway-api";
 import { useQuery } from "@tanstack/react-query";
 import { formatNameUtil } from "../../../common/utils/formatNameUtil";
-import { useNavigate, useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router";
 import useErrorSummaryList from "../../../common/hooks/useErrorSummaryList";
 import useGetSuspectRoute from "../../../common/hooks/useGetSuspectRoute";
 import ErrorSummaryWrapper from "../../common/ErrorSummaryWrapper";

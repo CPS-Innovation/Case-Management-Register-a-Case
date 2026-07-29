@@ -5,7 +5,7 @@ import { CaseRegistrationFormContext } from "../../../common/providers/CaseRegis
 import { getCaseComplexities } from "../../../apis/gateway-api";
 import { useQuery } from "@tanstack/react-query";
 import useErrorSummaryList from "../../../common/hooks/useErrorSummaryList";
-import { useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router";
 import PageContentWrapper from "../../common/PageContentWrapper";
 import styles from "../index.module.scss";
 

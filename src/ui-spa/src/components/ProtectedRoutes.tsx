@@ -1,4 +1,4 @@
-import { Outlet, Navigate } from "react-router-dom";
+import { Outlet, Navigate } from "react-router";
 import { useContext } from "react";
 import { CaseRegistrationFormContext } from "../common/providers/CaseRegistrationProvider";
 const ProtectedRoutes = () => {

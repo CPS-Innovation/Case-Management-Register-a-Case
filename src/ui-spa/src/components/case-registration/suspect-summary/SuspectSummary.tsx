@@ -8,7 +8,7 @@ import { getSuspectDetailsSummaryListRows } from "./utils/getSuspectDetailsSumma
 import { getChargesSummaryListRows } from "../charges-summary/utils/getChargesSummaryListRows";
 import { isYouthSuspect } from "../../../common/utils/isYouthSuspect";
 import { formatNameUtil } from "../../../common/utils/formatNameUtil";
-import { useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router";
 import styles from "./SuspectSummary.module.scss";
 
 type SuspectSummaryProps = {

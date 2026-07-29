@@ -4,7 +4,7 @@ import SaveAndCancel from "../../common/SaveAndCancel";
 import { CaseRegistrationFormContext } from "../../../common/providers/CaseRegistrationProvider";
 import { type GeneralRadioValue } from "../../../common/reducers/caseRegistrationReducer";
 import useErrorSummaryList from "../../../common/hooks/useErrorSummaryList";
-import { useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router";
 import PageContentWrapper from "../../common/PageContentWrapper";
 import styles from "../index.module.scss";
 
