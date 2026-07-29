@@ -957,6 +957,68 @@ public class CaseRegistrationRequestValidatorTests
     }
 
     [Fact]
+    public void Victim_Forename_InvalidCharacters_ShouldFail()
+    {
+        var req = GetValidRequest();
+        req.Victims =
+        [
+            new CaseRegistrationVictim
+            {
+                Surname = "Smith",
+                Forename = "Jane<script>"
+            }
+        ];
+        var result = _validator.TestValidate(req);
+        result.ShouldHaveValidationErrorFor("Victims[0].Forename");
+    }
+
+    [Fact]
+    public void Victim_Surname_ApostropheAndHyphen_ShouldPass()
+    {
+        var req = GetValidRequest();
+        req.Victims =
+        [
+            new CaseRegistrationVictim
+            {
+                Surname = "O'Brien",
+                Forename = "Mary-Jane"
+            }
+        ];
+        var result = _validator.TestValidate(req);
+        result.ShouldNotHaveValidationErrorFor("Victims[0].Surname");
+        result.ShouldNotHaveValidationErrorFor("Victims[0].Forename");
+    }
+
+    [Fact]
+    public void Defendant_Alias_FirstNames_InvalidCharacters_ShouldFail()
+    {
+        var req = GetValidRequest();
+        var defendants = req.Defendants!.ToList();
+        defendants[0].Aliases =
+        [
+            new CaseRegistrationDefendantAlias(0, "Smith", "John<script>")
+        ];
+        req.Defendants = defendants;
+        var result = _validator.TestValidate(req);
+        result.ShouldHaveValidationErrorFor("Defendants[0].Aliases[0].FirstNames");
+    }
+
+    [Fact]
+    public void Defendant_Alias_Surname_ApostropheAndHyphen_ShouldPass()
+    {
+        var req = GetValidRequest();
+        var defendants = req.Defendants!.ToList();
+        defendants[0].Aliases =
+        [
+            new CaseRegistrationDefendantAlias(0, "O'Brien", "Mary-Jane")
+        ];
+        req.Defendants = defendants;
+        var result = _validator.TestValidate(req);
+        result.ShouldNotHaveValidationErrorFor("Defendants[0].Aliases[0].Surname");
+        result.ShouldNotHaveValidationErrorFor("Defendants[0].Aliases[0].FirstNames");
+    }
+
+    [Fact]
     public void Defendant_Asn_InvalidCharacters_ShouldFail()
     {
         var req = GetValidRequest();

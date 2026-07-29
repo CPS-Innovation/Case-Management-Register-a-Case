@@ -9,7 +9,7 @@ public static class CaseRegistrationInputPatterns
     /// Person names: Unicode letters, apostrophes, full stops, spaces and hyphens.
     /// Matches ui-spa sanitizeNameText.
     /// </summary>
-    public const string PersonName = @"^[\p{L}.'\s-]*$";
+    public const string PersonName = @"^[\p{L}.' \-]*$";
 
     /// <summary>
     /// OIC first/surname after case-assignee sanitisation: ASCII letters only.
