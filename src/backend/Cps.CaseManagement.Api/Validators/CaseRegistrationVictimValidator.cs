@@ -8,7 +8,13 @@ public class CaseRegistrationVictimValidator : AbstractValidator<CaseRegistratio
 {
     public CaseRegistrationVictimValidator()
     {
-        this.RuleFor(x => x.Surname).MaximumLength(CaseRegistrationDefaults.SurnameMaxLength);
-        this.RuleFor(x => x.Forename).MaximumLength(CaseRegistrationDefaults.NameMaxLength);
+        this.RuleFor(x => x.Surname)
+            .MaximumLength(CaseRegistrationDefaults.SurnameMaxLength)
+            .Matches(CaseRegistrationInputPatterns.PersonName)
+            .WithMessage($"Surname {CaseRegistrationInputPatterns.PersonNameMessage}");
+        this.RuleFor(x => x.Forename)
+            .MaximumLength(CaseRegistrationDefaults.NameMaxLength)
+            .Matches(CaseRegistrationInputPatterns.PersonName)
+            .WithMessage($"Forename {CaseRegistrationInputPatterns.PersonNameMessage}");
     }
 }

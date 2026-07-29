@@ -931,4 +931,79 @@ public class CaseRegistrationRequestValidatorTests
         var result = _validator.TestValidate(req);
         result.ShouldHaveValidationErrorFor("MonitoringCodes[0].Code");
     }
+
+    [Fact]
+    public void Defendant_Firstname_InvalidCharacters_ShouldFail()
+    {
+        var req = GetValidRequest();
+        var defendants = req.Defendants!.ToList();
+        defendants[0].Firstname = "John<script>";
+        req.Defendants = defendants;
+        var result = _validator.TestValidate(req);
+        result.ShouldHaveValidationErrorFor("Defendants[0].Firstname");
+    }
+
+    [Fact]
+    public void Defendant_Surname_ApostropheAndHyphen_ShouldPass()
+    {
+        var req = GetValidRequest();
+        var defendants = req.Defendants!.ToList();
+        defendants[0].Surname = "O'Brien";
+        defendants[0].Firstname = "Mary-Jane";
+        req.Defendants = defendants;
+        var result = _validator.TestValidate(req);
+        result.ShouldNotHaveValidationErrorFor("Defendants[0].Surname");
+        result.ShouldNotHaveValidationErrorFor("Defendants[0].Firstname");
+    }
+
+    [Fact]
+    public void Defendant_Asn_InvalidCharacters_ShouldFail()
+    {
+        var req = GetValidRequest();
+        var defendants = req.Defendants!.ToList();
+        defendants[0].JsonPropertyNameArrestSummonsNumber = "ABC-123!";
+        req.Defendants = defendants;
+        var result = _validator.TestValidate(req);
+        result.ShouldHaveValidationErrorFor("Defendants[0].JsonPropertyNameArrestSummonsNumber");
+    }
+
+    [Fact]
+    public void Defendant_Asn_Alphanumeric_ShouldPass()
+    {
+        var req = GetValidRequest();
+        var defendants = req.Defendants!.ToList();
+        defendants[0].JsonPropertyNameArrestSummonsNumber = "ABC123XYZ";
+        req.Defendants = defendants;
+        var result = _validator.TestValidate(req);
+        result.ShouldNotHaveValidationErrorFor("Defendants[0].JsonPropertyNameArrestSummonsNumber");
+    }
+
+    [Fact]
+    public void OicSurname_WithDigits_ShouldFail()
+    {
+        var req = GetValidRequest();
+        req.OicSurname = "Smith1";
+        var result = _validator.TestValidate(req);
+        result.ShouldHaveValidationErrorFor(x => x.OicSurname);
+    }
+
+    [Fact]
+    public void OicSurname_LettersOnly_ShouldPass()
+    {
+        var req = GetValidRequest();
+        req.OicSurname = "Smith";
+        req.OicFirstnames = "John";
+        var result = _validator.TestValidate(req);
+        result.ShouldNotHaveValidationErrorFor(x => x.OicSurname);
+        result.ShouldNotHaveValidationErrorFor(x => x.OicFirstnames);
+    }
+
+    [Fact]
+    public void OicShoulderNumber_InvalidCharacters_ShouldFail()
+    {
+        var req = GetValidRequest();
+        req.OicShoulderNumber = "12-34";
+        var result = _validator.TestValidate(req);
+        result.ShouldHaveValidationErrorFor(x => x.OicShoulderNumber);
+    }
 }

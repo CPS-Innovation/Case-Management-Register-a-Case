@@ -28,9 +28,18 @@ public class CaseRegistrationRequestValidator : AbstractValidator<CaseRegistrati
         this.RuleFor(x => x.CaseWeight).MaximumLength(CaseRegistrationDefaults.ShortTextMaxLength);
         this.RuleFor(x => x.CaseWorker).MaximumLength(CaseRegistrationDefaults.NameMaxLength);
         this.RuleFor(x => x.OicRank).MaximumLength(CaseRegistrationDefaults.ShortTextMaxLength);
-        this.RuleFor(x => x.OicSurname).MaximumLength(CaseRegistrationDefaults.SurnameMaxLength);
-        this.RuleFor(x => x.OicFirstnames).MaximumLength(CaseRegistrationDefaults.NameMaxLength);
-        this.RuleFor(x => x.OicShoulderNumber).MaximumLength(CaseRegistrationDefaults.ShortTextMaxLength);
+        this.RuleFor(x => x.OicSurname)
+            .MaximumLength(CaseRegistrationDefaults.SurnameMaxLength)
+            .Matches(CaseRegistrationInputPatterns.LettersOnly)
+            .WithMessage($"OicSurname {CaseRegistrationInputPatterns.LettersOnlyMessage}");
+        this.RuleFor(x => x.OicFirstnames)
+            .MaximumLength(CaseRegistrationDefaults.NameMaxLength)
+            .Matches(CaseRegistrationInputPatterns.LettersOnly)
+            .WithMessage($"OicFirstnames {CaseRegistrationInputPatterns.LettersOnlyMessage}");
+        this.RuleFor(x => x.OicShoulderNumber)
+            .MaximumLength(CaseRegistrationDefaults.ShortTextMaxLength)
+            .Matches(CaseRegistrationInputPatterns.Alphanumeric)
+            .WithMessage($"OicShoulderNumber {CaseRegistrationInputPatterns.AlphanumericMessage}");
         this.RuleFor(x => x.OicPoliceUnit).MaximumLength(CaseRegistrationDefaults.ShortTextMaxLength);
 
         this.RuleFor(x => x.HearingDate)
