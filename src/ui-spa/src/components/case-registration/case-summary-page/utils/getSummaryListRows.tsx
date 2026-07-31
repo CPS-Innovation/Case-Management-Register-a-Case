@@ -381,7 +381,9 @@ export const getCaseComplexityAndMonitoringCodesSummaryListRows = (
   return rows;
 };
 
-const getInvestigatorSummaryText = (formData: CaseRegistrationFormData) => {
+export const getInvestigatorSummaryText = (
+  formData: CaseRegistrationFormData,
+) => {
   if (formData.caseInvestigatorTitleSelect.display) {
     return (
       <>
@@ -415,7 +417,7 @@ export const getWhosIsWorkingOnTheCaseSummaryListRows = (
     });
     navigate(url);
   };
-  const investigatorDetailsList =
+  let investigatorDetailsList =
     formData.caseInvestigatorRadio === "yes"
       ? [
           {
@@ -470,33 +472,6 @@ export const getWhosIsWorkingOnTheCaseSummaryListRows = (
                   ],
             },
           },
-          {
-            key: { children: <span>Police unit</span> },
-            value: {
-              children: (
-                <span>
-                  {policeUnit ? policeUnit.description : "Not entered"}
-                </span>
-              ),
-            },
-            actions: {
-              items: hideActions
-                ? []
-                : [
-                    {
-                      "data-testid": "change-police-unit-link",
-                      children: <span>Change</span>,
-                      to: "/case-registration/case-assignee",
-                      visuallyHiddenText: "Police Unit",
-                      onClick: (event: React.MouseEvent<HTMLAnchorElement>) =>
-                        handleAddChangeClick(
-                          event,
-                          "/case-registration/case-assignee",
-                        ),
-                    },
-                  ],
-            },
-          },
         ]
       : [
           {
@@ -524,6 +499,21 @@ export const getWhosIsWorkingOnTheCaseSummaryListRows = (
             },
           },
         ];
+
+  if (formData.caseInvestigatorRadio === "yes" && policeUnit?.description) {
+    investigatorDetailsList = [
+      ...investigatorDetailsList,
+      {
+        key: { children: <span>Police unit</span> },
+        value: {
+          children: <span>{policeUnit.description}</span>,
+        },
+        actions: {
+          items: [],
+        },
+      },
+    ];
+  }
 
   const rows = [
     {
