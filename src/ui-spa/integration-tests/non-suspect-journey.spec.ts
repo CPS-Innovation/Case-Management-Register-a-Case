@@ -177,12 +177,6 @@ test("Should successfully complete non suspect journey", async ({
   await caseAssigneePage.saveAndContinue();
   await caseRegistrationSummaryPage.verifyUrl();
 
-  await caseRegistrationSummaryPage.changePoliceUnitLinkClick();
-  await caseAssigneePage.verifyUrl();
-  await caseAssigneePage.verifyBackLink("/case-registration/case-summary");
-  await caseAssigneePage.saveAndContinue();
-  await caseRegistrationSummaryPage.verifyUrl();
-
   await caseRegistrationSummaryPage.changeProsecutorLinkClick();
   await caseAssigneePage.verifyUrl();
   await caseAssigneePage.verifyBackLink("/case-registration/case-summary");

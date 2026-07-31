@@ -293,19 +293,7 @@ export class CaseRegistrationSummaryPage {
         "/case-registration/case-assignee",
       );
 
-      await expect(rows.nth(4).locator("dt").nth(0)).toHaveText("Police unit");
-      await expect(rows.nth(4).locator("dd").nth(0)).toHaveText(
-        values.policeUnit,
-      );
-      const policeUnitChangeLink = rows
-        .nth(4)
-        .locator("dd")
-        .nth(1)
-        .getByRole("link", { name: "Change" });
-      await expect(policeUnitChangeLink).toHaveAttribute(
-        "href",
-        "/case-registration/case-assignee",
-      );
+      await expect(rows).toHaveCount(4);
     }
   }
 
@@ -593,9 +581,6 @@ export class CaseRegistrationSummaryPage {
   }
   async changeShoulderNumberLinkClick() {
     await this.page.getByTestId("change-shoulder-number-link").click();
-  }
-  async changePoliceUnitLinkClick() {
-    await this.page.getByTestId("change-police-unit-link").click();
   }
   async changePoliceOfficerOrInvestigatorLinkClick() {
     await this.page
