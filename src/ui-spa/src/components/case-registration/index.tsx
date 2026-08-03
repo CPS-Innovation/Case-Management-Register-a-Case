@@ -182,15 +182,31 @@ const CaseRegistrationPage = () => {
         },
       });
 
+      let defaultPayload: {
+        areaOrDivisionText: { id: number; description: string };
+        registeringUnitText?: { id: number; description: string };
+      } = {
+        areaOrDivisionText: {
+          id: areasData.homeUnit.areaId,
+          description: areasData.homeUnit.areaDescription,
+        },
+      };
+      if (areasData?.homeUnit?.areaIsSensitive) {
+        defaultPayload = {
+          ...defaultPayload,
+          registeringUnitText: {
+            id: areasData.homeUnit.id,
+            description: areasData.homeUnit.description,
+          },
+        };
+      }
+
       if (!state.formData.areaOrDivisionText.id && areasData?.homeUnit) {
         dispatch({
           type: "SET_FIELDS",
           payload: {
             data: {
-              areaOrDivisionText: {
-                id: areasData.homeUnit.areaId,
-                description: areasData.homeUnit.areaDescription,
-              },
+              ...defaultPayload,
             },
           },
         });
