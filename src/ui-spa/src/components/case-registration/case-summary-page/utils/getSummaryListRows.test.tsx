@@ -128,6 +128,7 @@ describe("getCaseDetailsSummaryListRows", () => {
       navigate,
       modifiedFormData,
       false,
+      false,
     );
 
     const expectedValues = [
@@ -200,6 +201,7 @@ describe("getCaseDetailsSummaryListRows", () => {
       navigate,
       modifiedFormData,
       false,
+      false,
     );
 
     const expectedValues = [
@@ -254,10 +256,54 @@ describe("getCaseDetailsSummaryListRows", () => {
       navigate,
       formData,
       true,
+      false,
     );
     for (const r of rows) {
       expect(r.actions?.items).toEqual([]);
     }
+  });
+  it("Should return correct row values for the sensitive cases, it should not show the change links for area and registering units (empty actions)", () => {
+    const dispatch = vi.fn();
+    const navigate = vi.fn();
+
+    const caseDetailsValue = {
+      operationNameRadio: "yes",
+      suspectDetailsRadio: "yes",
+      operationNameText: "op_1",
+      areaOrDivisionText: { id: 1, description: "area_1" },
+      urnPoliceForceText: "11",
+      urnPoliceUnitText: "12",
+      urnUniqueReferenceText: "0001",
+      urnYearReferenceText: "26",
+      registeringUnitText: { id: 2, description: "ru_1" },
+      witnessCareUnitText: { id: 3, description: "wcu_1" },
+      suspects: [
+        { id: 1, name: "Suspect 1" },
+        { id: 2, name: "Suspect 2" },
+      ] as unknown,
+    };
+
+    const modifiedFormData = {
+      ...formData,
+      ...caseDetailsValue,
+    } as CaseRegistrationFormData;
+
+    const rows = getCaseDetailsSummaryListRows(
+      dispatch,
+      navigate,
+      modifiedFormData,
+      false,
+      true,
+    );
+
+    expect(rows.length).toBeGreaterThanOrEqual(6);
+    expect(rows[0].key.children).toEqual(<span>Area</span>);
+    expect(rows[0].value.children).toEqual(<span>area_1</span>);
+    expect(rows[0].actions?.items).toEqual([]);
+
+    expect(rows[2].key.children).toEqual(<span>Registering unit</span>);
+    expect(rows[2].value.children).toEqual(<span>ru_1</span>);
+    expect(rows[2].actions?.items).toEqual([]);
   });
 });
 describe("getFirstHearingSummaryRows", () => {
