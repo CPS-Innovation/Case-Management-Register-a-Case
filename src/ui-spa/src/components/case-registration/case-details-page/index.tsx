@@ -344,7 +344,19 @@ const CaseDetailsPage = () => {
       "registering-unit-text",
     ) as HTMLInputElement | null;
     const registeringUnitInputValue = registeringUnitInput?.value ?? "";
-    if (
+    if (isAreaSensitive) {
+      // Field is hidden; use stored value or fall back to home unit.
+      const homeUnit = state.apiData.areasAndRegisteringUnits?.homeUnit;
+      const registeringUnitText = state.formData.registeringUnitText.id
+        ? state.formData.registeringUnitText
+        : homeUnit
+          ? { id: homeUnit.id, description: homeUnit.description }
+          : state.formData.registeringUnitText;
+      formValue = {
+        ...formValue,
+        registeringUnitText,
+      };
+    } else if (
       formData.registeringUnitText?.description !== registeringUnitInputValue
     ) {
       const { id, description } = getSelectedUnit(

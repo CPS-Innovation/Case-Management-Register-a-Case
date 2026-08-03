@@ -181,26 +181,48 @@ const CaseRegistrationPage = () => {
           areasAndRegisteringUnits: areasData,
         },
       });
-
-      if (!state.formData.areaOrDivisionText.id && areasData?.homeUnit) {
-        dispatch({
-          type: "SET_FIELDS",
-          payload: {
-            data: {
-              areaOrDivisionText: {
-                id: areasData.homeUnit.areaId,
-                description: areasData.homeUnit.areaDescription,
-              },
-            },
-          },
-        });
-      }
     }
+  }, [areasData, dispatch, state.apiData.areasAndRegisteringUnits]);
+
+  // Home unit must be re-applied after RESET_FORM_DATA (apiData is kept, form is cleared).
+  useEffect(() => {
+    const homeUnit = state.apiData.areasAndRegisteringUnits?.homeUnit;
+    if (!homeUnit) return;
+
+    const needsArea = !state.formData.areaOrDivisionText.id;
+    const needsRegisteringUnit = !state.formData.registeringUnitText.id;
+
+    if (!needsArea && !needsRegisteringUnit) return;
+
+    // Always seed area from home unit when empty. For sensitive areas the RU
+    // field is hidden, so also seed registering unit whenever it is missing.
+    if (!needsArea && !homeUnit.areaIsSensitive) return;
+
+    dispatch({
+      type: "SET_FIELDS",
+      payload: {
+        data: {
+          ...(needsArea && {
+            areaOrDivisionText: {
+              id: homeUnit.areaId,
+              description: homeUnit.areaDescription,
+            },
+          }),
+          ...(needsRegisteringUnit &&
+            (needsArea || homeUnit.areaIsSensitive) && {
+              registeringUnitText: {
+                id: homeUnit.id,
+                description: homeUnit.description,
+              },
+            }),
+        },
+      },
+    });
   }, [
-    areasData,
     dispatch,
-    state.formData.areaOrDivisionText,
     state.apiData.areasAndRegisteringUnits,
+    state.formData.areaOrDivisionText.id,
+    state.formData.registeringUnitText.id,
   ]);
 
   useEffect(() => {

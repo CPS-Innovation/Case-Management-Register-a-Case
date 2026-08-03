@@ -36,8 +36,15 @@ const FirstHearingPage = () => {
   }, [state.formData.navigation.fromCaseSummaryPage]);
 
   const registeringUnitId = useMemo(() => {
-    return state.formData.registeringUnitText?.id;
-  }, [state.formData.registeringUnitText]);
+    return (
+      state.formData.registeringUnitText?.id ??
+      state.apiData.areasAndRegisteringUnits?.homeUnit?.id ??
+      null
+    );
+  }, [
+    state.formData.registeringUnitText,
+    state.apiData.areasAndRegisteringUnits?.homeUnit?.id,
+  ]);
 
   const [formData, setFormData] = useState<{
     firstHearingRadio: string;

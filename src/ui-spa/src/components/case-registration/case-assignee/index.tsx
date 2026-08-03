@@ -82,8 +82,15 @@ const CaseAssigneePage = () => {
   });
 
   const registeringUnitId = useMemo(() => {
-    return state.formData.registeringUnitText?.id;
-  }, [state.formData.registeringUnitText]);
+    return (
+      state.formData.registeringUnitText?.id ??
+      state.apiData.areasAndRegisteringUnits?.homeUnit?.id ??
+      null
+    );
+  }, [
+    state.formData.registeringUnitText,
+    state.apiData.areasAndRegisteringUnits?.homeUnit?.id,
+  ]);
 
   const previousRoute = useMemo(() => {
     if (state.formData.navigation.fromCaseSummaryPage) {
