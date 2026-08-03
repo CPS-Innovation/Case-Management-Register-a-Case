@@ -13,7 +13,7 @@ export class CaseDetailsPage {
     await expect(this.page).toHaveURL(this.route);
   }
 
-  async verifyPageElements() {
+  async verifyPageElements(isCaseSensitive: boolean = false) {
     await expect(this.page).toHaveTitle(/Case Details - Register A Case/);
     await expect(this.page.locator("h1")).toHaveText("Case details");
     await expect(this.page.locator("legend").first()).toHaveText(
@@ -27,19 +27,26 @@ export class CaseDetailsPage {
     await expect(this.page.locator("label").nth(3)).toHaveText(
       "Year reference",
     );
-    await expect(this.page.locator("label").nth(4)).toHaveText(
-      "What is the registering unit?",
-    );
-    await expect(this.page.locator("label").nth(5)).toHaveText(
-      "What is the witness care unit (WCU)?",
-    );
+
+    if (!isCaseSensitive) {
+      await expect(this.page.locator("label").nth(4)).toHaveText(
+        "What is the registering unit?",
+      );
+      await expect(this.page.locator("label").nth(5)).toHaveText(
+        "What is the witness care unit (WCU)?",
+      );
+    } else {
+      await expect(this.page.locator("label").nth(4)).toHaveText(
+        "What is the witness care unit (WCU)?",
+      );
+    }
     await expect(this.page.getByTestId("urn-year-reference-text")).toHaveValue(
       "26",
     );
     await this.verifyCancelLink();
   }
 
-  async errorValidations() {
+  async errorValidations(isCaseSensitive: boolean = false) {
     await this.enterUrnYearReference("");
     await this.verifyErrorSummaryClear();
     this.saveAndContinue();
@@ -51,12 +58,14 @@ export class CaseDetailsPage {
     await expect(this.page.getByTestId("urn-error-text-link")).toHaveText(
       "Enter the URN",
     );
-    await expect(
-      this.page.getByTestId("registering-unit-error-text-link"),
-    ).toBeVisible();
-    await expect(
-      this.page.getByTestId("registering-unit-error-text-link"),
-    ).toHaveText("Select the registering unit");
+    if (!isCaseSensitive) {
+      await expect(
+        this.page.getByTestId("registering-unit-error-text-link"),
+      ).toBeVisible();
+      await expect(
+        this.page.getByTestId("registering-unit-error-text-link"),
+      ).toHaveText("Select the registering unit");
+    }
     await expect(
       this.page.getByTestId("witness-care-unit-error-text-link"),
     ).toBeVisible();
@@ -87,17 +96,20 @@ export class CaseDetailsPage {
     await expect(
       this.page.getByTestId("urn-error-text-link"),
     ).not.toBeVisible();
-
-    await this.page.getByTestId("registering-unit-error-text-link").click();
-    await expect(this.page.locator("#registering-unit-text")).toBeFocused();
-    await this.enterRegisteringUnit("abc");
-    await this.page.getByRole("button", { name: "Save and continue" }).click();
-    await expect(
-      this.page.getByTestId("registering-unit-error-text-link"),
-    ).toHaveText("Select a valid registering unit");
-    await this.page.getByTestId("registering-unit-error-text-link").click();
-    await expect(this.page.locator("#registering-unit-text")).toBeFocused();
-    await this.enterRegisteringUnit("NORTHERN CJU (Peterborough)");
+    if (!isCaseSensitive) {
+      await this.page.getByTestId("registering-unit-error-text-link").click();
+      await expect(this.page.locator("#registering-unit-text")).toBeFocused();
+      await this.enterRegisteringUnit("abc");
+      await this.page
+        .getByRole("button", { name: "Save and continue" })
+        .click();
+      await expect(
+        this.page.getByTestId("registering-unit-error-text-link"),
+      ).toHaveText("Select a valid registering unit");
+      await this.page.getByTestId("registering-unit-error-text-link").click();
+      await expect(this.page.locator("#registering-unit-text")).toBeFocused();
+      await this.enterRegisteringUnit("NORTHERN CJU (Peterborough)");
+    }
     await this.page.getByRole("button", { name: "Save and continue" }).click();
     await expect(
       this.page.getByTestId("registering-unit-error-text-link"),

@@ -86,3 +86,14 @@ export const caseAreasAndRegisteringUnitsPlaywright = {
     description: "SOUTHERN CJU (Cambridge)",
   },
 };
+
+export const caseAreasAndRegisteringUnitsSensitiveCasePlaywright = {
+  ...caseAreasAndRegisteringUnitsPlaywright,
+  homeUnit: {
+    areaId: 1008,
+    areaDescription: "CAMBRIDGESHIRE",
+    areaIsSensitive: true,
+    id: 2033,
+    description: "SOUTHERN CJU (Cambridge)",
+  },
+};

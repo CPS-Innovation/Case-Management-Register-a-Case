@@ -1985,7 +1985,7 @@ export const caseAreasAndRegisteringUnitsDev = {
   homeUnit: {
     areaId: 1008,
     areaDescription: "CAMBRIDGESHIRE",
-    areaIsSensitive: true,
+    areaIsSensitive: false,
     id: 2033,
     description: "SOUTHERN CJU (Cambridge)",
   },
