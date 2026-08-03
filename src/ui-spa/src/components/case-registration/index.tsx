@@ -190,13 +190,10 @@ const CaseRegistrationPage = () => {
     if (!homeUnit) return;
 
     const needsArea = !state.formData.areaOrDivisionText.id;
-    const needsRegisteringUnit = !state.formData.registeringUnitText.id;
+    const needsRegisteringUnit =
+      homeUnit.areaIsSensitive && !state.formData.registeringUnitText.id;
 
     if (!needsArea && !needsRegisteringUnit) return;
-
-    // Always seed area from home unit when empty. For sensitive areas the RU
-    // field is hidden, so also seed registering unit whenever it is missing.
-    if (!needsArea && !homeUnit.areaIsSensitive) return;
 
     dispatch({
       type: "SET_FIELDS",
@@ -208,13 +205,13 @@ const CaseRegistrationPage = () => {
               description: homeUnit.areaDescription,
             },
           }),
-          ...(needsRegisteringUnit &&
-            (needsArea || homeUnit.areaIsSensitive) && {
-              registeringUnitText: {
-                id: homeUnit.id,
-                description: homeUnit.description,
-              },
-            }),
+          // Only auto-set RU for sensitive areas (field is hidden there).
+          ...(needsRegisteringUnit && {
+            registeringUnitText: {
+              id: homeUnit.id,
+              description: homeUnit.description,
+            },
+          }),
         },
       },
     });
