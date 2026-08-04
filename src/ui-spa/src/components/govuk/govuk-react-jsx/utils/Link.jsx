@@ -2,11 +2,11 @@ import React from "react";
 import { Link as ReactRouterLink } from "react-router";
 
 function Link(props) {
-  const { children, to, href, forwardedRef, ...attributes } = props;
+  const { children, to, href, forwardedRef = null, ...attributes } = props;
 
   if (to) {
     return (
-      <ReactRouterLink innerRef={forwardedRef} to={to} {...attributes}>
+      <ReactRouterLink ref={forwardedRef} to={to} {...attributes}>
         {children}
       </ReactRouterLink>
     );
@@ -17,10 +17,6 @@ function Link(props) {
     </a>
   );
 }
-
-Link.defaultProps = {
-  forwardedRef: null,
-};
 
 function forwardRef(props, ref) {
   return <Link {...props} forwardedRef={ref} />;
