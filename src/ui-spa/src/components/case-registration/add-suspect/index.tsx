@@ -15,7 +15,7 @@ import {
 } from "../../../common/reducers/caseRegistrationReducer";
 import { getNextSuspectJourneyRoute } from "../../../common/utils/getSuspectJourneyRoutes";
 import { sanitizeNameText } from "../../../common/utils/sanitizeNameText";
-import { useNavigate, useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router";
 import PageContentWrapper from "../../common/PageContentWrapper";
 import styles from "../index.module.scss";
 

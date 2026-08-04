@@ -63,6 +63,10 @@ export default defineConfig(({ command, mode }) => {
           forceBuildInstrument: true,
         }),
     ].filter(Boolean),
+    legacy: {
+      // Restores Vite 7's relaxed CommonJS default export handling
+      inconsistentCjsInterop: true,
+    },
     test: {
       silent: true,
       globals: true,

@@ -1,5 +1,5 @@
 import { render, screen, cleanup, act } from "@testing-library/react";
-import { MemoryRouter } from "react-router-dom";
+import { MemoryRouter } from "react-router";
 import useRouteDocumentTitle from "./useRouteDocumentTitle";
 
 afterEach(() => {

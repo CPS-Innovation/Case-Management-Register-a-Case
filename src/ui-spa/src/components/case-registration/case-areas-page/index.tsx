@@ -5,7 +5,7 @@ import { CaseRegistrationFormContext } from "../../../common/providers/CaseRegis
 import { getAreasOrDivisions } from "../../../common/utils/getAreasOrDivisions";
 import { getSelectedUnit } from "../../../common/utils/getSelectedUnit";
 import useErrorSummaryList from "../../../common/hooks/useErrorSummaryList";
-import { useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router";
 import PageContentWrapper from "../../common/PageContentWrapper";
 import styles from "../index.module.scss";
 import pageStyles from "./index.module.scss";

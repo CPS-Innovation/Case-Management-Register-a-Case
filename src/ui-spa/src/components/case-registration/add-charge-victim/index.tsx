@@ -13,7 +13,7 @@ import { type VictimAdditionalDetailsValue } from "../../../common/reducers/case
 import { formatNameUtil } from "../../../common/utils/formatNameUtil";
 import { sanitizeNameText } from "../../../common/utils/sanitizeNameText";
 import { DEFAULT_VICTIM_ADDITIONAL_DETAIL_VALUE } from "../../../common/constants/general";
-import { useNavigate, useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router";
 import { v4 as uuidv4 } from "uuid";
 import PageContentWrapper from "../../common/PageContentWrapper";
 import styles from "../index.module.scss";

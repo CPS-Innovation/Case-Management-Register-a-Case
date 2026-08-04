@@ -6,7 +6,7 @@ import { getPreviousSuspectJourneyRoute } from "../../../common/utils/getSuspect
 import { formatNameUtil } from "../../../common/utils/formatNameUtil";
 import { sanitizeNameText } from "../../../common/utils/sanitizeNameText";
 import useErrorSummaryList from "../../../common/hooks/useErrorSummaryList";
-import { useNavigate, useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router";
 import ErrorSummaryWrapper from "../../common/ErrorSummaryWrapper";
 import PageContentWrapper from "../../common/PageContentWrapper";
 import styles from "../index.module.scss";

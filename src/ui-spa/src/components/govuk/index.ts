@@ -13,7 +13,7 @@ export { NotificationBanner } from "./NotificationBanner";
 export { Details } from "./Details";
 export { SkipLink } from "./SkipLink";
 export { AutoComplete } from "./AutoComplete";
-export { SummaryList } from "./SummaryList";
+export { SummaryList } from "./govuk-react-jsx";
 export { Panel } from "./Panel";
 export { Tag } from "./Tag";
 export { DateInput } from "./DateInput";

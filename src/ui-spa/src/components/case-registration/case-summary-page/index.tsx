@@ -21,7 +21,7 @@ import { useMutation, useQuery } from "@tanstack/react-query";
 import { submitCaseRegistration, validateUrn } from "../../../apis/gateway-api";
 import { getPoliceUnit } from "../../../common/utils/getPoliceUnit";
 import SuspectSummary from "../suspect-summary/SuspectSummary";
-import { useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router";
 import PageContentWrapper from "../../common/PageContentWrapper";
 import { useIsAreaSensitive } from "../../../common/hooks/useIsAreaSensitive";
 import styles from "./index.module.scss";

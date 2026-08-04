@@ -1,6 +1,6 @@
 import { useContext } from "react";
 import { Button, BackLink } from "../../govuk";
-import { useNavigate, useLocation, Link } from "react-router-dom";
+import { useNavigate, useLocation, Link } from "react-router";
 import { CaseRegistrationFormContext } from "../../../common/providers/CaseRegistrationProvider";
 import { type GeneralRadioValue } from "../../../common/reducers/caseRegistrationReducer";
 import PageContentWrapper from "../../common/PageContentWrapper";

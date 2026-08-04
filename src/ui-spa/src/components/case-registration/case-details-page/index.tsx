@@ -9,7 +9,7 @@ import { getSelectedUnit } from "../../../common/utils/getSelectedUnit";
 import { useQuery } from "@tanstack/react-query";
 import { validateUrn } from "../../../apis/gateway-api";
 import useErrorSummaryList from "../../../common/hooks/useErrorSummaryList";
-import { useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router";
 import PageContentWrapper from "../../common/PageContentWrapper";
 import styles from "../index.module.scss";
 import pageStyles from "./index.module.scss";

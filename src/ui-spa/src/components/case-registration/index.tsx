@@ -13,7 +13,7 @@ import { useIsAreaSensitive } from "../../common/hooks/useIsAreaSensitive";
 import { sanitizeOperationNameText } from "../../common/utils/sanitizeOperationNameText";
 import { DEFAULT_COMPLEXITY_DESCRIPTION } from "../../common/constants/general";
 import useErrorSummaryList from "../../common/hooks/useErrorSummaryList";
-import { useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router";
 import PageContentWrapper from "../common/PageContentWrapper";
 import styles from "./index.module.scss";
 

@@ -2,7 +2,7 @@ import { useRef, useEffect, useState, useCallback, useMemo } from "react";
 import { Radios, Button, ErrorSummary } from "../../govuk";
 import { type GeneralRadioValue } from "../../../common/reducers/caseRegistrationReducer";
 import { HOME_PAGE_URL } from "../../../config";
-import { useNavigate, useLocation } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router";
 import PageContentWrapper from "../../common/PageContentWrapper";
 import styles from "../index.module.scss";
 

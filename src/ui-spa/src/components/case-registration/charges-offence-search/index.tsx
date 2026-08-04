@@ -10,7 +10,7 @@ import {
 import { CaseRegistrationFormContext } from "../../../common/providers/CaseRegistrationProvider";
 import { getOffences } from "../../../apis/gateway-api";
 import { useQuery } from "@tanstack/react-query";
-import { Link, useParams, useNavigate } from "react-router-dom";
+import { Link, useParams, useNavigate } from "react-router";
 import { formatNameUtil } from "../../../common/utils/formatNameUtil";
 import useChargesCount from "../../../common/hooks/useChargesCount";
 import useErrorSummaryList from "../../../common/hooks/useErrorSummaryList";

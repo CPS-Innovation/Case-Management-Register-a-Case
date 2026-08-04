@@ -13,7 +13,7 @@ import { type GeneralRadioValue } from "../../../common/reducers/caseRegistratio
 import { formatNameUtil } from "../../../common/utils/formatNameUtil";
 import { isChargedWithAdultWarningActive } from "../../../common/utils/isChargedWithAdultWarningActive";
 import { isValidOnOrBeforeDate } from "../../../common/utils/isValidOnOrBeforeDate";
-import { useNavigate, useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router";
 import SaveAndCancel from "../../common/SaveAndCancel";
 import PageContentWrapper from "../../common/PageContentWrapper";
 import styles from "../index.module.scss";

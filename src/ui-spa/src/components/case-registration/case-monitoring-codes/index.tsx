@@ -4,7 +4,7 @@ import SaveAndCancel from "../../common/SaveAndCancel";
 import { CaseRegistrationFormContext } from "../../../common/providers/CaseRegistrationProvider";
 import { getCaseMonitoringCodes } from "../../../apis/gateway-api";
 import { useQuery } from "@tanstack/react-query";
-import { useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router";
 import { type CaseMonitoringCodes } from "../../../schemas";
 import { isMonitoringCodeOptional } from "../../../common/utils/isMonitoringCodeOptional";
 import useChargesCount from "../../../common/hooks/useChargesCount";
