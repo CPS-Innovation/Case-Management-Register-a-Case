@@ -12,6 +12,7 @@ export const getCaseDetailsSummaryListRows = (
   navigate: NavigateFunction,
   formData: CaseRegistrationFormData,
   hideActions: boolean,
+  isAreaSensitive: boolean,
 ) => {
   const handleAddChangeClick = (
     event: React.MouseEvent<HTMLAnchorElement>,
@@ -56,18 +57,19 @@ export const getCaseDetailsSummaryListRows = (
         children: <span>{formData.areaOrDivisionText?.description}</span>,
       },
       actions: {
-        items: hideActions
-          ? []
-          : [
-              {
-                "data-testid": "change-area-link",
-                children: <span>Change</span>,
-                to: "/case-registration/areas",
-                visuallyHiddenText: "Case Area",
-                onClick: (event: React.MouseEvent<HTMLAnchorElement>) =>
-                  handleAddChangeClick(event, "/case-registration/areas"),
-              },
-            ],
+        items:
+          hideActions || isAreaSensitive
+            ? []
+            : [
+                {
+                  "data-testid": "change-area-link",
+                  children: <span>Change</span>,
+                  to: "/case-registration/areas",
+                  visuallyHiddenText: "Case Area",
+                  onClick: (event: React.MouseEvent<HTMLAnchorElement>) =>
+                    handleAddChangeClick(event, "/case-registration/areas"),
+                },
+              ],
       },
     },
 
@@ -101,21 +103,22 @@ export const getCaseDetailsSummaryListRows = (
         children: <span>{formData.registeringUnitText?.description}</span>,
       },
       actions: {
-        items: hideActions
-          ? []
-          : [
-              {
-                "data-testid": "change-registering-unit-link",
-                children: <span>Change</span>,
-                to: "/case-registration/case-details",
-                visuallyHiddenText: "Registering Unit",
-                onClick: (event: React.MouseEvent<HTMLAnchorElement>) =>
-                  handleAddChangeClick(
-                    event,
-                    "/case-registration/case-details",
-                  ),
-              },
-            ],
+        items:
+          hideActions || isAreaSensitive
+            ? []
+            : [
+                {
+                  "data-testid": "change-registering-unit-link",
+                  children: <span>Change</span>,
+                  to: "/case-registration/case-details",
+                  visuallyHiddenText: "Registering Unit",
+                  onClick: (event: React.MouseEvent<HTMLAnchorElement>) =>
+                    handleAddChangeClick(
+                      event,
+                      "/case-registration/case-details",
+                    ),
+                },
+              ],
       },
     },
     {

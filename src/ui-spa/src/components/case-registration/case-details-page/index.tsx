@@ -345,7 +345,8 @@ const CaseDetailsPage = () => {
     ) as HTMLInputElement | null;
     const registeringUnitInputValue = registeringUnitInput?.value ?? "";
     if (
-      formData.registeringUnitText?.description !== registeringUnitInputValue
+      formData.registeringUnitText?.description !== registeringUnitInputValue &&
+      !isAreaSensitive
     ) {
       const { id, description } = getSelectedUnit(
         registeringUnits,

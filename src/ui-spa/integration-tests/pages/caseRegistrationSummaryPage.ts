@@ -49,13 +49,16 @@ export class CaseRegistrationSummaryPage {
     await this.verifyCancelLink();
   }
 
-  async verifyCaseDetailsElements(values: {
-    area: string;
-    urn: string;
-    registeringUnit: string;
-    wcu: string;
-    operationName: string;
-  }) {
+  async verifyCaseDetailsElements(
+    values: {
+      area: string;
+      urn: string;
+      registeringUnit: string;
+      wcu: string;
+      operationName: string;
+    },
+    isCaseSensitive: boolean = false,
+  ) {
     const caseDetailWrapperElement = this.page.getByTestId(
       "case-details-summary",
     );
@@ -65,15 +68,24 @@ export class CaseRegistrationSummaryPage {
     const rows = caseDetailWrapperElement.locator(".govuk-summary-list__row");
     await expect(rows.nth(0).locator("dt").nth(0)).toHaveText("Area");
     await expect(rows.nth(0).locator("dd").nth(0)).toHaveText(values.area);
-    const areaChangeLink = rows
-      .nth(0)
-      .locator("dd")
-      .nth(1)
-      .getByRole("link", { name: "Change" });
-    await expect(areaChangeLink).toHaveAttribute(
-      "href",
-      "/case-registration/areas",
-    );
+    if (isCaseSensitive) {
+      const actions = rows
+        .nth(0)
+        .locator("dd")
+        .nth(1)
+        .getByRole("link", { name: "Change" });
+      expect(actions).toHaveCount(0);
+    } else {
+      const areaChangeLink = rows
+        .nth(0)
+        .locator("dd")
+        .nth(1)
+        .getByRole("link", { name: "Change" });
+      await expect(areaChangeLink).toHaveAttribute(
+        "href",
+        "/case-registration/areas",
+      );
+    }
 
     await expect(rows.nth(1).locator("dt").nth(0)).toHaveText("URN");
     await expect(rows.nth(1).locator("dd").nth(0)).toHaveText(values.urn);
@@ -93,15 +105,25 @@ export class CaseRegistrationSummaryPage {
     await expect(rows.nth(2).locator("dd").nth(0)).toHaveText(
       values.registeringUnit,
     );
-    const registeringUnitChangeLink = rows
-      .nth(2)
-      .locator("dd")
-      .nth(1)
-      .getByRole("link", { name: "Change" });
-    await expect(registeringUnitChangeLink).toHaveAttribute(
-      "href",
-      "/case-registration/case-details",
-    );
+
+    if (isCaseSensitive) {
+      const actions = rows
+        .nth(0)
+        .locator("dd")
+        .nth(1)
+        .getByRole("link", { name: "Change" });
+      expect(actions).toHaveCount(0);
+    } else {
+      const registeringUnitChangeLink = rows
+        .nth(2)
+        .locator("dd")
+        .nth(1)
+        .getByRole("link", { name: "Change" });
+      await expect(registeringUnitChangeLink).toHaveAttribute(
+        "href",
+        "/case-registration/case-details",
+      );
+    }
 
     await expect(rows.nth(3).locator("dt").nth(0)).toHaveText("WCU");
     await expect(rows.nth(3).locator("dd").nth(0)).toHaveText(values.wcu);
