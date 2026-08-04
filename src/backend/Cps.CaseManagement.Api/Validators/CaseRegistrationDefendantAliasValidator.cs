@@ -9,7 +9,13 @@ public class CaseRegistrationDefendantAliasValidator : AbstractValidator<CaseReg
     public CaseRegistrationDefendantAliasValidator()
     {
         this.RuleFor(x => x.ListOrder).GreaterThanOrEqualTo(0);
-        this.RuleFor(x => x.Surname).MaximumLength(CaseRegistrationDefaults.SurnameMaxLength);
-        this.RuleFor(x => x.FirstNames).MaximumLength(CaseRegistrationDefaults.NameMaxLength);
+        this.RuleFor(x => x.Surname)
+            .MaximumLength(CaseRegistrationDefaults.SurnameMaxLength)
+            .Matches(CaseRegistrationInputPatterns.PersonName)
+            .WithMessage($"Surname {CaseRegistrationInputPatterns.PersonNameMessage}");
+        this.RuleFor(x => x.FirstNames)
+            .MaximumLength(CaseRegistrationDefaults.NameMaxLength)
+            .Matches(CaseRegistrationInputPatterns.PersonName)
+            .WithMessage($"FirstNames {CaseRegistrationInputPatterns.PersonNameMessage}");
     }
 }

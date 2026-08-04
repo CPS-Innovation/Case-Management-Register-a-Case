@@ -23,6 +23,7 @@ import { getPoliceUnit } from "../../../common/utils/getPoliceUnit";
 import SuspectSummary from "../suspect-summary/SuspectSummary";
 import { useNavigate } from "react-router";
 import PageContentWrapper from "../../common/PageContentWrapper";
+import { useIsAreaSensitive } from "../../../common/hooks/useIsAreaSensitive";
 import styles from "./index.module.scss";
 
 const CaseSummaryPage = () => {
@@ -39,6 +40,7 @@ const CaseSummaryPage = () => {
   const { state, dispatch } = useContext(CaseRegistrationFormContext);
   const navigate = useNavigate();
   const { chargesCount } = useChargesCount(state.formData.suspects);
+  const isAreaSensitive = useIsAreaSensitive();
 
   const submitCaseRegistrationMutation = useMutation({
     mutationFn: submitCaseRegistration,
@@ -171,8 +173,15 @@ const CaseSummaryPage = () => {
         navigate,
         state.formData,
         disableSummaryActions,
+        !!isAreaSensitive,
       ),
-    [dispatch, navigate, state.formData, disableSummaryActions],
+    [
+      dispatch,
+      navigate,
+      state.formData,
+      disableSummaryActions,
+      isAreaSensitive,
+    ],
   );
 
   const caseFirstHearingSummaryListRows = useMemo(

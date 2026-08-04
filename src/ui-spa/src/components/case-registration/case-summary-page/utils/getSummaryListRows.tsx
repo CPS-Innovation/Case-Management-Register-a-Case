@@ -12,6 +12,7 @@ export const getCaseDetailsSummaryListRows = (
   navigate: NavigateFunction,
   formData: CaseRegistrationFormData,
   hideActions: boolean,
+  isAreaSensitive: boolean,
 ) => {
   const handleAddChangeClick = (
     event: React.MouseEvent<HTMLAnchorElement>,
@@ -56,18 +57,19 @@ export const getCaseDetailsSummaryListRows = (
         children: <span>{formData.areaOrDivisionText?.description}</span>,
       },
       actions: {
-        items: hideActions
-          ? []
-          : [
-              {
-                "data-testid": "change-area-link",
-                children: <span>Change</span>,
-                to: "/case-registration/areas",
-                visuallyHiddenText: "Case Area",
-                onClick: (event: React.MouseEvent<HTMLAnchorElement>) =>
-                  handleAddChangeClick(event, "/case-registration/areas"),
-              },
-            ],
+        items:
+          hideActions || isAreaSensitive
+            ? []
+            : [
+                {
+                  "data-testid": "change-area-link",
+                  children: <span>Change</span>,
+                  to: "/case-registration/areas",
+                  visuallyHiddenText: "Case Area",
+                  onClick: (event: React.MouseEvent<HTMLAnchorElement>) =>
+                    handleAddChangeClick(event, "/case-registration/areas"),
+                },
+              ],
       },
     },
 
@@ -101,21 +103,22 @@ export const getCaseDetailsSummaryListRows = (
         children: <span>{formData.registeringUnitText?.description}</span>,
       },
       actions: {
-        items: hideActions
-          ? []
-          : [
-              {
-                "data-testid": "change-registering-unit-link",
-                children: <span>Change</span>,
-                to: "/case-registration/case-details",
-                visuallyHiddenText: "Registering Unit",
-                onClick: (event: React.MouseEvent<HTMLAnchorElement>) =>
-                  handleAddChangeClick(
-                    event,
-                    "/case-registration/case-details",
-                  ),
-              },
-            ],
+        items:
+          hideActions || isAreaSensitive
+            ? []
+            : [
+                {
+                  "data-testid": "change-registering-unit-link",
+                  children: <span>Change</span>,
+                  to: "/case-registration/case-details",
+                  visuallyHiddenText: "Registering Unit",
+                  onClick: (event: React.MouseEvent<HTMLAnchorElement>) =>
+                    handleAddChangeClick(
+                      event,
+                      "/case-registration/case-details",
+                    ),
+                },
+              ],
       },
     },
     {
@@ -381,7 +384,9 @@ export const getCaseComplexityAndMonitoringCodesSummaryListRows = (
   return rows;
 };
 
-const getInvestigatorSummaryText = (formData: CaseRegistrationFormData) => {
+export const getInvestigatorSummaryText = (
+  formData: CaseRegistrationFormData,
+) => {
   if (formData.caseInvestigatorTitleSelect.display) {
     return (
       <>
@@ -415,7 +420,7 @@ export const getWhosIsWorkingOnTheCaseSummaryListRows = (
     });
     navigate(url);
   };
-  const investigatorDetailsList =
+  let investigatorDetailsList =
     formData.caseInvestigatorRadio === "yes"
       ? [
           {
@@ -470,33 +475,6 @@ export const getWhosIsWorkingOnTheCaseSummaryListRows = (
                   ],
             },
           },
-          {
-            key: { children: <span>Police unit</span> },
-            value: {
-              children: (
-                <span>
-                  {policeUnit ? policeUnit.description : "Not entered"}
-                </span>
-              ),
-            },
-            actions: {
-              items: hideActions
-                ? []
-                : [
-                    {
-                      "data-testid": "change-police-unit-link",
-                      children: <span>Change</span>,
-                      to: "/case-registration/case-assignee",
-                      visuallyHiddenText: "Police Unit",
-                      onClick: (event: React.MouseEvent<HTMLAnchorElement>) =>
-                        handleAddChangeClick(
-                          event,
-                          "/case-registration/case-assignee",
-                        ),
-                    },
-                  ],
-            },
-          },
         ]
       : [
           {
@@ -524,6 +502,21 @@ export const getWhosIsWorkingOnTheCaseSummaryListRows = (
             },
           },
         ];
+
+  if (formData.caseInvestigatorRadio === "yes" && policeUnit?.description) {
+    investigatorDetailsList = [
+      ...investigatorDetailsList,
+      {
+        key: { children: <span>Police unit</span> },
+        value: {
+          children: <span>{policeUnit.description}</span>,
+        },
+        actions: {
+          items: [],
+        },
+      },
+    ];
+  }
 
   const rows = [
     {

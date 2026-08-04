@@ -7,9 +7,17 @@ using System.Threading.Tasks;
 using Cps.CaseManagement.Domain.Models;
 using FluentValidation;
 using Microsoft.AspNetCore.Http;
+using Microsoft.Extensions.Logging;
 
 public class RequestValidator : IRequestValidator
 {
+    private readonly ILogger<RequestValidator> _logger;
+
+    public RequestValidator(ILogger<RequestValidator> logger)
+    {
+        _logger = logger;
+    }
+
     public async Task<ValidatableRequest<T>> GetJsonBody<T, V>(HttpRequest request)
         where V : AbstractValidator<T>, new()
     {
@@ -23,7 +31,8 @@ public class RequestValidator : IRequestValidator
         }
         catch (JsonException ex)
         {
-            return InvalidRequest<T>($"Invalid JSON format: {ex.Message}");
+            _logger.LogWarning(ex, "Request body contained invalid JSON.");
+            return InvalidRequest<T>("The request body contains invalid JSON.");
         }
 
         if (requestObject == null)
