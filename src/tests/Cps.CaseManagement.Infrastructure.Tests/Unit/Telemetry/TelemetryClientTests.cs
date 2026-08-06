@@ -387,10 +387,10 @@ public class TelemetryClientTest
     [Theory]
     [InlineData(null, null)]
     [InlineData("", "")]
-    public void ToLowerFirstChar_WithNullOrEmpty_ReturnsInput(string input, string expected)
+    public void ToLowerFirstChar_WithNullOrEmpty_ReturnsInput(string? input, string? expected)
     {
         // Act
-        var result = Infrastructure.Telemetry.TelemetryClient.ToLowerFirstChar(input);
+        var result = Infrastructure.Telemetry.TelemetryClient.ToLowerFirstChar(input!);
 
         // Assert
         Assert.Equal(expected, result);
