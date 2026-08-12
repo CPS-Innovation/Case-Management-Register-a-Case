@@ -10,7 +10,7 @@ export async function aadLogin(
   page: Page,
   { appUrl, username, password }: AadLoginOptions,
 ): Promise<void> {
-  await page.goto(`${appUrl}/`);
+  await page.goto(`${appUrl}/`, { waitUntil: "domcontentloaded" });
 
   const email = page.locator('input[name="loginfmt"]');
   await email.waitFor({ state: "visible", timeout: 30_000 });
