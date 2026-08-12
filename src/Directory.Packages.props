@@ -1,12 +1,40 @@
 <Project>
   <PropertyGroup>
     <ManagePackageVersionsCentrally>true</ManagePackageVersionsCentrally>
-    <CentralPackageTransitivePinningEnabled>false</CentralPackageTransitivePinningEnabled>
+    <CentralPackageTransitivePinningEnabled>true</CentralPackageTransitivePinningEnabled>
   </PropertyGroup>
 
   <ItemGroup Label="Application">
     <PackageVersion Include="Ardalis.SmartEnum" Version="8.2.0" />
     <PackageVersion Include="FluentValidation" Version="12.1.1" />
+    <!--
+      We are staying on 2.x on purpose. The ITHC report lists 3.1.2 as current, but we cannot
+      move to it yet. This is not an oversight.
+
+      Application Insights 3.x is a rewrite that runs on OpenTelemetry underneath. Microsoft say
+      you must not mix 2.x and 3.x packages, and that every App Insights package has to move at
+      the same time:
+        https://github.com/microsoft/ApplicationInsights-dotnet/blob/main/BreakingChanges.md
+        https://learn.microsoft.com/en-us/azure/azure-monitor/app/migrate-to-opentelemetry
+
+      We cannot move them all at the same time. The newest Functions worker package,
+      Microsoft.Azure.Functions.Worker.ApplicationInsights 2.51.0, pulls in
+      Microsoft.ApplicationInsights.PerfCounterCollector. Microsoft dropped that package in 3.x
+      and never published it above 2.23.0, so the worker still ties us to the 2.x core. Their
+      migration guide lists it as unsupported and tells you to check for leftover 2.x packages
+      arriving as transitive dependencies, which is exactly what this is:
+        https://github.com/microsoft/ApplicationInsights-dotnet/blob/main/MigrationGuidance.md
+
+      Bumping the two versions below would therefore give us a 3.x SDK sitting on top of a 2.x
+      core, which is the mix Microsoft tell you not to ship.
+
+      Our own code would need work as well. 3.x removes ITelemetryInitializer, which
+      Telemetry/TelemetryInitializer.cs implements. It also removes TrackPageView and the
+      TrackEvent and TrackException overloads that take a metrics dictionary, and
+      Telemetry/AppInsightsTelemetryClient.cs calls all three.
+
+      Worth revisiting when the Functions worker supports 3.x.
+    -->
     <PackageVersion Include="Microsoft.ApplicationInsights" Version="2.23.0" />
     <PackageVersion Include="Microsoft.ApplicationInsights.WorkerService" Version="2.23.0" />
     <PackageVersion Include="Microsoft.Azure.Functions.Worker" Version="2.52.0" />
@@ -18,6 +46,24 @@
     <PackageVersion Include="Microsoft.Extensions.Http.Resilience" Version="10.8.0" />
     <PackageVersion Include="Microsoft.IdentityModel.Protocols" Version="8.22.0" />
     <PackageVersion Include="Microsoft.IdentityModel.Protocols.OpenIdConnect" Version="8.22.0" />
+  </ItemGroup>
+
+  <!--
+    Transitive pinning is on so ITHC-flagged dependencies we don't reference directly can be
+    lifted off the versions our direct dependencies ask for. A pin only takes effect for packages
+    listed below, so anything else still resolves normally.
+
+    These pins float ahead of what Microsoft.Azure.Functions.Worker* requests. Drop a pin once the
+    upstream package catches up, rather than carrying it indefinitely.
+  -->
+  <ItemGroup Label="Transitive pins">
+    <PackageVersion Include="Google.Protobuf" Version="3.35.1" />
+    <PackageVersion Include="Grpc.Core.Api" Version="2.83.0" />
+    <PackageVersion Include="Grpc.Net.Client" Version="2.83.0" />
+    <PackageVersion Include="Grpc.Net.ClientFactory" Version="2.83.0" />
+    <PackageVersion Include="Grpc.Net.Common" Version="2.83.0" />
+    <PackageVersion Include="Newtonsoft.Json" Version="13.0.4" />
+    <PackageVersion Include="YamlDotNet" Version="18.1.0" />
   </ItemGroup>
 
   <ItemGroup Label="Test">
