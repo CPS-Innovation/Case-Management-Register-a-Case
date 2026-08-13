@@ -37,7 +37,14 @@ export default defineConfig(({ command, mode }) => {
   }
 
   return {
-    build: { sourcemap: buildSourceMap },
+    build: {
+      sourcemap: buildSourceMap,
+      rollupOptions: {
+        // redirect.html is the MSAL redirect bridge required from msal-browser
+        // v5 onwards; it must be emitted as its own entry alongside the app.
+        input: { main: "index.html", redirect: "redirect.html" },
+      },
+    },
     plugins: [
       devStyleCspPlugin,
       react(),
@@ -58,6 +65,7 @@ export default defineConfig(({ command, mode }) => {
             "src/types.d.ts",
             "src/vite-env.d.ts",
             "src/main.tsx",
+            "src/redirect.ts",
           ],
           requireEnv: false,
           forceBuildInstrument: true,
@@ -100,6 +108,7 @@ export default defineConfig(({ command, mode }) => {
           "src/types.d.ts",
           "src/vite-env.d.ts",
           "src/main.tsx",
+          "src/redirect.ts",
         ],
       },
     },
