@@ -62,8 +62,10 @@ Authentication happens once in `global-setup.ts`, in a single browser context:
    to `{API}/api/tactical/login`, which sets the `Cms-Auth-Values` cookie that
    authenticates the gateway API.
 2. **Entra (Azure AD) sign-in** (`auth/aadLogin.ts`) — drives the Microsoft
-   sign-in for the deployed SPA, starting at the app root (the only registered
-   MSAL redirect URI).
+   sign-in for the deployed SPA, starting at the app root. Entra now returns to
+   `/redirect.html` (the MSAL redirect bridge), which hands the response back to
+   the app root, so `/redirect.html` must be a registered redirect URI on the app
+   registration.
 
 The resulting cookies are saved as Playwright `storageState`
 (`e2e-tests/.auth/state.json`, gitignored) and reused by every test via
