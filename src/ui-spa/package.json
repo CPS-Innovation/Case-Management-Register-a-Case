@@ -29,10 +29,10 @@
   "dependencies": {
     "@azure/msal-browser": "^4.4.0",
     "@azure/msal-react": "^3.0.19",
+    "@date-fns/tz": "^1.5.0",
     "@tanstack/react-query": "^5.90.1",
     "accessible-autocomplete": "^3.0.1",
     "date-fns": "^4.1.0",
-    "date-fns-tz": "^3.2.0",
     "govuk-react-jsx": "^7.1.0",
     "react": "^19.2.8",
     "react-dom": "^19.2.8",
