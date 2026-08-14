@@ -11,7 +11,7 @@ using Cps.CaseManagement.MdsClient.Tactical.Factories;
 using Cps.CaseManagement.MdsClient.Tactical.Models.Response;
 
 public class MdsClient(HttpClient httpClient,
-    IMdsRequestFactory mdsRequestFactory, 
+    IMdsRequestFactory mdsRequestFactory,
     IMdsRequestFactoryTactical mdsRequestFactoryTactical) : IMdsClient, IMdsClientTactical
 {
     private readonly HttpClient _httpClient = httpClient;

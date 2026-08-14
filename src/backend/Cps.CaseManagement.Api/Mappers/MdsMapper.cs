@@ -136,7 +136,8 @@ public class MdsMapper(ILogger<MdsMapper> logger) : IMdsMapper
     public OffencesDto MapOffencesEntityToDto(OffencesEntity entity)
     {
         var nullCmsIdOffences = entity.Offences.Where(o => o.CmsId == null);
-        foreach (var offence in nullCmsIdOffences)        {
+        foreach (var offence in nullCmsIdOffences)
+        {
             _logger.LogWarning("Offence with Code '{Code}' was excluded because CmsId is null", offence.Code);
         }
 
@@ -148,18 +149,18 @@ public class MdsMapper(ILogger<MdsMapper> logger) : IMdsMapper
         }
 
         var offences = entity.Offences.Where(o => o.CmsId != null && o.CmsModeOfTrial?.Id != null).Select(o => new OffenceDto
-            {
-                Code = o.Code,
-                Description = o.Description,
-                Legislation = o.Legislation,
-                DPPConsent = o.DPPConsent,
-                EffectiveFromDate = o.EffectiveFromDate,
-                EffectiveToDate = o.EffectiveToDate,
-                ModeOfTrial = o.ModeOfTrial,
-                CmsId = o.CmsId,
-                CmsModeOfTrialShortCode = CmsModeOfTrialMapper.ToCmsValue(o.CmsModeOfTrial?.Id),
-            }).ToArray();
-            
+        {
+            Code = o.Code,
+            Description = o.Description,
+            Legislation = o.Legislation,
+            DPPConsent = o.DPPConsent,
+            EffectiveFromDate = o.EffectiveFromDate,
+            EffectiveToDate = o.EffectiveToDate,
+            ModeOfTrial = o.ModeOfTrial,
+            CmsId = o.CmsId,
+            CmsModeOfTrialShortCode = CmsModeOfTrialMapper.ToCmsValue(o.CmsModeOfTrial?.Id),
+        }).ToArray();
+
         return new OffencesDto
         {
             Offences = offences,

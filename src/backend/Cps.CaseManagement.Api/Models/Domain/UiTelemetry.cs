@@ -11,5 +11,5 @@ public class UiTelemetry
     [JsonPropertyName("eventTimestamp")]
     public DateTime EventTimestamp { get; set; }
     [JsonPropertyName("properties")]
-    public List<Dictionary<string, object>>? Properties { get; set; } = new ();
+    public List<Dictionary<string, object>>? Properties { get; set; } = new();
 }

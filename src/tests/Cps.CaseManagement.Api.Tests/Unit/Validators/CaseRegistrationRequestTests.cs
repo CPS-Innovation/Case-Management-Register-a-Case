@@ -693,7 +693,7 @@ public class CaseRegistrationRequestValidatorTests
         result.ShouldHaveValidationErrorFor(x => x.MonitoringCodes);
     }
 
-    
+
     [Fact]
     public void MonitoringCodes_CseaRequired_WhenNoDefendantsAreAdded_ShouldPass()
     {

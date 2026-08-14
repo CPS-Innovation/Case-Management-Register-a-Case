@@ -16,27 +16,27 @@ public class GetProsecutors(
   IMdsService mdsService,
   IMdsArgFactory mdsArgFactory)
 {
-  private readonly IMdsService _mdsService = mdsService;
-  private readonly IMdsArgFactory _mdsArgFactory = mdsArgFactory;
+    private readonly IMdsService _mdsService = mdsService;
+    private readonly IMdsArgFactory _mdsArgFactory = mdsArgFactory;
 
-  [Function(nameof(GetProsecutors))]
-  [OpenApiOperation(operationId: nameof(GetProsecutors), tags: ["MDS"], Description = "Gets prosecutors by unit Id.")]
-  [CmsAuthValuesAuth]
-  [BearerTokenAuth]
-  [OpenApiParameter(name: HttpHeaderKeys.CorrelationId, In = Microsoft.OpenApi.Models.ParameterLocation.Header, Required = true, Type = typeof(string), Description = "Correlation identifier for tracking the request.")]
-  [OpenApiResponseWithBody(statusCode: HttpStatusCode.OK, contentType: ContentType.ApplicationJson, bodyType: typeof(ProsecutorOrCaseworkerEntity[]), Description = ApiResponseDescriptions.Success)]
-  [OpenApiResponseWithBody(statusCode: HttpStatusCode.BadRequest, contentType: ContentType.TextPlain, typeof(string), Description = ApiResponseDescriptions.BadRequest)]
-  [OpenApiResponseWithBody(statusCode: HttpStatusCode.Unauthorized, contentType: ContentType.TextPlain, typeof(string), Description = ApiResponseDescriptions.Unauthorized)]
-  [OpenApiResponseWithBody(statusCode: HttpStatusCode.Forbidden, contentType: ContentType.TextPlain, typeof(string), Description = ApiResponseDescriptions.Forbidden)]
-  [OpenApiResponseWithBody(statusCode: HttpStatusCode.InternalServerError, contentType: ContentType.TextPlain, typeof(string), Description = ApiResponseDescriptions.InternalServerError)]
-  public async Task<IActionResult> Run([HttpTrigger(AuthorizationLevel.Anonymous, "get", Route = "v1/prosecutors/{unitId}")] HttpRequest req, FunctionContext functionContext, long unitId)
-  {
-    var context = functionContext.GetRequestContext();
+    [Function(nameof(GetProsecutors))]
+    [OpenApiOperation(operationId: nameof(GetProsecutors), tags: ["MDS"], Description = "Gets prosecutors by unit Id.")]
+    [CmsAuthValuesAuth]
+    [BearerTokenAuth]
+    [OpenApiParameter(name: HttpHeaderKeys.CorrelationId, In = Microsoft.OpenApi.Models.ParameterLocation.Header, Required = true, Type = typeof(string), Description = "Correlation identifier for tracking the request.")]
+    [OpenApiResponseWithBody(statusCode: HttpStatusCode.OK, contentType: ContentType.ApplicationJson, bodyType: typeof(ProsecutorOrCaseworkerEntity[]), Description = ApiResponseDescriptions.Success)]
+    [OpenApiResponseWithBody(statusCode: HttpStatusCode.BadRequest, contentType: ContentType.TextPlain, typeof(string), Description = ApiResponseDescriptions.BadRequest)]
+    [OpenApiResponseWithBody(statusCode: HttpStatusCode.Unauthorized, contentType: ContentType.TextPlain, typeof(string), Description = ApiResponseDescriptions.Unauthorized)]
+    [OpenApiResponseWithBody(statusCode: HttpStatusCode.Forbidden, contentType: ContentType.TextPlain, typeof(string), Description = ApiResponseDescriptions.Forbidden)]
+    [OpenApiResponseWithBody(statusCode: HttpStatusCode.InternalServerError, contentType: ContentType.TextPlain, typeof(string), Description = ApiResponseDescriptions.InternalServerError)]
+    public async Task<IActionResult> Run([HttpTrigger(AuthorizationLevel.Anonymous, "get", Route = "v1/prosecutors/{unitId}")] HttpRequest req, FunctionContext functionContext, long unitId)
+    {
+        var context = functionContext.GetRequestContext();
 
-    var arg = _mdsArgFactory.CreateGetByUnitIdArg(context.CmsAuthValues, context.CorrelationId, unitId);
+        var arg = _mdsArgFactory.CreateGetByUnitIdArg(context.CmsAuthValues, context.CorrelationId, unitId);
 
-    var result = await _mdsService.GetProsecutorsAsync(arg);
+        var result = await _mdsService.GetProsecutorsAsync(arg);
 
-    return new OkObjectResult(result);
-  }
+        return new OkObjectResult(result);
+    }
 }

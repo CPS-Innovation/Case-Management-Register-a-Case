@@ -16,25 +16,25 @@ public class ListMonitoringCodes(
   IMdsService mdsService,
   IMdsArgFactory mdsArgFactory)
 {
-  private readonly IMdsService _mdsService = mdsService;
-  private readonly IMdsArgFactory _mdsArgFactory = mdsArgFactory;
+    private readonly IMdsService _mdsService = mdsService;
+    private readonly IMdsArgFactory _mdsArgFactory = mdsArgFactory;
 
-  [Function(nameof(ListMonitoringCodes))]
-  [OpenApiOperation(operationId: nameof(ListMonitoringCodes), tags: ["MDS"], Description = "Gets the list of monitoring codes from CMS.")]
-  [CmsAuthValuesAuth]
-  [BearerTokenAuth]
-  [OpenApiParameter(name: HttpHeaderKeys.CorrelationId, In = Microsoft.OpenApi.Models.ParameterLocation.Header, Required = true, Type = typeof(string), Description = "Correlation identifier for tracking the request.")]
-  [OpenApiResponseWithBody(statusCode: HttpStatusCode.OK, contentType: ContentType.ApplicationJson, bodyType: typeof(MonitoringCodeEntity[]), Description = ApiResponseDescriptions.Success)]
-  [OpenApiResponseWithBody(statusCode: HttpStatusCode.BadRequest, contentType: ContentType.TextPlain, typeof(string), Description = ApiResponseDescriptions.BadRequest)]
-  [OpenApiResponseWithBody(statusCode: HttpStatusCode.Unauthorized, contentType: ContentType.TextPlain, typeof(string), Description = ApiResponseDescriptions.Unauthorized)]
-  [OpenApiResponseWithBody(statusCode: HttpStatusCode.Forbidden, contentType: ContentType.TextPlain, typeof(string), Description = ApiResponseDescriptions.Forbidden)]
-  [OpenApiResponseWithBody(statusCode: HttpStatusCode.InternalServerError, contentType: ContentType.TextPlain, typeof(string), Description = ApiResponseDescriptions.InternalServerError)]
-  public async Task<IActionResult> Run([HttpTrigger(AuthorizationLevel.Anonymous, "get", Route = "v1/monitoring-codes")] HttpRequest req, FunctionContext functionContext)
-  {
-    var context = functionContext.GetRequestContext();
+    [Function(nameof(ListMonitoringCodes))]
+    [OpenApiOperation(operationId: nameof(ListMonitoringCodes), tags: ["MDS"], Description = "Gets the list of monitoring codes from CMS.")]
+    [CmsAuthValuesAuth]
+    [BearerTokenAuth]
+    [OpenApiParameter(name: HttpHeaderKeys.CorrelationId, In = Microsoft.OpenApi.Models.ParameterLocation.Header, Required = true, Type = typeof(string), Description = "Correlation identifier for tracking the request.")]
+    [OpenApiResponseWithBody(statusCode: HttpStatusCode.OK, contentType: ContentType.ApplicationJson, bodyType: typeof(MonitoringCodeEntity[]), Description = ApiResponseDescriptions.Success)]
+    [OpenApiResponseWithBody(statusCode: HttpStatusCode.BadRequest, contentType: ContentType.TextPlain, typeof(string), Description = ApiResponseDescriptions.BadRequest)]
+    [OpenApiResponseWithBody(statusCode: HttpStatusCode.Unauthorized, contentType: ContentType.TextPlain, typeof(string), Description = ApiResponseDescriptions.Unauthorized)]
+    [OpenApiResponseWithBody(statusCode: HttpStatusCode.Forbidden, contentType: ContentType.TextPlain, typeof(string), Description = ApiResponseDescriptions.Forbidden)]
+    [OpenApiResponseWithBody(statusCode: HttpStatusCode.InternalServerError, contentType: ContentType.TextPlain, typeof(string), Description = ApiResponseDescriptions.InternalServerError)]
+    public async Task<IActionResult> Run([HttpTrigger(AuthorizationLevel.Anonymous, "get", Route = "v1/monitoring-codes")] HttpRequest req, FunctionContext functionContext)
+    {
+        var context = functionContext.GetRequestContext();
 
-    var result = await _mdsService.GetMonitoringCodesAsync(_mdsArgFactory.CreateBaseArg(context.CmsAuthValues, context.CorrelationId));
+        var result = await _mdsService.GetMonitoringCodesAsync(_mdsArgFactory.CreateBaseArg(context.CmsAuthValues, context.CorrelationId));
 
-    return new OkObjectResult(result);
-  }
+        return new OkObjectResult(result);
+    }
 }

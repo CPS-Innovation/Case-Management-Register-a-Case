@@ -1,11 +1,11 @@
 using System.Net;
+using Cps.CaseManagement.Api.Context;
+using Cps.CaseManagement.Api.Exceptions;
+using Cps.CaseManagement.MdsClient.Exceptions;
 using Microsoft.Azure.Functions.Worker;
 using Microsoft.Azure.Functions.Worker.Http;
 using Microsoft.Azure.Functions.Worker.Middleware;
 using Microsoft.Extensions.Logging;
-using Cps.CaseManagement.Api.Context;
-using Cps.CaseManagement.Api.Exceptions;
-using Cps.CaseManagement.MdsClient.Exceptions;
 
 namespace Cps.CaseManagement.Api.Middleware;
 

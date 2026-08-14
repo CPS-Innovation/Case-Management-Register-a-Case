@@ -1,11 +1,3 @@
-using Microsoft.Azure.Functions.Worker;
-using Microsoft.Azure.Functions.Worker.Builder;
-using Microsoft.Azure.WebJobs.Extensions.OpenApi.Core.Abstractions;
-using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Hosting;
-using Microsoft.Extensions.Logging;
-using Microsoft.IdentityModel.Protocols;
-using Microsoft.IdentityModel.Protocols.OpenIdConnect;
 using Cps.CaseManagement.Api.Helpers;
 using Cps.CaseManagement.Api.Mappers;
 using Cps.CaseManagement.Api.Middleware;
@@ -15,6 +7,14 @@ using Cps.CaseManagement.Api.Validators;
 using Cps.CaseManagement.Infrastructure.Extensions;
 using Cps.CaseManagement.MdsClient.Extensions;
 using Cps.CaseManagement.MdsClient.Tactical.Extensions;
+using Microsoft.Azure.Functions.Worker;
+using Microsoft.Azure.Functions.Worker.Builder;
+using Microsoft.Azure.WebJobs.Extensions.OpenApi.Core.Abstractions;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Logging;
+using Microsoft.IdentityModel.Protocols;
+using Microsoft.IdentityModel.Protocols.OpenIdConnect;
 
 using var loggerFactory = LoggerFactory.Create(configure => configure.AddConsole());
 var logger = loggerFactory.CreateLogger("Configuration");

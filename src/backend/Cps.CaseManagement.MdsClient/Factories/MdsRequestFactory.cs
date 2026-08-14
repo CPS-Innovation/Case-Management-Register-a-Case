@@ -65,7 +65,7 @@ public class MdsRequestFactory : IMdsRequestFactory
 
     public HttpRequestMessage CreateGetPoliceUnitsRequest(MdsBaseArgDto arg) =>
         BuildRequest(HttpMethod.Get, "api/police-units", arg);
-        
+
     public HttpRequestMessage CreateSearchOffencesRequest(MdsOffenceSearchArg arg)
     {
         var queryParams = new Dictionary<string, string?>
