@@ -187,11 +187,11 @@ public class TelemetryClient(IAppInsightsTelemetryClient telemetryClient) : ITel
 
         return char.ToLower(input[0]) + input.Substring(1);
     }
-    
+
     public static bool TryParseEnum<TEnum>(string value, out TEnum? result) where TEnum : struct, Enum
     {
         result = null;
-        
+
         if (Enum.TryParse(value, out TEnum parsedEnum))
         {
             result = parsedEnum;

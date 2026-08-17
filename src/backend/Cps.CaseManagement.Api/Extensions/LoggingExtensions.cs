@@ -28,22 +28,22 @@ public static class LoggingExtensions
             eventId: new EventId(LoggingEvent.ProcessingFailed, LoggingEvent.ProcessingFailed.Name),
             formatString: "'{CorrelationId}': Method '{MethodName}' - Processing Failed, Error Message: '{ErrorMessage}'");
     }
-    
+
     public static void LogMethodEntry(this ILogger logger, Guid correlationId, string methodName, string incomingParameters)
     {
         MethodEntryAction(logger, correlationId, methodName, incomingParameters, null);
     }
-    
+
     public static void LogMethodExit(this ILogger logger, Guid correlationId, string methodName, string returnValues)
     {
         MethodExitAction(logger, correlationId, methodName, returnValues, null);
     }
-    
+
     public static void LogMethodFlow(this ILogger logger, Guid correlationId, string methodName, string message)
     {
         MethodFlowMessageAction(logger, correlationId, methodName, message, null);
     }
-    
+
     public static void LogMethodError(this ILogger logger, Guid correlationId, string methodName,
         string errorMessage, Exception ex)
     {
@@ -53,7 +53,7 @@ public static class LoggingExtensions
         exceptionMessages = exceptionMessages.Length > 0 ? string.Concat(errorMessage, Environment.NewLine, exceptionMessages) : errorMessage;
         MethodExceptionAction(logger, correlationId, methodName, exceptionMessages, ex);
     }
-    
+
     private static IEnumerable<TSource> FromHierarchy<TSource>(this TSource source, Func<TSource, TSource?> nextItem, Func<TSource, bool> canContinue)
     {
         for (var current = source; canContinue(current); current = nextItem(current)!)
@@ -61,7 +61,7 @@ public static class LoggingExtensions
             yield return current;
         }
     }
-    
+
     private static IEnumerable<TSource> FromHierarchy<TSource>(this TSource source, Func<TSource, TSource?> nextItem)
         where TSource : class
     {

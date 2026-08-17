@@ -6,9 +6,9 @@ namespace Cps.CaseManagement.MdsClient.Tactical.Extensions;
 
 public static class IServiceCollectionExtension
 {
-  public static void AddMdsClientTactical(this IServiceCollection services)
-  {
-    services.AddSingleton<IMdsRequestFactoryTactical, MdsRequestFactoryTactical>();
-    services.AddHttpClient<IMdsClientTactical, MdsClient.Client.MdsClient>(MdsClient.Extensions.IServiceCollectionExtension.AddMdsClient);
-  }
+    public static void AddMdsClientTactical(this IServiceCollection services)
+    {
+        services.AddSingleton<IMdsRequestFactoryTactical, MdsRequestFactoryTactical>();
+        services.AddHttpClient<IMdsClientTactical, MdsClient.Client.MdsClient>(MdsClient.Extensions.IServiceCollectionExtension.AddMdsClient);
+    }
 }

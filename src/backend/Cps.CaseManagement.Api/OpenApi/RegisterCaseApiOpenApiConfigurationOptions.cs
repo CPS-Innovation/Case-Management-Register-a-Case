@@ -33,7 +33,7 @@ public class RegisterCaseApiOpenApiConfigurationOptions : BaseOpenApiConfigurati
             Url = null,
         },
     };
-    
+
     public override IDictionary<string, OpenApiSecurityScheme> SecuritySchemes => new Dictionary<string, OpenApiSecurityScheme>
     {
         {

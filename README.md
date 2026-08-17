@@ -4,6 +4,12 @@
 
 The Case Management project aims to deliver a Case Management solution that streamlines how cases are registered, created, and updated, enabling efficient tracking, improved data accuracy, and greater visibility across the case lifecycle.
 
+## Pre-Commit Hooks
+This repo contains pre-commit hooks for maintaining formatting standards. Please install these before commiting any work.
+1. Download and install [Python](https://www.python.org/downloads/).
+2. Install the [pre-commit package manager](https://pre-commit.com/#install).
+3. Run `pre-commit install` to install the hooks.
+
 ## UI
 
 UI is a vite react typescript project
@@ -28,10 +34,9 @@ UI is a vite react typescript project
 2. To run playwright ui integration test in browser mode: use `ui:integration`
 3. To run playwright ui integration test in ci mode: use `ui:integration:ci`
 
+## CI/CD
 
-## CI/CD 
-
-The project uses Azure Pipelines for automated build, test, and deployment. 
+The project uses Azure Pipelines for automated build, test, and deployment.
 
 ### Key pipeline definitions
 
@@ -70,11 +75,11 @@ The following are triggered in response to any changes pushed to the [`ui-spa`](
 
 #### Backend
 
-App settings for the function apps are configured in the App Service environment during the deployment pipeline, by calling the step defined in [fa-config-steps.yml](devops-pipelines/templates/fa-config-steps.yml). 
+App settings for the function apps are configured in the App Service environment during the deployment pipeline, by calling the step defined in [fa-config-steps.yml](devops-pipelines/templates/fa-config-steps.yml).
 
 New variable blocks can be added to the `appSettings` list in the task's input variables. The "slotSetting" field should always be set to false.
 
-**Secret values:** 
+**Secret values:**
 
 For settings such as api keys, passwords, certificates, etc., the "value" field should contain a [Key Vault reference](https://learn.microsoft.com/en-us/azure/app-service/app-service-key-vault-references?tabs=azure-cli). For example:
 ```json
@@ -83,7 +88,7 @@ For settings such as api keys, passwords, certificates, etc., the "value" field 
   "value": "@Microsoft.KeyVault(VaultName=${{ parameters.keyVaultName }};SecretName=Api--AccessKey)",
   "slotSetting": false
 },
-``` 
+```
 ❗ The key-value pairs for these secrets must be added to the Key Vaults by a team member with appropriate access.
 
 **Non-sensitive cross-environment values:**
@@ -97,7 +102,7 @@ Non-sensitive values that remain consistent across all environments can be added
 },
 ```
 
-**Sensitive values that don't require storing in Key Vault:** 
+**Sensitive values that don't require storing in Key Vault:**
 
 - Values such as UUIDs, internally-facing urls, etc., that shouldn't be exposed in a public repository, should be added as variable references. For Example:
   ```json
@@ -109,7 +114,7 @@ Non-sensitive values that remain consistent across all environments can be added
   ```
   ❗ The key-value pairs must be added to the relevant variable groups in the Azure DevOps Library.
 
-**Non-sensitive environment-specific values** 
+**Non-sensitive environment-specific values**
 
 Values that may differ by environment (e.g., feature flags) should also be added as variable references.
 

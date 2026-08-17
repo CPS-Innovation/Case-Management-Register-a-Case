@@ -1,13 +1,13 @@
 using System.Net;
-using Microsoft.Azure.Functions.Worker;
-using Microsoft.Azure.Functions.Worker.Http;
-using Microsoft.Azure.Functions.Worker.Middleware;
 using Cps.CaseManagement.Api.Constants;
 using Cps.CaseManagement.Api.Context;
 using Cps.CaseManagement.Api.Exceptions;
 using Cps.CaseManagement.Api.Helpers;
 using Cps.CaseManagement.Api.Validators;
 using Cps.CaseManagement.Infrastructure.Telemetry;
+using Microsoft.Azure.Functions.Worker;
+using Microsoft.Azure.Functions.Worker.Http;
+using Microsoft.Azure.Functions.Worker.Middleware;
 
 namespace Cps.CaseManagement.Api.Middleware;
 

@@ -13,84 +13,84 @@ namespace Cps.CaseManagement.Api.Functions.Tactical;
 
 public class CmsLoginDirect(IMdsClientTactical mdsClient)
 {
-	private readonly IMdsClientTactical _mdsClient = mdsClient;
+    private readonly IMdsClientTactical _mdsClient = mdsClient;
 
-	[Function(nameof(CmsLoginDirectGet))]
-	[OpenApiOperation(operationId: nameof(CmsLoginDirectGet), tags: ["CMS", "Authentication"], Description = "Returns the developer CMS login form.")]
-	[OpenApiNoSecurity]
-	[OpenApiResponseWithBody(statusCode: HttpStatusCode.OK, contentType: ContentType.TextPlain, bodyType: typeof(string), Description = ApiResponseDescriptions.Success)]
-	[OpenApiResponseWithBody(statusCode: HttpStatusCode.BadRequest, contentType: ContentType.TextPlain, typeof(string), Description = ApiResponseDescriptions.BadRequest)]
-	[OpenApiResponseWithBody(statusCode: HttpStatusCode.Unauthorized, contentType: ContentType.TextPlain, typeof(string), Description = ApiResponseDescriptions.Unauthorized)]
-	[OpenApiResponseWithBody(statusCode: HttpStatusCode.Forbidden, contentType: ContentType.TextPlain, typeof(string), Description = ApiResponseDescriptions.Forbidden)]
-	[OpenApiResponseWithBody(statusCode: HttpStatusCode.InternalServerError, contentType: ContentType.TextPlain, typeof(string), Description = ApiResponseDescriptions.InternalServerError)]
-	public IActionResult CmsLoginDirectGet([HttpTrigger(AuthorizationLevel.Anonymous, "get", Route = "tactical/login")] HttpRequest req) => new ContentResult
-	{
-		Content = HtmlHelpers.LoginForm(),
-		ContentType = ContentType.TextHtml
-	};
+    [Function(nameof(CmsLoginDirectGet))]
+    [OpenApiOperation(operationId: nameof(CmsLoginDirectGet), tags: ["CMS", "Authentication"], Description = "Returns the developer CMS login form.")]
+    [OpenApiNoSecurity]
+    [OpenApiResponseWithBody(statusCode: HttpStatusCode.OK, contentType: ContentType.TextPlain, bodyType: typeof(string), Description = ApiResponseDescriptions.Success)]
+    [OpenApiResponseWithBody(statusCode: HttpStatusCode.BadRequest, contentType: ContentType.TextPlain, typeof(string), Description = ApiResponseDescriptions.BadRequest)]
+    [OpenApiResponseWithBody(statusCode: HttpStatusCode.Unauthorized, contentType: ContentType.TextPlain, typeof(string), Description = ApiResponseDescriptions.Unauthorized)]
+    [OpenApiResponseWithBody(statusCode: HttpStatusCode.Forbidden, contentType: ContentType.TextPlain, typeof(string), Description = ApiResponseDescriptions.Forbidden)]
+    [OpenApiResponseWithBody(statusCode: HttpStatusCode.InternalServerError, contentType: ContentType.TextPlain, typeof(string), Description = ApiResponseDescriptions.InternalServerError)]
+    public IActionResult CmsLoginDirectGet([HttpTrigger(AuthorizationLevel.Anonymous, "get", Route = "tactical/login")] HttpRequest req) => new ContentResult
+    {
+        Content = HtmlHelpers.LoginForm(),
+        ContentType = ContentType.TextHtml
+    };
 
-	[Function(nameof(CmsLoginDirectPost))]
-	[OpenApiOperation(operationId: nameof(CmsLoginDirectPost), tags: ["CMS", "Authentication"], Description = "Authenticates a user in CMS and returns a token and cookie.")]
-	[OpenApiNoSecurity]
-	[OpenApiRequestBody(contentType: ContentType.MultipartFormData, bodyType: typeof(AuthenticationRequest), Description = "Form data including username and password.")]
-	[OpenApiResponseWithBody(statusCode: HttpStatusCode.OK, contentType: ContentType.TextHtml, bodyType: typeof(string), Description = ApiResponseDescriptions.Success)]
-	[OpenApiResponseWithBody(statusCode: HttpStatusCode.BadRequest, contentType: ContentType.TextPlain, typeof(string), Description = ApiResponseDescriptions.BadRequest)]
-	[OpenApiResponseWithBody(statusCode: HttpStatusCode.Unauthorized, contentType: ContentType.TextPlain, typeof(string), Description = ApiResponseDescriptions.Unauthorized)]
-	[OpenApiResponseWithBody(statusCode: HttpStatusCode.Forbidden, contentType: ContentType.TextPlain, typeof(string), Description = ApiResponseDescriptions.Forbidden)]
-	[OpenApiResponseWithBody(statusCode: HttpStatusCode.InternalServerError, contentType: ContentType.TextPlain, typeof(string), Description = ApiResponseDescriptions.InternalServerError)]
-	public async Task<IActionResult> CmsLoginDirectPost([HttpTrigger(AuthorizationLevel.Anonymous, "post", Route = "tactical/login")] HttpRequest req)
-	{
-		var username = req.Form[InputParameters.Username].ToString();
-		var password = req.Form[InputParameters.Password].ToString();
+    [Function(nameof(CmsLoginDirectPost))]
+    [OpenApiOperation(operationId: nameof(CmsLoginDirectPost), tags: ["CMS", "Authentication"], Description = "Authenticates a user in CMS and returns a token and cookie.")]
+    [OpenApiNoSecurity]
+    [OpenApiRequestBody(contentType: ContentType.MultipartFormData, bodyType: typeof(AuthenticationRequest), Description = "Form data including username and password.")]
+    [OpenApiResponseWithBody(statusCode: HttpStatusCode.OK, contentType: ContentType.TextHtml, bodyType: typeof(string), Description = ApiResponseDescriptions.Success)]
+    [OpenApiResponseWithBody(statusCode: HttpStatusCode.BadRequest, contentType: ContentType.TextPlain, typeof(string), Description = ApiResponseDescriptions.BadRequest)]
+    [OpenApiResponseWithBody(statusCode: HttpStatusCode.Unauthorized, contentType: ContentType.TextPlain, typeof(string), Description = ApiResponseDescriptions.Unauthorized)]
+    [OpenApiResponseWithBody(statusCode: HttpStatusCode.Forbidden, contentType: ContentType.TextPlain, typeof(string), Description = ApiResponseDescriptions.Forbidden)]
+    [OpenApiResponseWithBody(statusCode: HttpStatusCode.InternalServerError, contentType: ContentType.TextPlain, typeof(string), Description = ApiResponseDescriptions.InternalServerError)]
+    public async Task<IActionResult> CmsLoginDirectPost([HttpTrigger(AuthorizationLevel.Anonymous, "post", Route = "tactical/login")] HttpRequest req)
+    {
+        var username = req.Form[InputParameters.Username].ToString();
+        var password = req.Form[InputParameters.Password].ToString();
 
-		string? content;
-		try
-		{
-			var response = await _mdsClient.AuthenticateAsync(username, password);
-			var cookieString = JsonSerializer.Serialize(response);
-			AppendAuthCookie(req, cookieString);
+        string? content;
+        try
+        {
+            var response = await _mdsClient.AuthenticateAsync(username, password);
+            var cookieString = JsonSerializer.Serialize(response);
+            AppendAuthCookie(req, cookieString);
 
-			content = HtmlHelpers.LoginFormResult(username, true, cookieString);
-		}
-		catch (Exception e)
-		{
-			content = HtmlHelpers.LoginFormResult(username, false, e.Message);
-		}
+            content = HtmlHelpers.LoginFormResult(username, true, cookieString);
+        }
+        catch (Exception e)
+        {
+            content = HtmlHelpers.LoginFormResult(username, false, e.Message);
+        }
 
-		return new ContentResult
-		{
-			Content = content,
-			ContentType = ContentType.TextHtml
-		};
-		}
+        return new ContentResult
+        {
+            Content = content,
+            ContentType = ContentType.TextHtml
+        };
+    }
 
-		private static void AppendAuthCookie(HttpRequest req, string cookiesString)
-		{
-		var cookieOptions = CreateAuthCookieOptions(req.IsHttps);
+    private static void AppendAuthCookie(HttpRequest req, string cookiesString)
+    {
+        var cookieOptions = CreateAuthCookieOptions(req.IsHttps);
 
-		req.HttpContext.Response.Cookies.Append(HttpHeaderKeys.CmsAuthValues, cookiesString, cookieOptions);
-	}
+        req.HttpContext.Response.Cookies.Append(HttpHeaderKeys.CmsAuthValues, cookiesString, cookieOptions);
+    }
 
-	private static CookieOptions CreateAuthCookieOptions(bool isHttps)
-	{
+    private static CookieOptions CreateAuthCookieOptions(bool isHttps)
+    {
 #if LOCAL_HTTP_DEV
-		if (!isHttps)
-		{
-			return new CookieOptions
-			{
-				Path = "/api/",
-				HttpOnly = true,
-			};
-		}
+        if (!isHttps)
+        {
+            return new CookieOptions
+            {
+                Path = "/api/",
+                HttpOnly = true,
+            };
+        }
 #endif
-		_ = isHttps;
+        _ = isHttps;
 
-		return new CookieOptions
-		{
-			Path = "/api/",
-			HttpOnly = true,
-			Secure = true,
-			SameSite = SameSiteMode.None
-		};
-	}
+        return new CookieOptions
+        {
+            Path = "/api/",
+            HttpOnly = true,
+            Secure = true,
+            SameSite = SameSiteMode.None
+        };
+    }
 }

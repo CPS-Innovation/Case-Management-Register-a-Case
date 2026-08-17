@@ -6,7 +6,7 @@ public static class HtmlHelpers
 {
     public static string LoginForm()
     {
-      return @$"
+        return @$"
 			<html>
 				<head>
 				<style>
@@ -52,7 +52,7 @@ public static class HtmlHelpers
 
     public static string LoginFormResult(string username, bool isLoggedInOk, string rawCookiesStrings)
     {
-      return $@"
+        return $@"
                 <html>
                     <head>
                       <style>
@@ -63,11 +63,11 @@ public static class HtmlHelpers
                           margin: 100px auto;
                           width: 400px;
                           font-size: 2em;
-                        }}        
+                        }}
                         div.feedback {{
                           width: 1400px;
                           margin: 20px auto;
-                        }}  
+                        }}
                         .ok{{
                           color: green;
                         }}
@@ -80,8 +80,8 @@ public static class HtmlHelpers
                         <div class='user'>
                           Hi {username} <br>
                           We believe you {(isLoggedInOk
-                            ? "<strong class='ok' data-testid='login-ok'>ARE</strong>"
-                            : "<strong class='not-ok'>ARE NOT</strong>")} logged in to CMS<br/>
+                              ? "<strong class='ok' data-testid='login-ok'>ARE</strong>"
+                              : "<strong class='not-ok'>ARE NOT</strong>")} logged in to CMS<br/>
                         </div>
                         <div class='feedback'>
                           <code>
@@ -94,17 +94,17 @@ public static class HtmlHelpers
 
     public static string FullCookieResult(string serializedCmsAuthValues, string modernUrl, string modernAuthToken)
     {
-		return $@"
+        return $@"
 		<html>
 		<body>
 		<pre>
 		Cms-Auth-Value Cookie =>
 		{serializedCmsAuthValues}
 
-		Encoded Cms-Auth-Value Cookie => 
+		Encoded Cms-Auth-Value Cookie =>
 		{Uri.EscapeDataString(serializedCmsAuthValues)}
-		</pre>  
+		</pre>
 		</body>
 		</html>";
-	}
+    }
 }

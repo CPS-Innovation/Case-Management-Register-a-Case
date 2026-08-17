@@ -30,6 +30,7 @@ stages:
               dotNetVersion: $(dotNetVersion)
               publishOutput: false
               runTests: true
+              checkFormatting: true
               testResultsDirectory: $(testResultsDirectory)
 
       - job: Build_Main_API

@@ -38,8 +38,8 @@ public class TelemetryClientTest
         _mockAppInsightsTelemetryClient.Verify(
             x => x.TrackEvent(
                 expectedEventName,
-                It.Is<IDictionary<string, string>>(p => 
-                    p.ContainsKey("correlationId") && 
+                It.Is<IDictionary<string, string>>(p =>
+                    p.ContainsKey("correlationId") &&
                     p.ContainsKey("eventTimestamp") &&
                     !p.ContainsKey("isFailure")),
                 It.IsAny<IDictionary<string, double>>()),
@@ -62,8 +62,8 @@ public class TelemetryClientTest
         _mockAppInsightsTelemetryClient.Verify(
             x => x.TrackEvent(
                 It.IsAny<string>(),
-                It.Is<IDictionary<string, string>>(p => 
-                    p.ContainsKey("isFailure") && 
+                It.Is<IDictionary<string, string>>(p =>
+                    p.ContainsKey("isFailure") &&
                     p["isFailure"] == "true"),
                 It.IsAny<IDictionary<string, double>>()),
             Times.Once);
@@ -105,7 +105,7 @@ public class TelemetryClientTest
         _mockAppInsightsTelemetryClient.Verify(
             x => x.TrackException(
                 It.Is<Exception>(e => e.Message == "Test exception message"),
-                It.Is<IDictionary<string, string>>(p => 
+                It.Is<IDictionary<string, string>>(p =>
                     p.ContainsKey("exceptionMessage") &&
                     p.ContainsKey("exceptionStackTrace")),
                 It.IsAny<IDictionary<string, double>>()),
@@ -358,7 +358,7 @@ public class TelemetryClientTest
         _mockAppInsightsTelemetryClient.Verify(
             x => x.TrackEvent(
                 It.IsAny<string>(),
-                It.Is<IDictionary<string, string>>(p => 
+                It.Is<IDictionary<string, string>>(p =>
                     string.IsNullOrEmpty(expected) || p.ContainsKey(expected)),
                 It.IsAny<IDictionary<string, double>>()),
             Times.Once);

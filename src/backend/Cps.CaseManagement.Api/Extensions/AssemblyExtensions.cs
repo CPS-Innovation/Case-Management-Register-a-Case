@@ -23,7 +23,7 @@ public static class AssemblyExtensions
             SourceVersion = GetShortHash(infoVerAttr),
             LastBuilt = GetBuildDate(currentAssembly)
         };
-        
+
         return new JsonResult(response) { StatusCode = (int)HttpStatusCode.OK };
     }
 

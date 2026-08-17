@@ -1,7 +1,7 @@
 namespace Cps.CaseManagement.Infrastructure.Telemetry;
 
 public class BaseUiTelemetryEvent : BaseTelemetryEvent
-{ 
+{
     public IEnumerable<Dictionary<string, object>> Properties { get; set; } = new List<Dictionary<string, object>>();
 
     public override (IDictionary<string, string> Properties, IDictionary<string, double?> Metrics) ToTelemetryEventProps()
