@@ -6,8 +6,9 @@ The Case Management project aims to deliver a Case Management solution that stre
 
 ## Pre-Commit Hooks
 This repo contains pre-commit hooks for maintaining formatting standards. Please install these before commiting any work.
-1. Install the [pre-commit package manager](https://pre-commit.com/#install).
-2. Run `pre-commit install` to install the hooks.
+1. Download and install [Python](https://www.python.org/downloads/).
+2. Install the [pre-commit package manager](https://pre-commit.com/#install).
+3. Run `pre-commit install` to install the hooks.
 
 ## UI
 
