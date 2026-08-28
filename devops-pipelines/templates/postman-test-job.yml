@@ -54,7 +54,7 @@ jobs:
     inputs:
       testResultsFormat: 'JUnit'
       testResultsFiles: '$(Build.ArtifactStagingDirectory)/newman-report-${{parameters.environment}}.xml'
-    displayName: 'Publish Newman Report' 
-  
+    displayName: 'Publish Newman Report'
+
   - publish: '$(Build.ArtifactStagingDirectory)/newman-report-${{parameters.environment}}.html'
-    artifact: '${{parameters.environment}}NewmanReportHTML'
+    artifact: '$(System.JobId)-${{parameters.environment}}-NewmanReportHTML'
