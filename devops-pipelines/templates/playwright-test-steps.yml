@@ -8,7 +8,7 @@ steps:
       command: 'custom'
       customCommand: 'exec playwright install -- --with-deps'
       workingDir: ${{ parameters.workingDir }}
-  
+
   - task: Npm@1
     displayName: 'Run Integration Tests in CI Mode'
     inputs:
@@ -17,8 +17,8 @@ steps:
       workingDir: ${{ parameters.workingDir }}
 
   - publish: '${{ parameters.workingDir }}/playwright-report'
-    artifact: 'integration-test-report'
-    displayName: 'Upload Integration Test Report As Pipeline Artifact'  
+    artifact: '$(System.JobId)-integration-test-report'
+    displayName: 'Upload Integration Test Report As Pipeline Artifact'
 
   - task: PublishTestResults@2
     displayName: 'Publish Integration Test Results'
