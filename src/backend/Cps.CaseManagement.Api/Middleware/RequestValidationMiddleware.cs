@@ -33,7 +33,7 @@ public sealed partial class RequestValidationMiddleware(IAuthorizationValidator 
         var isUnauthenticatedRoute = _unauthenticatedRoutes.Contains(path);
         var requiresCmsAuth = !isUnauthenticatedRoute && !_cmsAuthOptionalRoutes.Contains(path);
 
-        var correlationId = EstablishCorrelation(httpRequestData, requireNonEmpty: !isUnauthenticatedRoute || path == "/api/v1/init");
+        var correlationId = EstablishCorrelation(httpRequestData, requireNonEmpty: !isUnauthenticatedRoute);
         var cmsAuthValues = EstablishCmsAuthValues(httpRequestData);
 
         if (requiresCmsAuth)
