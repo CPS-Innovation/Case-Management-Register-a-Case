@@ -11,9 +11,9 @@ type ErrorSummaryWrapperProps = {
   }[];
   errorSummaryRef: React.RefObject<HTMLDivElement | null>;
   dataTestId: string;
-  showSkip: boolean;
-  nextRoute: string;
-  skipText: string;
+  showSkip?: boolean;
+  nextRoute?: string;
+  skipText?: string;
 };
 
 const ErrorSummaryWrapper = ({
@@ -38,7 +38,7 @@ const ErrorSummaryWrapper = ({
             titleChildren="There is a problem"
           />
 
-          {showSkip && (
+          {showSkip && nextRoute && skipText && (
             <div className={styles.suspectAdditionalDetailsSkip}>
               <Link
                 className="govuk-link govuk-link--no-visited-state"

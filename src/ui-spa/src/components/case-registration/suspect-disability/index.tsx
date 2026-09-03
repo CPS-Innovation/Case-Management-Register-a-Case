@@ -30,6 +30,7 @@ const SuspectDisabilityPage = () => {
     const index = suspectId.replace("suspect-", "");
     return Number.parseInt(index, 10);
   }, [suspectId]);
+  const [showSkip, setShowSkip] = useState(false);
 
   const [disabilityFormData, setDisabilityFormData] = useState<{
     suspectDisabilityRadio?: GeneralRadioValue;
@@ -73,12 +74,15 @@ const SuspectDisabilityPage = () => {
         errorSummaryText: "Select whether the defendant has a disability",
         inputErrorText: "Select whether the defendant has a disability",
       };
+      setDisabilityFormDataErrors(errors);
+      setShowSkip(true);
+      return false;
+    }
+    if (showSkip) {
+      setShowSkip(false);
     }
 
-    const isValid = !Object.entries(errors).filter(([, value]) => value).length;
-
-    setDisabilityFormDataErrors(errors);
-    return isValid;
+    return true;
   };
 
   const setFormValue = (value: string) => {
@@ -119,6 +123,9 @@ const SuspectDisabilityPage = () => {
           errorList={errorList}
           errorSummaryRef={errorSummaryRef}
           dataTestId="suspect-disability-error-summary"
+          showSkip={showSkip}
+          nextRoute={nextRoute}
+          skipText="I do not have disability information"
         />
         <form onSubmit={handleSubmit}>
           <div className={styles.inputWrapper}>

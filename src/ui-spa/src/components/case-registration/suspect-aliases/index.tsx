@@ -28,7 +28,7 @@ const SuspectAliasesPage = () => {
   }>() as {
     suspectId: string;
   };
-
+  const [showSkip, setShowSkip] = useState(false);
   const [alias, setAlias] = useState<{
     firstName: string;
     lastName: string;
@@ -82,12 +82,15 @@ const SuspectAliasesPage = () => {
         errorSummaryText: "Enter a last name",
         inputErrorText: "Enter a last name",
       };
+      setFormDataErrors(errors);
+      setShowSkip(true);
+      return false;
+    }
+    if (showSkip) {
+      setShowSkip(false);
     }
 
-    const isValid = !Object.entries(errors).filter(([, value]) => value).length;
-
-    setFormDataErrors(errors);
-    return isValid;
+    return true;
   };
 
   const setFormValue = (fieldName: "firstName" | "lastName", value: string) => {
@@ -136,6 +139,9 @@ const SuspectAliasesPage = () => {
           errorList={errorList}
           errorSummaryRef={errorSummaryRef}
           dataTestId={"suspect-aliases-error-summary"}
+          showSkip={showSkip}
+          nextRoute={`/case-registration/suspect-${suspectIndex}/suspect-asn`}
+          skipText="I do not have alias details"
         />
         <form onSubmit={handleSubmit}>
           <div className={pageStyles.headingWrapper}>
