@@ -53,6 +53,7 @@ const SuspectDOBPage = () => {
   );
 
   const [formDataErrors, setFormDataErrors] = useState<FormDataErrors>({});
+  const [showSkip, setShowSkip] = useState(false);
 
   const errorSummaryProperties = useCallback(() => {
     if (formDataErrors.suspectDOBDateError?.inputErrorFields.includes("day")) {
@@ -93,11 +94,15 @@ const SuspectDOBPage = () => {
     if (!suspectDOBDayText && !suspectDOBMonthText && !suspectDOBYearText) {
       setFormDataErrors({
         suspectDOBDateError: {
-          inputErrorFields: ["day", "month", "year"].filter(Boolean),
+          inputErrorFields: ["day", "month", "year"],
           errorSummaryText: "Enter the date of birth",
         },
       });
+      setShowSkip(true);
       return false;
+    }
+    if (showSkip) {
+      setShowSkip(false);
     }
 
     const result = validateDate(
@@ -194,6 +199,9 @@ const SuspectDOBPage = () => {
           errorList={errorList}
           errorSummaryRef={errorSummaryRef}
           dataTestId="suspect-dob-error-summary"
+          showSkip={showSkip}
+          nextRoute={nextRoute}
+          skipText="I do not have the date of birth"
         />
         <form onSubmit={handleSubmit}>
           <div className={styles.inputWrapper}>

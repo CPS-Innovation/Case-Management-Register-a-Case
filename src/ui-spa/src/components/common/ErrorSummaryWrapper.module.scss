@@ -5,3 +5,16 @@
     outline: 0.2rem solid #ffdd00;
   }
 }
+
+.errorSummarySkipLinkWrapper {
+  position: relative;
+  & :global(.govuk-error-summary__list) {
+    margin-bottom: 35px;
+  }
+
+  .suspectAdditionalDetailsSkip {
+    position: absolute;
+    bottom: 25px;
+    left: 25px;
+  }
+}
