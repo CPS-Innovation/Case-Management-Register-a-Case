@@ -14,6 +14,7 @@ type ErrorSummaryWrapperProps = {
   showSkip?: boolean;
   nextRoute?: string;
   skipText?: string;
+  onSkipCallBack?: () => void;
 };
 
 const ErrorSummaryWrapper = ({
@@ -23,6 +24,7 @@ const ErrorSummaryWrapper = ({
   showSkip,
   nextRoute,
   skipText,
+  onSkipCallBack,
 }: ErrorSummaryWrapperProps) => {
   return (
     <div className={showSkip ? `${styles.errorSummarySkipLinkWrapper}` : ""}>
@@ -44,6 +46,7 @@ const ErrorSummaryWrapper = ({
                 className="govuk-link govuk-link--no-visited-state"
                 to={nextRoute}
                 data-testid="suspect-detail-skip-link"
+                onClick={onSkipCallBack ?? onSkipCallBack}
               >
                 {skipText}
               </Link>

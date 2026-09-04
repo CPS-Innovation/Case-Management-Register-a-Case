@@ -184,6 +184,23 @@ const SuspectDOBPage = () => {
     return navigate(nextRoute);
   };
 
+  const onSkipCallBack = useCallback(() => {
+    //reset the date values if it present when user skips
+    if (state.formData.suspects[suspectIndex].suspectDOBDayText) {
+      dispatch({
+        type: "SET_SUSPECT_FIELDS",
+        payload: {
+          index: suspectIndex,
+          data: {
+            suspectDOBDayText: "",
+            suspectDOBMonthText: "",
+            suspectDOBYearText: "",
+          },
+        },
+      });
+    }
+  }, [state.formData.suspects, suspectIndex, dispatch]);
+
   const {
     formData: { suspects },
   } = state;
@@ -202,6 +219,7 @@ const SuspectDOBPage = () => {
           showSkip={showSkip}
           nextRoute={nextRoute}
           skipText="I do not have the date of birth"
+          onSkipCallBack={onSkipCallBack}
         />
         <form onSubmit={handleSubmit}>
           <div className={styles.inputWrapper}>
