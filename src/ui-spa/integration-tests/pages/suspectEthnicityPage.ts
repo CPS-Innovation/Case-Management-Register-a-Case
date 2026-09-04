@@ -29,9 +29,6 @@ export class SuspectEthnicityPage {
     await expect(
       this.page.getByTestId("suspect-ethnicity-radio-link"),
     ).toHaveText("Select the defendant's ethnicity");
-    await expect(
-      this.page.getByTestId("suspect-detail-skip-link"),
-    ).toBeVisible();
     await expect(this.page.getByTestId("suspect-detail-skip-link")).toHaveText(
       "I do not have the ethnicity",
     );

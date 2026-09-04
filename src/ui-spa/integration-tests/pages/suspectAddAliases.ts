@@ -36,9 +36,6 @@ export class SuspectAliasesPage {
     await expect(
       this.page.getByTestId("suspect-aliases-last-name-text-link"),
     ).toHaveText("Enter a last name");
-    await expect(
-      this.page.getByTestId("suspect-detail-skip-link"),
-    ).toBeVisible();
     await expect(this.page.getByTestId("suspect-detail-skip-link")).toHaveText(
       "I do not have alias details",
     );

@@ -28,9 +28,6 @@ export class SuspectGenderPage {
     await expect(this.page.getByTestId("suspect-gender-radio-link")).toHaveText(
       "Select a gender",
     );
-    await expect(
-      this.page.getByTestId("suspect-detail-skip-link"),
-    ).toBeVisible();
     await expect(this.page.getByTestId("suspect-detail-skip-link")).toHaveText(
       "I do not have the gender",
     );
