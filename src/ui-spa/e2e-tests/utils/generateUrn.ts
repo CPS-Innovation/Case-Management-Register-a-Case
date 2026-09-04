@@ -22,6 +22,6 @@ export const generateUniqueUrn = (
     policeUnit,
     uniqueReference,
     yearReference: year,
-    formatted: `${policeForce}${policeUnit}${uniqueReference}/${year}`,
+    formatted: `${policeForce}${policeUnit}${uniqueReference}${year}`,
   };
 };
