@@ -19,7 +19,7 @@ export class SuspectASNPage {
     await this.verifyCancelLink();
   }
 
-  async verifySkipAdditionalDetails() {
+  async verifySkipASNAdditionalDetails() {
     await expect(
       this.page.getByTestId("suspect-asn-error-summary"),
     ).toBeVisible();
@@ -31,7 +31,7 @@ export class SuspectASNPage {
     );
   }
 
-  async clickSkipAdditionalDetails() {
+  async clickSkipASNAdditionalDetails() {
     await this.page.getByTestId("suspect-detail-skip-link").click();
   }
 

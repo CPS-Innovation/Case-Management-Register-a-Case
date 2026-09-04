@@ -33,7 +33,7 @@ export class SuspectDOBPage {
     await this.verifyCancelLink();
   }
 
-  async verifySkipAdditionalDetails() {
+  async verifySkipDOBAdditionalDetails() {
     await expect(
       this.page.getByTestId("suspect-dob-error-summary"),
     ).toBeVisible();
@@ -45,7 +45,7 @@ export class SuspectDOBPage {
     );
   }
 
-  async clickSkipAdditionalDetails() {
+  async clickSkipDOBAdditionalDetails() {
     await this.page.getByTestId("suspect-detail-skip-link").click();
   }
 

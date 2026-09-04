@@ -29,7 +29,7 @@ export class SuspectAliasesPage {
     await this.verifyCancelLink();
   }
 
-  async verifySkipAdditionalDetails() {
+  async verifySkipAddAliasesAdditionalDetails() {
     await expect(
       this.page.getByTestId("suspect-aliases-error-summary"),
     ).toBeVisible();
@@ -41,7 +41,7 @@ export class SuspectAliasesPage {
     );
   }
 
-  async clickSkipAdditionalDetails() {
+  async clickSkipAddAliasesAdditionalDetails() {
     await this.page.getByTestId("suspect-detail-skip-link").click();
   }
 

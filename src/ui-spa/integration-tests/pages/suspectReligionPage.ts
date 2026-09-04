@@ -22,7 +22,7 @@ export class SuspectReligionPage {
     await this.verifyCancelLink();
   }
 
-  async verifySkipAdditionalDetails() {
+  async verifySkipReligionAdditionalDetails() {
     await expect(
       this.page.getByTestId("suspect-religion-error-summary"),
     ).toBeVisible();
@@ -34,7 +34,7 @@ export class SuspectReligionPage {
     );
   }
 
-  async clickSkipAdditionalDetails() {
+  async clickSkipReligionAdditionalDetails() {
     await this.page.getByTestId("suspect-detail-skip-link").click();
   }
 

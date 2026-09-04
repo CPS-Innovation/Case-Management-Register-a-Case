@@ -55,7 +55,7 @@ export class SuspectOffenderTypesPage {
     ).toBeVisible();
   }
 
-  async verifySkipAdditionalDetails() {
+  async verifySkipOffenderTypesAdditionalDetails() {
     await expect(
       this.page.getByTestId("suspect-offender-types-error-summary"),
     ).toBeVisible();
@@ -67,7 +67,7 @@ export class SuspectOffenderTypesPage {
     );
   }
 
-  async clickSkipAdditionalDetails() {
+  async clickSkipOffenderTypesSSSAdditionalDetails() {
     await this.page.getByTestId("suspect-detail-skip-link").click();
   }
 

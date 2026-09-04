@@ -22,7 +22,7 @@ export class SuspectEthnicityPage {
     await this.verifyCancelLink();
   }
 
-  async verifySkipAdditionalDetails() {
+  async verifySkipEthnicityAdditionalDetails() {
     await expect(
       this.page.getByTestId("suspect-ethnicity-error-summary"),
     ).toBeVisible();
@@ -34,7 +34,7 @@ export class SuspectEthnicityPage {
     );
   }
 
-  async clickSkipAdditionalDetails() {
+  async clickSkipEthnicityAdditionalDetails() {
     await this.page.getByTestId("suspect-detail-skip-link").click();
   }
 

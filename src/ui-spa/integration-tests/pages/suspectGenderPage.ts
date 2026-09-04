@@ -21,7 +21,7 @@ export class SuspectGenderPage {
     await this.verifyCancelLink();
   }
 
-  async verifySkipAdditionalDetails() {
+  async verifySkipGenderAdditionalDetails() {
     await expect(
       this.page.getByTestId("suspect-gender-error-summary"),
     ).toBeVisible();
@@ -33,7 +33,7 @@ export class SuspectGenderPage {
     );
   }
 
-  async clickSkipAdditionalDetails() {
+  async clickSkipGenderAdditionalDetails() {
     await this.page.getByTestId("suspect-detail-skip-link").click();
   }
 
