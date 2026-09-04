@@ -27,7 +27,9 @@ const ErrorSummaryWrapper = ({
   onSkipCallBack,
 }: ErrorSummaryWrapperProps) => {
   return (
-    <div className={showSkip ? `${styles.errorSummarySkipLinkWrapper}` : ""}>
+    <div
+      className={showSkip ? `${styles.errorSummarySkipLinkWrapper}` : undefined}
+    >
       {!!errorList.length && (
         <div
           ref={errorSummaryRef}
