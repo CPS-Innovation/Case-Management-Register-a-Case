@@ -20,6 +20,24 @@ export class SuspectDisabilityPage {
     await expect(this.page.locator("label").nth(1)).toHaveText("No");
     await this.verifyCancelLink();
   }
+  async verifySkipAdditionalDetails() {
+    await expect(
+      this.page.getByTestId("suspect-disability-error-summary"),
+    ).toBeVisible();
+    await expect(
+      this.page.getByTestId("suspect-disability-radio-link"),
+    ).toHaveText("Select whether the defendant has a disability");
+    await expect(
+      this.page.getByTestId("suspect-detail-skip-link"),
+    ).toBeVisible();
+    await expect(this.page.getByTestId("suspect-detail-skip-link")).toHaveText(
+      "I do not have disability information",
+    );
+  }
+
+  async clickSkipAdditionalDetails() {
+    await this.page.getByTestId("suspect-detail-skip-link").click();
+  }
 
   async errorValidations() {
     await this.saveAndContinue();

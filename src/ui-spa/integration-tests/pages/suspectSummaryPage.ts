@@ -107,6 +107,13 @@ export class SuspectSummaryPage {
       }),
     );
   }
+  async verifyNoSuspectSummaryDetails(suspectIndex: number) {
+    await expect(
+      this.page
+        .getByTestId(`suspect-details-${suspectIndex}`)
+        .locator("summary"),
+    ).not.toBeVisible();
+  }
 
   async verifyNoSuspects() {
     await expect(

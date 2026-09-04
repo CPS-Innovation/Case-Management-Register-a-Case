@@ -21,6 +21,25 @@ export class SuspectGenderPage {
     await this.verifyCancelLink();
   }
 
+  async verifySkipAdditionalDetails() {
+    await expect(
+      this.page.getByTestId("suspect-gender-error-summary"),
+    ).toBeVisible();
+    await expect(this.page.getByTestId("suspect-gender-radio-link")).toHaveText(
+      "Select a gender",
+    );
+    await expect(
+      this.page.getByTestId("suspect-detail-skip-link"),
+    ).toBeVisible();
+    await expect(this.page.getByTestId("suspect-detail-skip-link")).toHaveText(
+      "I do not have the gender",
+    );
+  }
+
+  async clickSkipAdditionalDetails() {
+    await this.page.getByTestId("suspect-detail-skip-link").click();
+  }
+
   async errorValidations() {
     await this.saveAndContinue();
     await expect(

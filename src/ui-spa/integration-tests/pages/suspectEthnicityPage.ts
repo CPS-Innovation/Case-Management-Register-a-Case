@@ -22,6 +22,25 @@ export class SuspectEthnicityPage {
     await this.verifyCancelLink();
   }
 
+  async verifySkipAdditionalDetails() {
+    await expect(
+      this.page.getByTestId("suspect-ethnicity-error-summary"),
+    ).toBeVisible();
+    await expect(
+      this.page.getByTestId("suspect-ethnicity-radio-link"),
+    ).toHaveText("Select the defendant's ethnicity");
+    await expect(
+      this.page.getByTestId("suspect-detail-skip-link"),
+    ).toBeVisible();
+    await expect(this.page.getByTestId("suspect-detail-skip-link")).toHaveText(
+      "I do not have the ethnicity",
+    );
+  }
+
+  async clickSkipAdditionalDetails() {
+    await this.page.getByTestId("suspect-detail-skip-link").click();
+  }
+
   async errorValidations() {
     await this.saveAndContinue();
     await expect(
