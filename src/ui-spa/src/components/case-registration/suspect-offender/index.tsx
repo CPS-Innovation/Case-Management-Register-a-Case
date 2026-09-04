@@ -111,6 +111,18 @@ const SuspectOffenderPage = () => {
       },
     } = formData;
 
+    if (!suspectOffenderTypesRadio.shortCode) {
+      errors.suspectOffenderTypesRadio = {
+        errorSummaryText: "Select the type of offender",
+        inputErrorText: "Select the type of offender",
+      };
+      setFormDataErrors(errors);
+      setShowSkip(true);
+      return false;
+    } else if (showSkip) {
+      setShowSkip(false);
+    }
+
     if (
       suspectOffenderTypesRadio?.arrestDate &&
       !isValidOnOrBeforeDate(suspectOffenderTypesRadio?.arrestDate)
@@ -119,22 +131,11 @@ const SuspectOffenderPage = () => {
         errorSummaryText: "Enter an arrest date that is today or in the past",
         inputErrorText: "Enter an arrest date that is today or in the past",
       };
+      setFormDataErrors(errors);
+      return false;
     }
 
-    if (!suspectOffenderTypesRadio.shortCode) {
-      errors.suspectOffenderTypesRadio = {
-        errorSummaryText: "Select the type of offender",
-        inputErrorText: "Select the type of offender",
-      };
-      setShowSkip(true);
-    } else if (showSkip) {
-      setShowSkip(false);
-    }
-
-    const isValid = !Object.entries(errors).filter(([, value]) => value).length;
-
-    setFormDataErrors(errors);
-    return isValid;
+    return true;
   };
 
   useEffect(() => {
