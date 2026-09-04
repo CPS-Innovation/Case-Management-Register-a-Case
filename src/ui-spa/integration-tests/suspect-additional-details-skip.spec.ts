@@ -107,64 +107,64 @@ test("Should successfully complete suspect journey with skip all additional deta
   );
   await suspectDOBPage.verifyPageElements();
   await suspectDOBPage.saveAndContinue();
-  await suspectDOBPage.verifySkipAdditionalDetails();
-  await suspectDOBPage.clickSkipAdditionalDetails();
+  await suspectDOBPage.verifySkipDOBAdditionalDetails();
+  await suspectDOBPage.clickSkipDOBAdditionalDetails();
 
   const suspectGenderPage = new SuspectGenderPage(page);
   await suspectGenderPage.verifyUrl(
     "http://localhost:5173/case-registration/suspect-0/suspect-gender",
   );
   await suspectGenderPage.saveAndContinue();
-  await suspectGenderPage.verifySkipAdditionalDetails();
-  await suspectGenderPage.clickSkipAdditionalDetails();
+  await suspectGenderPage.verifySkipGenderAdditionalDetails();
+  await suspectGenderPage.clickSkipGenderAdditionalDetails();
 
   const suspectDisabilityPage = new SuspectDisabilityPage(page);
   await suspectDisabilityPage.verifyUrl(
     "http://localhost:5173/case-registration/suspect-0/suspect-disability",
   );
   await suspectDisabilityPage.saveAndContinue();
-  await suspectDisabilityPage.verifySkipAdditionalDetails();
-  await suspectDisabilityPage.clickSkipAdditionalDetails();
+  await suspectDisabilityPage.verifySkipDisabilityAdditionalDetails();
+  await suspectDisabilityPage.clickSkipDisabilityAdditionalDetails();
 
   const suspectReligionPage = new SuspectReligionPage(page);
   await suspectReligionPage.verifyUrl(
     "http://localhost:5173/case-registration/suspect-0/suspect-religion",
   );
   await suspectReligionPage.saveAndContinue();
-  await suspectReligionPage.verifySkipAdditionalDetails();
-  await suspectReligionPage.clickSkipAdditionalDetails();
+  await suspectReligionPage.verifySkipReligionAdditionalDetails();
+  await suspectReligionPage.clickSkipReligionAdditionalDetails();
 
   const suspectEthnicityPage = new SuspectEthnicityPage(page);
   await suspectEthnicityPage.verifyUrl(
     "http://localhost:5173/case-registration/suspect-0/suspect-ethnicity",
   );
   await suspectEthnicityPage.saveAndContinue();
-  await suspectEthnicityPage.verifySkipAdditionalDetails();
-  await suspectEthnicityPage.clickSkipAdditionalDetails();
+  await suspectEthnicityPage.verifySkipEthnicityAdditionalDetails();
+  await suspectEthnicityPage.clickSkipEthnicityAdditionalDetails();
 
   const suspectAliasesPage = new SuspectAliasesPage(page);
   await suspectAliasesPage.verifyUrl(
     "http://localhost:5173/case-registration/suspect-0/suspect-add-aliases",
   );
   await suspectAliasesPage.saveAndContinue();
-  await suspectAliasesPage.verifySkipAdditionalDetails();
-  await suspectAliasesPage.clickSkipAdditionalDetails();
+  await suspectAliasesPage.verifySkipAddAliasesAdditionalDetails();
+  await suspectAliasesPage.clickSkipAddAliasesAdditionalDetails();
 
   const suspectASNPage = new SuspectASNPage(page);
   await suspectASNPage.verifyUrl(
     "http://localhost:5173/case-registration/suspect-0/suspect-asn",
   );
   await suspectASNPage.saveAndContinue();
-  await suspectASNPage.verifySkipAdditionalDetails();
-  await suspectASNPage.clickSkipAdditionalDetails();
+  await suspectASNPage.verifySkipASNAdditionalDetails();
+  await suspectASNPage.clickSkipASNAdditionalDetails();
 
   const suspectOffenderTypesPage = new SuspectOffenderTypesPage(page);
   await suspectOffenderTypesPage.verifyUrl(
     "http://localhost:5173/case-registration/suspect-0/suspect-offender",
   );
   await suspectOffenderTypesPage.saveAndContinue();
-  await suspectOffenderTypesPage.verifySkipAdditionalDetails();
-  await suspectOffenderTypesPage.clickSkipAdditionalDetails();
+  await suspectOffenderTypesPage.verifySkipOffenderTypesAdditionalDetails();
+  await suspectOffenderTypesPage.clickSkipOffenderTypesAdditionalDetails();
 
   const suspectSummaryPage = new SuspectSummaryPage(page);
   await suspectSummaryPage.verifyUrl();
@@ -235,7 +235,8 @@ test("Should successfully complete suspect journey with skip all additional deta
   await suspectDOBPage.addDOBMonth("");
   await suspectDOBPage.addDOBYear("");
   await suspectDOBPage.saveAndContinue();
-  await suspectDOBPage.clickSkipAdditionalDetails();
+  await suspectDOBPage.verifySkipDOBAdditionalDetails();
+  await suspectDOBPage.clickSkipDOBAdditionalDetails();
   await suspectGenderPage.verifyBackLink(
     "/case-registration/suspect-1/suspect-dob",
   );
@@ -314,8 +315,8 @@ test("Should successfully complete suspect journey with skip all additional deta
   );
   await suspectASNPage.addASNText("");
   await suspectASNPage.saveAndContinue();
-  await suspectASNPage.verifySkipAdditionalDetails();
-  await suspectASNPage.clickSkipAdditionalDetails();
+  await suspectASNPage.verifySkipASNAdditionalDetails();
+  await suspectASNPage.clickSkipASNAdditionalDetails();
 
   await suspectOffenderTypesPage.verifyUrl(
     "http://localhost:5173/case-registration/suspect-1/suspect-offender",

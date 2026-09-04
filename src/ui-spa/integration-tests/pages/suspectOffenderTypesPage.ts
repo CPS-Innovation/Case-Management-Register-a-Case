@@ -67,7 +67,7 @@ export class SuspectOffenderTypesPage {
     );
   }
 
-  async clickSkipOffenderTypesSSSAdditionalDetails() {
+  async clickSkipOffenderTypesAdditionalDetails() {
     await this.page.getByTestId("suspect-detail-skip-link").click();
   }
 
