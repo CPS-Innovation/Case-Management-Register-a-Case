@@ -46,7 +46,7 @@ const ErrorSummaryWrapper = ({
                 className="govuk-link govuk-link--no-visited-state"
                 to={nextRoute}
                 data-testid="suspect-detail-skip-link"
-                onClick={onSkipCallBack ?? onSkipCallBack}
+                onClick={onSkipCallBack}
               >
                 {skipText}
               </Link>
