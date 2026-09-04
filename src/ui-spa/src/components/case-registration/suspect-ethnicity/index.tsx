@@ -26,7 +26,7 @@ const SuspectEthnicityPage = () => {
   const { suspectId } = useParams<{ suspectId: string }>() as {
     suspectId: string;
   };
-
+  const [showSkip, setShowSkip] = useState(false);
   const suspectIndex = useMemo(() => {
     const index = suspectId.replace("suspect-", "");
     return Number.parseInt(index, 10);
@@ -94,12 +94,15 @@ const SuspectEthnicityPage = () => {
         errorSummaryText: "Select the defendant's ethnicity",
         inputErrorText: "Select the defendant's ethnicity",
       };
+      setEthnicityFormDataErrors(errors);
+      setShowSkip(true);
+      return false;
+    }
+    if (showSkip) {
+      setShowSkip(false);
     }
 
-    const isValid = !Object.entries(errors).filter(([, value]) => value).length;
-
-    setEthnicityFormDataErrors(errors);
-    return isValid;
+    return true;
   };
 
   useEffect(() => {
@@ -167,6 +170,9 @@ const SuspectEthnicityPage = () => {
           errorList={errorList}
           errorSummaryRef={errorSummaryRef}
           dataTestId="suspect-ethnicity-error-summary"
+          showSkip={showSkip}
+          nextRoute={nextRoute}
+          skipText="I do not have the ethnicity"
         />
         <form onSubmit={handleSubmit}>
           <div className={styles.inputWrapper}>

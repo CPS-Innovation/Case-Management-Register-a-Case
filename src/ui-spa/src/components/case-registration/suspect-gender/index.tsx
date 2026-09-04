@@ -31,6 +31,7 @@ const SuspectGenderPage = () => {
     const index = suspectId.replace("suspect-", "");
     return Number.parseInt(index, 10);
   }, [suspectId]);
+  const [showSkip, setShowSkip] = useState(false);
 
   const [genderData, setGenderData] = useState<{
     suspectGenderRadio: { shortCode: string; description: string };
@@ -93,12 +94,15 @@ const SuspectGenderPage = () => {
         errorSummaryText: "Select a gender",
         inputErrorText: "Select a gender",
       };
+      setGenderFormDataErrors(errors);
+      setShowSkip(true);
+      return false;
+    }
+    if (showSkip) {
+      setShowSkip(false);
     }
 
-    const isValid = !Object.entries(errors).filter(([, value]) => value).length;
-
-    setGenderFormDataErrors(errors);
-    return isValid;
+    return true;
   };
 
   useEffect(() => {
@@ -171,6 +175,9 @@ const SuspectGenderPage = () => {
           errorList={errorList}
           errorSummaryRef={errorSummaryRef}
           dataTestId="suspect-gender-error-summary"
+          showSkip={showSkip}
+          nextRoute={nextRoute}
+          skipText="I do not have the gender"
         />
         <form onSubmit={handleSubmit}>
           <div className={styles.inputWrapper}>

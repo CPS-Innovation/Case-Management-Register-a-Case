@@ -24,7 +24,7 @@ const SuspectASNPage = () => {
   const { suspectId } = useParams<{ suspectId: string }>() as {
     suspectId: string;
   };
-
+  const [showSkip, setShowSkip] = useState(false);
   const suspectIndex = useMemo(() => {
     const index = suspectId.replace("suspect-", "");
     return Number.parseInt(index, 10);
@@ -71,12 +71,15 @@ const SuspectASNPage = () => {
         errorSummaryText: "Enter the Arrest Summons Number (ASN)",
         inputErrorText: "Enter the Arrest Summons Number (ASN)",
       };
+      setAsnFormDataErrors(errors);
+      setShowSkip(true);
+      return false;
+    }
+    if (showSkip) {
+      setShowSkip(false);
     }
 
-    const isValid = !Object.entries(errors).filter(([, value]) => value).length;
-
-    setAsnFormDataErrors(errors);
-    return isValid;
+    return true;
   };
 
   const setFormValue = (value: string) => {
@@ -101,6 +104,21 @@ const SuspectASNPage = () => {
     return navigate(nextRoute);
   };
 
+  const onSkipCallBack = useCallback(() => {
+    //reset the asn values if it present when user skips
+    if (state.formData.suspects[suspectIndex].suspectASNText) {
+      dispatch({
+        type: "SET_SUSPECT_FIELDS",
+        payload: {
+          index: suspectIndex,
+          data: {
+            suspectASNText: "",
+          },
+        },
+      });
+    }
+  }, [state.formData.suspects, suspectIndex, dispatch]);
+
   return (
     <div>
       <BackLink to={previousRoute}>Back</BackLink>
@@ -109,6 +127,10 @@ const SuspectASNPage = () => {
           errorList={errorList}
           errorSummaryRef={errorSummaryRef}
           dataTestId="suspect-asn-error-summary"
+          showSkip={showSkip}
+          nextRoute={nextRoute}
+          skipText="I do not have the Arrest Summons Number"
+          onSkipCallBack={onSkipCallBack}
         />
         <form onSubmit={handleSubmit}>
           <div className={styles.inputWrapper}>

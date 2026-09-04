@@ -22,7 +22,7 @@ const SaveAndCancel = ({
       {!disabled && (
         <Link
           to={"/case-registration/cancel-case-registration-confirmation"}
-          className="govuk-link--no-visited-state"
+          className="govuk-link govuk-link--no-visited-state"
           state={{ backRoute: location.pathname }}
         >
           Cancel

@@ -30,7 +30,7 @@ const SuspectOffenderPage = () => {
   const { suspectId } = useParams<{ suspectId: string }>() as {
     suspectId: string;
   };
-
+  const [showSkip, setShowSkip] = useState(false);
   const suspectIndex = useMemo(() => {
     const index = suspectId.replace("suspect-", "");
     return Number.parseInt(index, 10);
@@ -111,6 +111,18 @@ const SuspectOffenderPage = () => {
       },
     } = formData;
 
+    if (!suspectOffenderTypesRadio.shortCode) {
+      errors.suspectOffenderTypesRadio = {
+        errorSummaryText: "Select the type of offender",
+        inputErrorText: "Select the type of offender",
+      };
+      setFormDataErrors(errors);
+      setShowSkip(true);
+      return false;
+    } else if (showSkip) {
+      setShowSkip(false);
+    }
+
     if (
       suspectOffenderTypesRadio?.arrestDate &&
       !isValidOnOrBeforeDate(suspectOffenderTypesRadio?.arrestDate)
@@ -119,19 +131,11 @@ const SuspectOffenderPage = () => {
         errorSummaryText: "Enter an arrest date that is today or in the past",
         inputErrorText: "Enter an arrest date that is today or in the past",
       };
+      setFormDataErrors(errors);
+      return false;
     }
 
-    if (!suspectOffenderTypesRadio.shortCode) {
-      errors.suspectOffenderTypesRadio = {
-        errorSummaryText: "Select the type of offender",
-        inputErrorText: "Select the type of offender",
-      };
-    }
-
-    const isValid = !Object.entries(errors).filter(([, value]) => value).length;
-
-    setFormDataErrors(errors);
-    return isValid;
+    return true;
   };
 
   useEffect(() => {
@@ -255,6 +259,9 @@ const SuspectOffenderPage = () => {
           errorList={errorList}
           errorSummaryRef={errorSummaryRef}
           dataTestId="suspect-offender-types-error-summary"
+          showSkip={showSkip}
+          nextRoute={nextRoute}
+          skipText="I do not have the type of offender"
         />
         <form onSubmit={handleSubmit}>
           <div className={styles.inputWrapper}>

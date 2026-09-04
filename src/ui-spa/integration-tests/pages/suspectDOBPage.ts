@@ -33,6 +33,22 @@ export class SuspectDOBPage {
     await this.verifyCancelLink();
   }
 
+  async verifySkipDOBAdditionalDetails() {
+    await expect(
+      this.page.getByTestId("suspect-dob-error-summary"),
+    ).toBeVisible();
+    await expect(this.page.getByTestId("suspect-DOB-day-text-link")).toHaveText(
+      "Enter the date of birth",
+    );
+    await expect(this.page.getByTestId("suspect-detail-skip-link")).toHaveText(
+      "I do not have the date of birth",
+    );
+  }
+
+  async clickSkipDOBAdditionalDetails() {
+    await this.page.getByTestId("suspect-detail-skip-link").click();
+  }
+
   async errorValidations() {
     await this.saveAndContinue();
     await expect(

@@ -19,6 +19,22 @@ export class SuspectASNPage {
     await this.verifyCancelLink();
   }
 
+  async verifySkipASNAdditionalDetails() {
+    await expect(
+      this.page.getByTestId("suspect-asn-error-summary"),
+    ).toBeVisible();
+    await expect(this.page.getByTestId("suspect-asn-text-link")).toHaveText(
+      "Enter the Arrest Summons Number (ASN)",
+    );
+    await expect(this.page.getByTestId("suspect-detail-skip-link")).toHaveText(
+      "I do not have the Arrest Summons Number",
+    );
+  }
+
+  async clickSkipASNAdditionalDetails() {
+    await this.page.getByTestId("suspect-detail-skip-link").click();
+  }
+
   async errorValidations() {
     await this.saveAndContinue();
     await expect(

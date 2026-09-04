@@ -22,6 +22,22 @@ export class SuspectReligionPage {
     await this.verifyCancelLink();
   }
 
+  async verifySkipReligionAdditionalDetails() {
+    await expect(
+      this.page.getByTestId("suspect-religion-error-summary"),
+    ).toBeVisible();
+    await expect(
+      this.page.getByTestId("suspect-religion-radio-link"),
+    ).toHaveText("Select the defendant's religion");
+    await expect(this.page.getByTestId("suspect-detail-skip-link")).toHaveText(
+      "I do not have the religion",
+    );
+  }
+
+  async clickSkipReligionAdditionalDetails() {
+    await this.page.getByTestId("suspect-detail-skip-link").click();
+  }
+
   async errorValidations() {
     await this.saveAndContinue();
     await expect(

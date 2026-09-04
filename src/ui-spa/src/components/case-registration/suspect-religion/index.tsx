@@ -26,6 +26,7 @@ const SuspectReligionPage = () => {
   const { suspectId } = useParams<{ suspectId: string }>() as {
     suspectId: string;
   };
+  const [showSkip, setShowSkip] = useState(false);
 
   const suspectIndex = useMemo(() => {
     const index = suspectId.replace("suspect-", "");
@@ -94,12 +95,15 @@ const SuspectReligionPage = () => {
         errorSummaryText: "Select the defendant's religion",
         inputErrorText: "Select the defendant's religion",
       };
+      setReligionFormDataErrors(errors);
+      setShowSkip(true);
+      return false;
+    }
+    if (showSkip) {
+      setShowSkip(false);
     }
 
-    const isValid = !Object.entries(errors).filter(([, value]) => value).length;
-
-    setReligionFormDataErrors(errors);
-    return isValid;
+    return true;
   };
 
   useEffect(() => {
@@ -166,6 +170,9 @@ const SuspectReligionPage = () => {
           errorList={errorList}
           errorSummaryRef={errorSummaryRef}
           dataTestId={"suspect-religion-error-summary"}
+          showSkip={showSkip}
+          nextRoute={nextRoute}
+          skipText="I do not have the religion"
         />
         <form onSubmit={handleSubmitReligion}>
           <div className={styles.inputWrapper}>

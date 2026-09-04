@@ -29,6 +29,22 @@ export class SuspectAliasesPage {
     await this.verifyCancelLink();
   }
 
+  async verifySkipAddAliasesAdditionalDetails() {
+    await expect(
+      this.page.getByTestId("suspect-aliases-error-summary"),
+    ).toBeVisible();
+    await expect(
+      this.page.getByTestId("suspect-aliases-last-name-text-link"),
+    ).toHaveText("Enter a last name");
+    await expect(this.page.getByTestId("suspect-detail-skip-link")).toHaveText(
+      "I do not have alias details",
+    );
+  }
+
+  async clickSkipAddAliasesAdditionalDetails() {
+    await this.page.getByTestId("suspect-detail-skip-link").click();
+  }
+
   async errorValidations() {
     await this.saveAndContinue();
     await expect(
