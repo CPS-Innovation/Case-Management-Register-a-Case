@@ -11,13 +11,23 @@ export const isYouthSuspect = (suspect: SuspectFormData): boolean => {
     return true;
   }
 
-  const suspectDateOfBirth = `${suspect.suspectDOBDayText}/${suspect.suspectDOBMonthText}/${suspect.suspectDOBYearText}`;
-
-  return isUnder18(suspectDateOfBirth);
+  return isUnder18({
+    suspectDOBDayText: suspect.suspectDOBDayText,
+    suspectDOBMonthText: suspect.suspectDOBMonthText,
+    suspectDOBYearText: suspect.suspectDOBYearText,
+  });
 };
 
-export const isUnder18 = (dob: string): boolean => {
-  const age = getCurrentAge(dob);
+export const isUnder18 = (dobData: {
+  suspectDOBDayText: string;
+  suspectDOBMonthText: string;
+  suspectDOBYearText: string;
+}): boolean => {
+  const day = dobData.suspectDOBDayText.padStart(2, "0");
+  const month = dobData.suspectDOBMonthText.padStart(2, "0");
+  const year = dobData.suspectDOBYearText;
+  const suspectDateOfBirth = `${year}-${month}-${day}`;
+  const age = getCurrentAge(suspectDateOfBirth);
   if (!age) {
     return false;
   }

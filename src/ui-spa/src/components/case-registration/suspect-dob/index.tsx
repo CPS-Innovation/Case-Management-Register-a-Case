@@ -173,29 +173,26 @@ const SuspectDOBPage = () => {
 
     if (!validateFormData()) return;
     setDisableBtns(true);
-    const birthDate = `${formData.suspectDOBDayText}/${formData.suspectDOBMonthText}/${formData.suspectDOBYearText}`;
-    const underAgeSuspect = isUnder18(birthDate);
 
+    const underAgeSuspect = isUnder18(formData);
     if (underAgeSuspect) {
-      if (
-        !state.formData.suspects[
-          suspectIndex
-        ].suspectAdditionalDetailsCheckboxes.includes("Type of offender")
-      )
-        dispatch({
-          type: "SET_SUSPECT_FIELDS",
-          payload: {
-            index: suspectIndex,
-            data: {
-              ...formData,
-              suspectAdditionalDetailsCheckboxes: [
-                ...state.formData.suspects[suspectIndex]
-                  .suspectAdditionalDetailsCheckboxes,
-                "Type of offender",
-              ],
-            },
+      const currentCheckboxes =
+        state.formData.suspects[suspectIndex]
+          .suspectAdditionalDetailsCheckboxes;
+      const updatedCheckboxes = currentCheckboxes.includes("Type of offender")
+        ? currentCheckboxes
+        : [...currentCheckboxes, "Type of offender" as const];
+
+      dispatch({
+        type: "SET_SUSPECT_FIELDS",
+        payload: {
+          index: suspectIndex,
+          data: {
+            ...formData,
+            suspectAdditionalDetailsCheckboxes: updatedCheckboxes,
           },
-        });
+        },
+      });
       navigate(`/case-registration/suspect-${suspectIndex}/suspect-offender`);
       return;
     }

@@ -66,8 +66,11 @@ const SuspectOffenderPage = () => {
   });
 
   const isUnderAge = useMemo(() => {
-    const birthDate = `${suspectData.suspectDOBDayText}/${suspectData.suspectDOBMonthText}/${suspectData.suspectDOBYearText}`;
-    return isUnder18(birthDate);
+    return isUnder18({
+      suspectDOBDayText: suspectData.suspectDOBDayText,
+      suspectDOBMonthText: suspectData.suspectDOBMonthText,
+      suspectDOBYearText: suspectData.suspectDOBYearText,
+    });
   }, [suspectData]);
 
   useEffect(() => {
