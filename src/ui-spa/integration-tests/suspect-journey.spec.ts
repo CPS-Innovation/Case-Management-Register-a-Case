@@ -90,13 +90,13 @@ test("Should successfully complete suspect journey", async ({ page }) => {
   await addSuspectPage.selectAdditionalDetailsOffenderType(true);
   await addSuspectPage.verifySelectedAdditionalDetails([
     "Date of birth",
+    "Type of offender",
     "Gender",
     "Disability",
     "Religion",
     "Ethnicity",
     "Alias details",
     "Arrest Summons Number (ASN)",
-    "Type of offender",
   ]);
   await addSuspectPage.saveAndContinue();
 
@@ -122,18 +122,45 @@ test("Should successfully complete suspect journey", async ({ page }) => {
   await suspectDOBPage.addDOBYear("2007");
   await suspectDOBPage.saveAndContinue();
 
+  const suspectOffenderTypesPage = new SuspectOffenderTypesPage(page);
+  await suspectOffenderTypesPage.verifyUrl(
+    "http://localhost:5173/case-registration/suspect-0/suspect-offender",
+  );
+  await suspectOffenderTypesPage.verifyBackLink(
+    "/case-registration/suspect-0/suspect-dob",
+  );
+  await suspectOffenderTypesPage.backLinkClick();
+  await suspectDOBPage.verifyUrl(
+    "http://localhost:5173/case-registration/suspect-0/suspect-dob",
+  );
+  await suspectDOBPage.saveAndContinue();
+  await suspectOffenderTypesPage.verifyUrl(
+    "http://localhost:5173/case-registration/suspect-0/suspect-offender",
+  );
+  await suspectOffenderTypesPage.saveAndContinue();
+  await suspectOffenderTypesPage.verifyUrl(
+    "http://localhost:5173/case-registration/suspect-0/suspect-offender",
+  );
+  await suspectOffenderTypesPage.verifyBasePageElements();
+  await suspectOffenderTypesPage.errorValidations();
+  await suspectOffenderTypesPage.verifyPYOElements();
+  await suspectOffenderTypesPage.verifyYOElements();
+  await suspectOffenderTypesPage.selectOffenderTypePYO();
+  await suspectOffenderTypesPage.addArrestDate("2024-01-01");
+  await suspectOffenderTypesPage.saveAndContinue();
+
   const suspectGenderPage = new SuspectGenderPage(page);
   await suspectGenderPage.verifyUrl(
     "http://localhost:5173/case-registration/suspect-0/suspect-gender",
   );
   await suspectGenderPage.verifyBackLink(
-    "/case-registration/suspect-0/suspect-dob",
+    "/case-registration/suspect-0/suspect-offender",
   );
   await suspectGenderPage.backLinkClick();
-  await suspectDOBPage.verifyUrl(
-    "http://localhost:5173/case-registration/suspect-0/suspect-dob",
+  await suspectOffenderTypesPage.verifyUrl(
+    "http://localhost:5173/case-registration/suspect-0/suspect-offender",
   );
-  await suspectDOBPage.saveAndContinue();
+  await suspectOffenderTypesPage.saveAndContinue();
   await suspectGenderPage.verifyUrl(
     "http://localhost:5173/case-registration/suspect-0/suspect-gender",
   );
@@ -265,29 +292,6 @@ test("Should successfully complete suspect journey", async ({ page }) => {
   await suspectASNPage.addASNText("123456");
   await suspectASNPage.saveAndContinue();
 
-  const suspectOffenderTypesPage = new SuspectOffenderTypesPage(page);
-  await suspectOffenderTypesPage.verifyUrl(
-    "http://localhost:5173/case-registration/suspect-0/suspect-offender",
-  );
-  await suspectOffenderTypesPage.verifyBackLink(
-    "/case-registration/suspect-0/suspect-asn",
-  );
-  await suspectOffenderTypesPage.backLinkClick();
-  await suspectASNPage.verifyUrl(
-    "http://localhost:5173/case-registration/suspect-0/suspect-asn",
-  );
-  await suspectASNPage.saveAndContinue();
-  await suspectOffenderTypesPage.verifyUrl(
-    "http://localhost:5173/case-registration/suspect-0/suspect-offender",
-  );
-  await suspectOffenderTypesPage.verifyBasePageElements();
-  await suspectOffenderTypesPage.errorValidations();
-  await suspectOffenderTypesPage.verifyPYOElements();
-  await suspectOffenderTypesPage.verifyYOElements();
-  await suspectOffenderTypesPage.selectOffenderTypePYO();
-  await suspectOffenderTypesPage.addArrestDate("2024-01-01");
-  await suspectOffenderTypesPage.saveAndContinue();
-
   const suspectSummaryPage = new SuspectSummaryPage(page);
   await suspectSummaryPage.verifyUrl();
   await suspectSummaryPage.verifyBackLink("/case-registration/case-details");
@@ -300,14 +304,14 @@ test("Should successfully complete suspect journey", async ({ page }) => {
   await suspectSummaryPage.verifySuspectSummaryRows(["POTTER, Harry"]);
   await suspectSummaryPage.verifySuspectSummaryDetails(0, [
     { key: "Date of birth", value: "27/03/2007" },
+    { key: "Type of offender", value: "Prolific youth offender (PYO)" },
+    { key: "Arrest date", value: "01 January 2024" },
     { key: "Gender", value: "Male" },
     { key: "Disability", value: "yes" },
     { key: "Religion", value: "Christianity" },
     { key: "Ethnicity", value: "Black" },
     { key: "Alias", value: "POTTER, Harry" },
     { key: "Arrest Summons Number", value: "123456" },
-    { key: "Type of offender", value: "Prolific youth offender (PYO)" },
-    { key: "Arrest date", value: "01 January 2024" },
   ]);
   await suspectSummaryPage.selectAddMoreSuspectYes();
   await suspectSummaryPage.saveAndContinue();
@@ -332,13 +336,13 @@ test("Should successfully complete suspect journey", async ({ page }) => {
   await addSuspectPage.selectAdditionalDetailsOffenderType(true);
   await addSuspectPage.verifySelectedAdditionalDetails([
     "Date of birth",
+    "Type of offender",
     "Gender",
     "Disability",
     "Religion",
     "Ethnicity",
     "Alias details",
     "Arrest Summons Number (ASN)",
-    "Type of offender",
   ]);
   await addSuspectPage.saveAndContinue();
 
@@ -353,11 +357,20 @@ test("Should successfully complete suspect journey", async ({ page }) => {
   await suspectDOBPage.addDOBYear("2007");
   await suspectDOBPage.saveAndContinue();
 
+  await suspectOffenderTypesPage.verifyUrl(
+    "http://localhost:5173/case-registration/suspect-1/suspect-offender",
+  );
+  await suspectOffenderTypesPage.verifyBackLink(
+    "/case-registration/suspect-1/suspect-dob",
+  );
+  await suspectOffenderTypesPage.selectOffenderTypePPO();
+  await suspectOffenderTypesPage.saveAndContinue();
+
   await suspectGenderPage.verifyUrl(
     "http://localhost:5173/case-registration/suspect-1/suspect-gender",
   );
   await suspectGenderPage.verifyBackLink(
-    "/case-registration/suspect-1/suspect-dob",
+    "/case-registration/suspect-1/suspect-offender",
   );
   await suspectGenderPage.selectGenderFemale();
   await suspectGenderPage.saveAndContinue();
@@ -418,15 +431,6 @@ test("Should successfully complete suspect journey", async ({ page }) => {
   await suspectASNPage.addASNText("1234");
   await suspectASNPage.saveAndContinue();
 
-  await suspectOffenderTypesPage.verifyUrl(
-    "http://localhost:5173/case-registration/suspect-1/suspect-offender",
-  );
-  await suspectOffenderTypesPage.verifyBackLink(
-    "/case-registration/suspect-1/suspect-asn",
-  );
-  await suspectOffenderTypesPage.selectOffenderTypePPO();
-  await suspectOffenderTypesPage.saveAndContinue();
-
   await suspectSummaryPage.verifyUrl();
   await suspectSummaryPage.verifyBackLink("/case-registration/case-details");
   await suspectSummaryPage.verifyPageElements("You have added 2 suspects");
@@ -437,13 +441,13 @@ test("Should successfully complete suspect journey", async ({ page }) => {
   ]);
   await suspectSummaryPage.verifySuspectSummaryDetails(1, [
     { key: "Date of birth", value: "15/06/2007" },
+    { key: "Type of offender", value: "Prolific priority offender (PPO)" },
     { key: "Gender", value: "Female" },
     { key: "Disability", value: "no" },
     { key: "Religion", value: "Christianity" },
     { key: "Ethnicity", value: "White" },
     { key: "Alias", value: "MARK, Stev" },
     { key: "Arrest Summons Number", value: "1234" },
-    { key: "Type of offender", value: "Prolific priority offender (PPO)" },
   ]);
   await suspectSummaryPage.changeSuspect(1);
   await addSuspectPage.verifyUrl(
@@ -452,13 +456,13 @@ test("Should successfully complete suspect journey", async ({ page }) => {
   await addSuspectPage.verifyPersonSuspectSelected("steve", "smith");
   await addSuspectPage.verifySelectedAdditionalDetails([
     "Date of birth",
+    "Type of offender",
     "Gender",
     "Disability",
     "Religion",
     "Ethnicity",
     "Alias details",
     "Arrest Summons Number (ASN)",
-    "Type of offender",
   ]);
   await addSuspectPage.selectAdditionalDetailsDisability(false);
   await addSuspectPage.selectAdditionalDetailsReligion(false);
@@ -591,14 +595,14 @@ test("Should successfully complete suspect journey", async ({ page }) => {
   await caseRegistrationSummaryPage.verifySuspectSummaryRows(["POTTER, Harry"]);
   await caseRegistrationSummaryPage.verifySuspectSummaryDetails(0, [
     { key: "Date of birth", value: "27/03/2007" },
+    { key: "Type of offender", value: "Prolific youth offender (PYO)" },
+    { key: "Arrest date", value: "01 January 2024" },
     { key: "Gender", value: "Male" },
     { key: "Disability", value: "yes" },
     { key: "Religion", value: "Christianity" },
     { key: "Ethnicity", value: "Black" },
     { key: "Alias", value: "POTTER, Harry" },
     { key: "Arrest Summons Number", value: "123456" },
-    { key: "Type of offender", value: "Prolific youth offender (PYO)" },
-    { key: "Arrest date", value: "01 January 2024" },
   ]);
   await caseRegistrationSummaryPage.verifyComplexityAndMonitoringCodesElements({
     complexity: "Basic",

@@ -8,6 +8,7 @@ import { dobValidationConstants } from "../../../common/constants/dobValidationC
 import useErrorSummaryList from "../../../common/hooks/useErrorSummaryList";
 import useGetSuspectRoute from "../../../common/hooks/useGetSuspectRoute";
 import ErrorSummaryWrapper from "../../common/ErrorSummaryWrapper";
+import { isUnder18 } from "../../../common/utils/isYouthSuspect";
 import { useNavigate, useParams } from "react-router";
 import PageContentWrapper from "../../common/PageContentWrapper";
 import styles from "../index.module.scss";
@@ -172,6 +173,32 @@ const SuspectDOBPage = () => {
 
     if (!validateFormData()) return;
     setDisableBtns(true);
+    const birthDate = `${formData.suspectDOBDayText}/${formData.suspectDOBMonthText}/${formData.suspectDOBYearText}`;
+    const underAgeSuspect = isUnder18(birthDate);
+
+    if (underAgeSuspect) {
+      if (
+        !state.formData.suspects[
+          suspectIndex
+        ].suspectAdditionalDetailsCheckboxes.includes("Type of offender")
+      )
+        dispatch({
+          type: "SET_SUSPECT_FIELDS",
+          payload: {
+            index: suspectIndex,
+            data: {
+              ...formData,
+              suspectAdditionalDetailsCheckboxes: [
+                ...state.formData.suspects[suspectIndex]
+                  .suspectAdditionalDetailsCheckboxes,
+                "Type of offender",
+              ],
+            },
+          },
+        });
+      navigate(`/case-registration/suspect-${suspectIndex}/suspect-offender`);
+      return;
+    }
 
     dispatch({
       type: "SET_SUSPECT_FIELDS",

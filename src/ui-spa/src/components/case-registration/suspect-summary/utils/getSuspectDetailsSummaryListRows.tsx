@@ -73,6 +73,7 @@ export const getSuspectDetailsSummaryListRows = (
         ),
       },
     },
+    ...getOffenderTypeList(suspect.suspectOffenderTypesRadio),
     suspect.suspectGenderRadio.description && {
       key: { children: <span>Gender</span> },
       value: {
@@ -109,7 +110,6 @@ export const getSuspectDetailsSummaryListRows = (
         children: <span>{suspect.suspectASNText}</span>,
       },
     },
-    ...getOffenderTypeList(suspect.suspectOffenderTypesRadio),
   ]);
   return suspectSummaryList.map((rows) => rows.filter((row) => !!row));
 };

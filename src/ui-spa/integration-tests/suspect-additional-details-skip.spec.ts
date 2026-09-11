@@ -18,7 +18,7 @@ import { CaseMonitoringPage } from "./pages/caseMonitoringPage";
 import { CaseAssigneePage } from "./pages/caseAssigneePage";
 import { CaseRegistrationSummaryPage } from "./pages/caseRegistrationSummaryPage";
 
-test("Should successfully complete suspect journey with skip all additional details and some of additional details", async ({
+test("Should successfully complete suspect journey with skip all additional details and some of additional details1", async ({
   page,
 }) => {
   await page.goto("http://localhost:5173");
@@ -91,13 +91,13 @@ test("Should successfully complete suspect journey with skip all additional deta
   await addSuspectPage.selectAdditionalDetailsOffenderType(true);
   await addSuspectPage.verifySelectedAdditionalDetails([
     "Date of birth",
+    "Type of offender",
     "Gender",
     "Disability",
     "Religion",
     "Ethnicity",
     "Alias details",
     "Arrest Summons Number (ASN)",
-    "Type of offender",
   ]);
   await addSuspectPage.saveAndContinue();
 
@@ -109,6 +109,14 @@ test("Should successfully complete suspect journey with skip all additional deta
   await suspectDOBPage.saveAndContinue();
   await suspectDOBPage.verifySkipDOBAdditionalDetails();
   await suspectDOBPage.clickSkipDOBAdditionalDetails();
+
+  const suspectOffenderTypesPage = new SuspectOffenderTypesPage(page);
+  await suspectOffenderTypesPage.verifyUrl(
+    "http://localhost:5173/case-registration/suspect-0/suspect-offender",
+  );
+  await suspectOffenderTypesPage.saveAndContinue();
+  await suspectOffenderTypesPage.verifySkipOffenderTypesAdditionalDetails();
+  await suspectOffenderTypesPage.clickSkipOffenderTypesAdditionalDetails();
 
   const suspectGenderPage = new SuspectGenderPage(page);
   await suspectGenderPage.verifyUrl(
@@ -158,14 +166,6 @@ test("Should successfully complete suspect journey with skip all additional deta
   await suspectASNPage.verifySkipASNAdditionalDetails();
   await suspectASNPage.clickSkipASNAdditionalDetails();
 
-  const suspectOffenderTypesPage = new SuspectOffenderTypesPage(page);
-  await suspectOffenderTypesPage.verifyUrl(
-    "http://localhost:5173/case-registration/suspect-0/suspect-offender",
-  );
-  await suspectOffenderTypesPage.saveAndContinue();
-  await suspectOffenderTypesPage.verifySkipOffenderTypesAdditionalDetails();
-  await suspectOffenderTypesPage.clickSkipOffenderTypesAdditionalDetails();
-
   const suspectSummaryPage = new SuspectSummaryPage(page);
   await suspectSummaryPage.verifyUrl();
   await suspectSummaryPage.verifyBackLink("/case-registration/case-details");
@@ -202,13 +202,13 @@ test("Should successfully complete suspect journey with skip all additional deta
   await addSuspectPage.selectAdditionalDetailsOffenderType(true);
   await addSuspectPage.verifySelectedAdditionalDetails([
     "Date of birth",
+    "Type of offender",
     "Gender",
     "Disability",
     "Religion",
     "Ethnicity",
     "Alias details",
     "Arrest Summons Number (ASN)",
-    "Type of offender",
   ]);
   await addSuspectPage.saveAndContinue();
 
@@ -223,11 +223,13 @@ test("Should successfully complete suspect journey with skip all additional deta
   await suspectDOBPage.addDOBYear("2007");
   await suspectDOBPage.saveAndContinue();
 
-  await suspectGenderPage.verifyUrl(
-    "http://localhost:5173/case-registration/suspect-1/suspect-gender",
+  await suspectOffenderTypesPage.verifyUrl(
+    "http://localhost:5173/case-registration/suspect-1/suspect-offender",
   );
-  //coming back to the dob and clearing the texts to check reset on skip the dob details
-  await suspectSummaryPage.backLinkClick();
+  await suspectOffenderTypesPage.verifyBackLink(
+    "/case-registration/suspect-1/suspect-dob",
+  );
+  await suspectOffenderTypesPage.backLinkClick();
   await suspectDOBPage.verifyUrl(
     "http://localhost:5173/case-registration/suspect-1/suspect-dob",
   );
@@ -237,9 +239,12 @@ test("Should successfully complete suspect journey with skip all additional deta
   await suspectDOBPage.saveAndContinue();
   await suspectDOBPage.verifySkipDOBAdditionalDetails();
   await suspectDOBPage.clickSkipDOBAdditionalDetails();
-  await suspectGenderPage.verifyBackLink(
-    "/case-registration/suspect-1/suspect-dob",
+  await suspectOffenderTypesPage.verifyUrl(
+    "http://localhost:5173/case-registration/suspect-1/suspect-offender",
   );
+  await suspectOffenderTypesPage.selectOffenderTypePPO();
+  await suspectOffenderTypesPage.saveAndContinue();
+
   await suspectGenderPage.verifyUrl(
     "http://localhost:5173/case-registration/suspect-1/suspect-gender",
   );
@@ -302,28 +307,6 @@ test("Should successfully complete suspect journey with skip all additional deta
   await suspectASNPage.addASNText("1234");
   await suspectASNPage.saveAndContinue();
 
-  await suspectOffenderTypesPage.verifyUrl(
-    "http://localhost:5173/case-registration/suspect-1/suspect-offender",
-  );
-  await suspectOffenderTypesPage.verifyBackLink(
-    "/case-registration/suspect-1/suspect-asn",
-  );
-  //coming back to the asn and clearing the texts to check reset on skip the asn details
-  await suspectOffenderTypesPage.backLinkClick();
-  await suspectASNPage.verifyUrl(
-    "http://localhost:5173/case-registration/suspect-1/suspect-asn",
-  );
-  await suspectASNPage.addASNText("");
-  await suspectASNPage.saveAndContinue();
-  await suspectASNPage.verifySkipASNAdditionalDetails();
-  await suspectASNPage.clickSkipASNAdditionalDetails();
-
-  await suspectOffenderTypesPage.verifyUrl(
-    "http://localhost:5173/case-registration/suspect-1/suspect-offender",
-  );
-  await suspectOffenderTypesPage.selectOffenderTypePPO();
-  await suspectOffenderTypesPage.saveAndContinue();
-
   await suspectSummaryPage.verifyUrl();
   await suspectSummaryPage.verifyBackLink("/case-registration/case-details");
   await suspectSummaryPage.verifyPageElements("You have added 2 suspects");
@@ -333,12 +316,13 @@ test("Should successfully complete suspect journey with skip all additional deta
     "SMITH, Steve",
   ]);
   await suspectSummaryPage.verifySuspectSummaryDetails(1, [
+    { key: "Type of offender", value: "Prolific priority offender (PPO)" },
     { key: "Gender", value: "Female" },
     { key: "Disability", value: "no" },
     { key: "Religion", value: "Christianity" },
     { key: "Ethnicity", value: "White" },
     { key: "Alias", value: "MARK, Stev" },
-    { key: "Type of offender", value: "Prolific priority offender (PPO)" },
+    { key: "Arrest Summons Number", value: "1234" },
   ]);
 
   await suspectSummaryPage.selectAddMoreSuspectNo();
@@ -422,12 +406,13 @@ test("Should successfully complete suspect journey with skip all additional deta
   ]);
   await caseRegistrationSummaryPage.verifySuspectSummaryDetails(0, []);
   await caseRegistrationSummaryPage.verifySuspectSummaryDetails(1, [
+    { key: "Type of offender", value: "Prolific priority offender (PPO)" },
     { key: "Gender", value: "Female" },
     { key: "Disability", value: "no" },
     { key: "Religion", value: "Christianity" },
     { key: "Ethnicity", value: "White" },
     { key: "Alias", value: "MARK, Stev" },
-    { key: "Type of offender", value: "Prolific priority offender (PPO)" },
+    { key: "Arrest Summons Number", value: "1234" },
   ]);
   await caseRegistrationSummaryPage.verifyComplexityAndMonitoringCodesElements({
     complexity: "Basic",
@@ -511,9 +496,9 @@ test("Should successfully complete suspect additional details journey with skipp
   await addSuspectPage.selectAdditionalDetailsOffenderType(true);
   await addSuspectPage.verifySelectedAdditionalDetails([
     "Date of birth",
+    "Type of offender",
     "Disability",
     "Alias details",
-    "Type of offender",
   ]);
   await addSuspectPage.saveAndContinue();
 
@@ -525,6 +510,14 @@ test("Should successfully complete suspect additional details journey with skipp
   await suspectDOBPage.saveAndContinue();
   await suspectDOBPage.verifySkipDOBAdditionalDetails();
   await suspectDOBPage.clickSkipDOBAdditionalDetails();
+
+  const suspectOffenderTypesPage = new SuspectOffenderTypesPage(page);
+  await suspectOffenderTypesPage.verifyUrl(
+    "http://localhost:5173/case-registration/suspect-0/suspect-offender",
+  );
+  await suspectOffenderTypesPage.saveAndContinue();
+  await suspectOffenderTypesPage.verifySkipOffenderTypesAdditionalDetails();
+  await suspectOffenderTypesPage.clickSkipOffenderTypesAdditionalDetails();
 
   const suspectDisabilityPage = new SuspectDisabilityPage(page);
   await suspectDisabilityPage.verifyUrl(
@@ -541,14 +534,6 @@ test("Should successfully complete suspect additional details journey with skipp
   await suspectAliasesPage.saveAndContinue();
   await suspectAliasesPage.verifySkipAddAliasesAdditionalDetails();
   await suspectAliasesPage.clickSkipAddAliasesAdditionalDetails();
-
-  const suspectOffenderTypesPage = new SuspectOffenderTypesPage(page);
-  await suspectOffenderTypesPage.verifyUrl(
-    "http://localhost:5173/case-registration/suspect-0/suspect-offender",
-  );
-  await suspectOffenderTypesPage.saveAndContinue();
-  await suspectOffenderTypesPage.verifySkipOffenderTypesAdditionalDetails();
-  await suspectOffenderTypesPage.clickSkipOffenderTypesAdditionalDetails();
 
   const suspectSummaryPage = new SuspectSummaryPage(page);
   await suspectSummaryPage.verifyUrl();
