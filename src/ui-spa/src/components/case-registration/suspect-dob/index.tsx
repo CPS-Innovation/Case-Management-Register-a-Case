@@ -8,6 +8,7 @@ import { dobValidationConstants } from "../../../common/constants/dobValidationC
 import useErrorSummaryList from "../../../common/hooks/useErrorSummaryList";
 import useGetSuspectRoute from "../../../common/hooks/useGetSuspectRoute";
 import ErrorSummaryWrapper from "../../common/ErrorSummaryWrapper";
+import { isUnder18 } from "../../../common/utils/isYouthSuspect";
 import { useNavigate, useParams } from "react-router";
 import PageContentWrapper from "../../common/PageContentWrapper";
 import styles from "../index.module.scss";
@@ -173,6 +174,29 @@ const SuspectDOBPage = () => {
     if (!validateFormData()) return;
     setDisableBtns(true);
 
+    const underAgeSuspect = isUnder18(formData);
+    if (underAgeSuspect) {
+      const currentCheckboxes =
+        state.formData.suspects[suspectIndex]
+          .suspectAdditionalDetailsCheckboxes;
+      const updatedCheckboxes = currentCheckboxes.includes("Type of offender")
+        ? currentCheckboxes
+        : [...currentCheckboxes, "Type of offender" as const];
+
+      dispatch({
+        type: "SET_SUSPECT_FIELDS",
+        payload: {
+          index: suspectIndex,
+          data: {
+            ...formData,
+            suspectAdditionalDetailsCheckboxes: updatedCheckboxes,
+          },
+        },
+      });
+      navigate(`/case-registration/suspect-${suspectIndex}/suspect-offender`);
+      return;
+    }
+
     dispatch({
       type: "SET_SUSPECT_FIELDS",
       payload: {
@@ -222,7 +246,10 @@ const SuspectDOBPage = () => {
           onSkipCallBack={onSkipCallBack}
         />
         <form onSubmit={handleSubmit}>
-          <div className={styles.inputWrapper}>
+          <div
+            className={`${styles.inputWrapper}
+            ${styles.suspectDetails}`}
+          >
             <DateInput
               errorMessage={
                 formDataErrors.suspectDOBDateError

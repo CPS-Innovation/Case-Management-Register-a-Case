@@ -30,13 +30,13 @@ export class AddSuspectPage {
       .allInnerTexts();
     expect(labels).toEqual([
       "Date of birth",
+      "Type of offender",
       "Gender",
       "Disability",
       "Religion",
       "Ethnicity",
       "Alias details",
       "Arrest Summons Number (ASN)",
-      "Type of offender",
     ]);
   }
 

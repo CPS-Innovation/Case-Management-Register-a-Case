@@ -66,13 +66,13 @@ const AddSuspectPage = () => {
   const suspectAdditionalDetails: SuspectAdditionalDetailValue[] = useMemo(
     () => [
       "Date of birth",
+      "Type of offender",
       "Gender",
       "Disability",
       "Religion",
       "Ethnicity",
       "Alias details",
       "Arrest Summons Number (ASN)",
-      "Type of offender",
     ],
     [],
   );
@@ -288,7 +288,10 @@ const AddSuspectPage = () => {
           </div>
         )}
         <form onSubmit={handleSubmit}>
-          <div className={styles.inputWrapper}>
+          <div
+            className={`${styles.inputWrapper}
+            ${styles.suspectDetails}`}
+          >
             <Radios
               fieldset={{
                 legend: {

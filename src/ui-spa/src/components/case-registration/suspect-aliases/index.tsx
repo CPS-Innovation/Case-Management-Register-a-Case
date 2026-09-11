@@ -162,7 +162,10 @@ const SuspectAliasesPage = () => {
               You can add more aliases on the next page if needed
             </span>
           </div>
-          <div className={styles.inputWrapper}>
+          <div
+            className={`${styles.inputWrapper}
+            ${styles.suspectDetails}`}
+          >
             <Input
               key="suspect-aliases-first-name-text"
               id="suspect-aliases-first-name-text"

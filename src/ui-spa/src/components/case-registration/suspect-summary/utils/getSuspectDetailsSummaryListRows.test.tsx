@@ -89,32 +89,32 @@ describe("getSuspectDetailsSummaryListRows", () => {
     renderRows(rows);
     expect(screen.getByTestId(`row-0-key`)).toHaveTextContent(/Date of birth/i);
     expect(screen.getByTestId(`row-0-value`)).toHaveTextContent("12/12/2000");
-    expect(screen.getByTestId(`row-1-key`)).toHaveTextContent(/Gender/i);
-    expect(screen.getByTestId(`row-1-value`)).toHaveTextContent("Male");
-    expect(screen.getByTestId(`row-2-key`)).toHaveTextContent(/Disability/i);
-    expect(screen.getByTestId(`row-2-value`)).toHaveTextContent("no");
-    expect(screen.getByTestId(`row-3-key`)).toHaveTextContent(/Religion/i);
-    expect(screen.getByTestId(`row-3-value`)).toHaveTextContent("Christian");
-    expect(screen.getByTestId(`row-4-key`)).toHaveTextContent(/Ethnicity/i);
-    expect(screen.getByTestId(`row-4-value`)).toHaveTextContent("British");
-    expect(screen.getByTestId(`row-5-key`)).toHaveTextContent(/Alias/i);
-    expect(screen.getByTestId(`row-5-value`)).toHaveTextContent("DOE, Johnny");
-    expect(screen.getByTestId(`row-6-key`)).toHaveTextContent(/Alias/i);
-    expect(screen.getByTestId(`row-6-value`)).toHaveTextContent("DOE, Jane");
-    expect(screen.getByTestId(`row-7-key`)).toHaveTextContent(
-      /Arrest summons/i,
-    );
-    expect(screen.getByTestId(`row-7-value`)).toHaveTextContent("r123456");
-    expect(screen.getByTestId(`row-8-key`)).toHaveTextContent(
+    expect(screen.getByTestId(`row-1-key`)).toHaveTextContent(
       /Type of offender/i,
     );
-    expect(screen.getByTestId(`row-8-value`)).toHaveTextContent(
+    expect(screen.getByTestId(`row-1-value`)).toHaveTextContent(
       "Youth offender",
     );
-    expect(screen.getByTestId(`row-9-key`)).toHaveTextContent(/Arrest Date/i);
-    expect(screen.getByTestId(`row-9-value`)).toHaveTextContent(
+    expect(screen.getByTestId(`row-2-key`)).toHaveTextContent(/Arrest Date/i);
+    expect(screen.getByTestId(`row-2-value`)).toHaveTextContent(
       "12 February 2020",
     );
+    expect(screen.getByTestId(`row-3-key`)).toHaveTextContent(/Gender/i);
+    expect(screen.getByTestId(`row-3-value`)).toHaveTextContent("Male");
+    expect(screen.getByTestId(`row-4-key`)).toHaveTextContent(/Disability/i);
+    expect(screen.getByTestId(`row-4-value`)).toHaveTextContent("no");
+    expect(screen.getByTestId(`row-5-key`)).toHaveTextContent(/Religion/i);
+    expect(screen.getByTestId(`row-5-value`)).toHaveTextContent("Christian");
+    expect(screen.getByTestId(`row-6-key`)).toHaveTextContent(/Ethnicity/i);
+    expect(screen.getByTestId(`row-6-value`)).toHaveTextContent("British");
+    expect(screen.getByTestId(`row-7-key`)).toHaveTextContent(/Alias/i);
+    expect(screen.getByTestId(`row-7-value`)).toHaveTextContent("DOE, Johnny");
+    expect(screen.getByTestId(`row-8-key`)).toHaveTextContent(/Alias/i);
+    expect(screen.getByTestId(`row-8-value`)).toHaveTextContent("DOE, Jane");
+    expect(screen.getByTestId(`row-9-key`)).toHaveTextContent(
+      /Arrest summons/i,
+    );
+    expect(screen.getByTestId(`row-9-value`)).toHaveTextContent("r123456");
   });
 
   it("omits Arrest Date entry for PP offender type", () => {

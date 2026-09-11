@@ -175,7 +175,10 @@ const SuspectReligionPage = () => {
           skipText="I do not have the religion"
         />
         <form onSubmit={handleSubmitReligion}>
-          <div className={styles.inputWrapper}>
+          <div
+            className={`${styles.inputWrapper}
+            ${styles.suspectDetails}`}
+          >
             <Radios
               fieldset={{
                 legend: {

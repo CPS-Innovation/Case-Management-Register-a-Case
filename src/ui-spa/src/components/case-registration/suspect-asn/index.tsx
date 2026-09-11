@@ -133,7 +133,10 @@ const SuspectASNPage = () => {
           onSkipCallBack={onSkipCallBack}
         />
         <form onSubmit={handleSubmit}>
-          <div className={styles.inputWrapper}>
+          <div
+            className={`${styles.inputWrapper}
+            ${styles.suspectDetails}`}
+          >
             <Input
               key="suspect-asn-text"
               id="suspect-asn-text"

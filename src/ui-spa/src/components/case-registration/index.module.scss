@@ -8,3 +8,22 @@
     outline: 0.2rem solid #ffdd00;
   }
 }
+
+.suspectDetails {
+  :global(.govuk-fieldset) {
+    & :global(.govuk-fieldset__legend) {
+      h1 {
+        margin: 0;
+      }
+    }
+    //this is to override the existing specificity
+    :global(
+      .govuk-fieldset__legend:not(.govuk-fieldset__legend--m):not(
+          .govuk-fieldset__legend--l
+        ):not(.govuk-fieldset__legend--xl)
+        + .govuk-hint
+    ) {
+      margin-bottom: 20px;
+    }
+  }
+}

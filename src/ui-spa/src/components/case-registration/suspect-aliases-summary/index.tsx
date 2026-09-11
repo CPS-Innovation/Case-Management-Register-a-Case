@@ -171,7 +171,10 @@ const SuspectAliasesSummaryPage = () => {
               <span>There are no aliases</span>
             </div>
           )}
-          <div className={styles.inputWrapper}>
+          <div
+            className={`${styles.inputWrapper}
+            ${styles.suspectDetails}`}
+          >
             <Radios
               fieldset={{
                 legend: {

@@ -180,7 +180,10 @@ const SuspectGenderPage = () => {
           skipText="I do not have the gender"
         />
         <form onSubmit={handleSubmit}>
-          <div className={styles.inputWrapper}>
+          <div
+            className={`${styles.inputWrapper}
+            ${styles.suspectDetails}`}
+          >
             <Radios
               fieldset={{
                 legend: {
