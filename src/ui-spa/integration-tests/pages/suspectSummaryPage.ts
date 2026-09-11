@@ -149,11 +149,15 @@ export class SuspectSummaryPage {
       .click();
   }
 
+  // Addressed by test id rather than label: getByLabel matches on substring, so
+  // "No" also matches options like "Not Provided" / "Not Stated" if this runs
+  // before the previous page has unmounted, which made the ethnicity skip spec
+  // flaky with a strict-mode violation.
   async selectAddMoreSuspectYes() {
-    await this.page.getByLabel("Yes").check();
+    await this.page.getByTestId("add-more-suspects-radio-yes").check();
   }
   async selectAddMoreSuspectNo() {
-    await this.page.getByLabel("No").check();
+    await this.page.getByTestId("add-more-suspects-radio-no").check();
   }
   async verifyBackLink(url: string) {
     await expect(this.page.getByRole("link", { name: "Back" })).toBeVisible();
