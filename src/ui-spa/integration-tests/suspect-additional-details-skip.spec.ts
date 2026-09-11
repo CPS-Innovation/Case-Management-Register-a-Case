@@ -18,7 +18,7 @@ import { CaseMonitoringPage } from "./pages/caseMonitoringPage";
 import { CaseAssigneePage } from "./pages/caseAssigneePage";
 import { CaseRegistrationSummaryPage } from "./pages/caseRegistrationSummaryPage";
 
-test("Should successfully complete suspect journey with skip all additional details and some of additional details1", async ({
+test("Should successfully complete suspect journey with skip all additional details and some of additional details", async ({
   page,
 }) => {
   await page.goto("http://localhost:5173");

@@ -363,6 +363,7 @@ test("Should successfully complete suspect journey", async ({ page }) => {
   await suspectOffenderTypesPage.verifyBackLink(
     "/case-registration/suspect-1/suspect-dob",
   );
+  await suspectOffenderTypesPage.verifyHintTextIsNotVisible();
   await suspectOffenderTypesPage.selectOffenderTypePPO();
   await suspectOffenderTypesPage.saveAndContinue();
 
@@ -615,4 +616,185 @@ test("Should successfully complete suspect journey", async ({ page }) => {
     shoulderNumber: "12345",
     policeUnit: "Not entered",
   });
+});
+
+test("Should show the 'Type of Offender' details if the user is underAge even if the user has not selected it and 'Type of Offender' details is not optional", async ({
+  page,
+}) => {
+  await page.goto("http://localhost:5173");
+  const caseRegistrationHomePage = new CaseRegistrationHomePage(page);
+  await caseRegistrationHomePage.verifyUrl();
+  await caseRegistrationHomePage.verifyPageElements();
+  await caseRegistrationHomePage.errorValidations();
+  await caseRegistrationHomePage.addOperationName("thunderstruck");
+  await caseRegistrationHomePage.addSuspect();
+  await caseRegistrationHomePage.saveAndContinue();
+  await caseRegistrationHomePage.verifyErrorSummaryClear();
+
+  const caseAreasPage = new CaseAreasPage(page);
+  await caseAreasPage.verifyUrl();
+  await caseAreasPage.verifyBackLink("/case-registration");
+  await caseAreasPage.backLinkClick();
+  await caseRegistrationHomePage.verifyUrl();
+  await caseRegistrationHomePage.saveAndContinue();
+  await caseAreasPage.verifyUrl();
+  await caseAreasPage.verifyPageElements();
+  await caseAreasPage.errorValidations();
+  await caseAreasPage.enterAreaOrDivision("CAMBRIDGESHIRE");
+  await caseAreasPage.saveAndContinue();
+  await caseAreasPage.verifyErrorSummaryClear();
+
+  const caseDetailsPage = new CaseDetailsPage(page);
+  await caseDetailsPage.verifyUrl();
+  await caseDetailsPage.verifyBackLink("/case-registration/areas");
+  await caseDetailsPage.backLinkClick();
+  await caseAreasPage.verifyUrl();
+  await caseAreasPage.saveAndContinue();
+  await caseDetailsPage.verifyUrl();
+  await caseDetailsPage.verifyPageElements();
+  await caseDetailsPage.errorValidations();
+  await caseDetailsPage.enterUrnPoliceForce("12");
+  await caseDetailsPage.enterUrnPoliceUnit("21");
+  await caseDetailsPage.enterUrnUniqueReference("12345");
+  await caseDetailsPage.enterUrnYearReference("26");
+  await caseDetailsPage.enterRegisteringUnit("NORTHERN CJU (Peterborough)");
+  await caseDetailsPage.enterWitnessCareUnit(
+    "Cambridgeshire Non Operational WCU",
+  );
+  await caseDetailsPage.saveAndContinue();
+  await caseDetailsPage.verifyErrorSummaryClear();
+
+  const addSuspectPage = new AddSuspectPage(page);
+  await addSuspectPage.verifyUrl(
+    "http://localhost:5173/case-registration/suspect-0/add-suspect",
+  );
+  await addSuspectPage.verifyBackLink("/case-registration/case-details");
+  await addSuspectPage.backLinkClick();
+  await caseDetailsPage.verifyUrl();
+  await caseDetailsPage.saveAndContinue();
+  await addSuspectPage.verifyUrl(
+    "http://localhost:5173/case-registration/suspect-0/add-suspect",
+  );
+  await addSuspectPage.verifyBasePageElements();
+  await addSuspectPage.addPersonSuspect();
+  await addSuspectPage.verifyAdditionalElements();
+  await addSuspectPage.addPersonSuspect();
+  await addSuspectPage.addSuspectFirstName("harry");
+  await addSuspectPage.addSuspectLastName("potter");
+  await addSuspectPage.selectAdditionalDetailsDOB(true);
+  await addSuspectPage.selectAdditionalDetailsGender(true);
+  await addSuspectPage.selectAdditionalDetailsDisability(true);
+  await addSuspectPage.verifySelectedAdditionalDetails([
+    "Date of birth",
+    "Gender",
+    "Disability",
+  ]);
+  await addSuspectPage.saveAndContinue();
+  const suspectDOBPage = new SuspectDOBPage(page);
+  await suspectDOBPage.verifyUrl(
+    "http://localhost:5173/case-registration/suspect-0/suspect-dob",
+  );
+  await suspectDOBPage.verifyBackLink(
+    "/case-registration/suspect-0/add-suspect",
+  );
+  await suspectDOBPage.backLinkClick();
+  await addSuspectPage.verifyUrl(
+    "http://localhost:5173/case-registration/suspect-0/add-suspect",
+  );
+  await addSuspectPage.saveAndContinue();
+  await suspectDOBPage.verifyUrl(
+    "http://localhost:5173/case-registration/suspect-0/suspect-dob",
+  );
+  await suspectDOBPage.verifyPageElements();
+  await suspectDOBPage.errorValidations();
+  await suspectDOBPage.addDOBDay("10");
+  await suspectDOBPage.addDOBMonth("09");
+  await suspectDOBPage.addDOBYear("2015");
+  await suspectDOBPage.saveAndContinue();
+
+  const suspectOffenderTypesPage = new SuspectOffenderTypesPage(page);
+  await suspectOffenderTypesPage.verifyUrl(
+    "http://localhost:5173/case-registration/suspect-0/suspect-offender",
+  );
+  await suspectOffenderTypesPage.verifyBackLink(
+    "/case-registration/suspect-0/suspect-dob",
+  );
+  await suspectOffenderTypesPage.backLinkClick();
+  await suspectDOBPage.verifyUrl(
+    "http://localhost:5173/case-registration/suspect-0/suspect-dob",
+  );
+  await suspectDOBPage.saveAndContinue();
+  await suspectOffenderTypesPage.verifyUrl(
+    "http://localhost:5173/case-registration/suspect-0/suspect-offender",
+  );
+  await suspectOffenderTypesPage.verifyHintTextIsVisible();
+  await suspectOffenderTypesPage.verifyBasePageElements();
+  await suspectOffenderTypesPage.errorValidations();
+  await suspectOffenderTypesPage.verifySkipOffenderTypesAdditionalDetails(
+    false,
+  );
+  await suspectOffenderTypesPage.verifyPYOElements();
+  await suspectOffenderTypesPage.verifyYOElements();
+
+  await suspectOffenderTypesPage.selectOffenderTypePYO();
+  await suspectOffenderTypesPage.addArrestDate("2024-01-01");
+  await suspectOffenderTypesPage.saveAndContinue();
+
+  const suspectGenderPage = new SuspectGenderPage(page);
+  await suspectGenderPage.verifyUrl(
+    "http://localhost:5173/case-registration/suspect-0/suspect-gender",
+  );
+  await suspectGenderPage.verifyBackLink(
+    "/case-registration/suspect-0/suspect-offender",
+  );
+  await suspectGenderPage.backLinkClick();
+  await suspectOffenderTypesPage.verifyUrl(
+    "http://localhost:5173/case-registration/suspect-0/suspect-offender",
+  );
+  await suspectGenderPage.saveAndContinue();
+  await suspectGenderPage.verifyUrl(
+    "http://localhost:5173/case-registration/suspect-0/suspect-gender",
+  );
+  await suspectGenderPage.verifyPageElements("POTTER, Harry");
+  await suspectGenderPage.errorValidations();
+  await suspectGenderPage.selectGenderMale();
+  await suspectGenderPage.saveAndContinue();
+
+  const suspectDisabilityPage = new SuspectDisabilityPage(page);
+  await suspectDisabilityPage.verifyUrl(
+    "http://localhost:5173/case-registration/suspect-0/suspect-disability",
+  );
+  await suspectDisabilityPage.verifyBackLink(
+    "/case-registration/suspect-0/suspect-gender",
+  );
+  await suspectDisabilityPage.backLinkClick();
+  await suspectGenderPage.verifyUrl(
+    "http://localhost:5173/case-registration/suspect-0/suspect-gender",
+  );
+  await suspectGenderPage.saveAndContinue();
+  await suspectDisabilityPage.verifyUrl(
+    "http://localhost:5173/case-registration/suspect-0/suspect-disability",
+  );
+  await suspectDisabilityPage.verifyPageElements("POTTER, Harry");
+  await suspectDisabilityPage.errorValidations();
+  await suspectDisabilityPage.selectDisabilityYes();
+  await suspectDisabilityPage.saveAndContinue();
+
+  const suspectSummaryPage = new SuspectSummaryPage(page);
+  await suspectSummaryPage.verifyUrl();
+  await suspectSummaryPage.verifyBackLink("/case-registration/case-details");
+  await suspectSummaryPage.backLinkClick();
+  await caseDetailsPage.verifyUrl();
+  await caseDetailsPage.saveAndContinue();
+  await suspectSummaryPage.verifyUrl();
+  await suspectSummaryPage.verifyPageElements("You have added 1 suspect");
+  await suspectSummaryPage.errorValidations();
+  await suspectSummaryPage.verifySuspectSummaryRows(["POTTER, Harry"]);
+  await suspectSummaryPage.verifySuspectSummaryDetails(0, [
+    { key: "Date of birth", value: "10/09/2015" },
+    { key: "Type of offender", value: "Prolific youth offender (PYO)" },
+    { key: "Arrest date", value: "01 January 2024" },
+    { key: "Gender", value: "Male" },
+    { key: "Disability", value: "yes" },
+  ]);
 });

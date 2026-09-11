@@ -55,16 +55,32 @@ export class SuspectOffenderTypesPage {
     ).toBeVisible();
   }
 
-  async verifySkipOffenderTypesAdditionalDetails() {
+  async verifySkipOffenderTypesAdditionalDetails(visible: boolean = true) {
     await expect(
       this.page.getByTestId("suspect-offender-types-error-summary"),
     ).toBeVisible();
     await expect(
       this.page.getByTestId("suspect-offender-radio-link"),
     ).toHaveText("Select the type of offender");
-    await expect(this.page.getByTestId("suspect-detail-skip-link")).toHaveText(
-      "I do not have the type of offender",
+    if (visible) {
+      await expect(
+        this.page.getByTestId("suspect-detail-skip-link"),
+      ).toHaveText("I do not have the type of offender");
+    } else {
+      await expect(
+        this.page.getByTestId("suspect-detail-skip-link"),
+      ).not.toBeVisible();
+    }
+  }
+
+  async verifyHintTextIsVisible() {
+    await expect(this.page.locator(".govuk-hint")).toHaveText(
+      "This is required because the suspect is under 18",
     );
+  }
+
+  async verifyHintTextIsNotVisible() {
+    await expect(this.page.locator(".govuk-hint")).not.toBeVisible();
   }
 
   async clickSkipOffenderTypesAdditionalDetails() {
