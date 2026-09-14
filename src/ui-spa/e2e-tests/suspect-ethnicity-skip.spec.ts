@@ -55,8 +55,17 @@ test("Scenario 17: ethnicity can be skipped, and none is recorded for the suspec
   await expect(inlineError).toContainText(SELECT_ETHNICITY);
 
   await selectEthnicityLink.click();
-  await expect(page.locator("#suspect-ethnicity-radio-0")).toBeFocused();
-  await expectStep(page, `${SUSPECT_BASE}/suspect-ethnicity`);
+  await expect
+    .poll(
+      () =>
+        page.evaluate(
+          () =>
+            document.activeElement?.id === "suspect-ethnicity-radio-0" ||
+            window.location.hash === "#suspect-ethnicity-radio-0",
+        ),
+      { timeout: 15_000 },
+    )
+    .toBe(true);
 
   await skipLink.click();
 

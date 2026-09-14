@@ -115,6 +115,12 @@ export async function addPersonSuspectWithAllDetails(
   await suspectDOBPage.addDOBYear(String(dob.getFullYear()));
   await suspectDOBPage.saveAndContinue();
 
+  const suspectOffenderTypesPage = new SuspectOffenderTypesPage(page);
+  await expectStep(page, `${base}/suspect-offender`);
+  await suspectOffenderTypesPage.selectOffenderTypePYO();
+  await suspectOffenderTypesPage.addArrestDate(isoDate(opts.arrestDate));
+  await suspectOffenderTypesPage.saveAndContinue();
+
   const suspectGenderPage = new SuspectGenderPage(page);
   await expectStep(page, `${base}/suspect-gender`);
   await suspectGenderPage.selectGenderMale();
@@ -150,12 +156,6 @@ export async function addPersonSuspectWithAllDetails(
   await expectStep(page, `${base}/suspect-asn`);
   await suspectASNPage.addASNText("123456");
   await suspectASNPage.saveAndContinue();
-
-  const suspectOffenderTypesPage = new SuspectOffenderTypesPage(page);
-  await expectStep(page, `${base}/suspect-offender`);
-  await suspectOffenderTypesPage.selectOffenderTypePYO();
-  await suspectOffenderTypesPage.addArrestDate(isoDate(opts.arrestDate));
-  await suspectOffenderTypesPage.saveAndContinue();
 }
 
 export interface AddChargeOptions {
