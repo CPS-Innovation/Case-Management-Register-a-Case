@@ -17,3 +17,4 @@ export { SummaryList } from "./govuk-react-jsx";
 export { Panel } from "./Panel";
 export { Tag } from "./Tag";
 export { DateInput } from "./DateInput";
+export { WarningText } from "./WarningText";

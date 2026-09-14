@@ -6,6 +6,7 @@ import {
   BackLink,
   Table,
   Select,
+  WarningText,
 } from "../../govuk";
 import { CaseRegistrationFormContext } from "../../../common/providers/CaseRegistrationProvider";
 import { getOffences } from "../../../apis/gateway-api";
@@ -201,10 +202,32 @@ const ChargesOffenceSearch = () => {
       return {
         cells: [
           {
+            children: (
+              <Link
+                to={`/case-registration/suspect-${suspectIndex}/charge-${chargeIndex}/add-charge-details`}
+                onClick={(event) => handleClick(event, data.code)}
+                className="govuk-link--no-visited-state"
+              >
+                Add
+              </Link>
+            ),
+          },
+          {
             children: <div>{data.code}</div>,
           },
           {
-            children: <div>{data.description}</div>,
+            children: (
+              <div>
+                {data.description}
+                {data.effectiveToDate && (
+                  <WarningText
+                    data-testid={`offence-repealed-warning-${data.code}`}
+                  >
+                    Repealed
+                  </WarningText>
+                )}
+              </div>
+            ),
           },
           {
             children: <div>{data.legislation}</div>,
@@ -214,17 +237,6 @@ const ChargesOffenceSearch = () => {
               <div>
                 {getEffectiveDate(data.effectiveFromDate, data.effectiveToDate)}
               </div>
-            ),
-          },
-          {
-            children: (
-              <Link
-                to={`/case-registration/suspect-${suspectIndex}/charge-${chargeIndex}/add-charge-details`}
-                onClick={(event) => handleClick(event, data.code)}
-                className="govuk-link--no-visited-state"
-              >
-                Add
-              </Link>
             ),
           },
         ],
@@ -382,6 +394,9 @@ const ChargesOffenceSearch = () => {
                       captionClassName="govuk-visually-hidden"
                       head={[
                         {
+                          children: "Actions",
+                        },
+                        {
                           children: "CJS code",
                         },
                         {
@@ -393,9 +408,6 @@ const ChargesOffenceSearch = () => {
                         },
                         {
                           children: "Effective dates",
-                        },
-                        {
-                          children: "Actions",
                         },
                       ]}
                       rows={getTableRowData()}
