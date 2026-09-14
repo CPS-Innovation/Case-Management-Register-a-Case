@@ -116,7 +116,7 @@ export class ChargesOffenceSearchPagePage {
     await expect(
       this.page
         .locator("tbody tr")
-        .nth(0)
+        .nth(1)
         .locator("td")
         .nth(0)
         .getByRole("link", { name: "Add" }),
