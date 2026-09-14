@@ -73,91 +73,98 @@ export class ChargesOffenceSearchPagePage {
 
     const resultsTable = offenceResultsWrapper.getByRole("table");
     await expect(resultsTable).toBeVisible();
-    await expect(resultsTable.locator("th").nth(0)).toHaveText("CJS code");
-    await expect(resultsTable.locator("th").nth(1)).toHaveText("Description");
-    await expect(resultsTable.locator("th").nth(2)).toHaveText(
+    await expect(resultsTable.locator("th").nth(0)).toHaveText("Actions");
+    await expect(resultsTable.locator("th").nth(1)).toHaveText("CJS code");
+    await expect(resultsTable.locator("th").nth(2)).toHaveText("Description");
+    await expect(resultsTable.locator("th").nth(3)).toHaveText(
       "Statute name and section",
     );
-    await expect(resultsTable.locator("th").nth(3)).toHaveText(
+    await expect(resultsTable.locator("th").nth(4)).toHaveText(
       "Effective dates",
     );
-    await expect(resultsTable.locator("th").nth(4)).toHaveText("Actions");
 
     await expect(
-      resultsTable.locator("tbody tr").nth(0).locator("td").nth(0),
-    ).toHaveText("WC81229");
+      this.page
+        .locator("tbody tr")
+        .nth(0)
+        .locator("td")
+        .nth(0)
+        .getByRole("link", { name: "Add" }),
+    ).toHaveAttribute(
+      "href",
+      `/case-registration/suspect-${suspectIndex}/charge-${chargeIndex}/add-charge-details`,
+    );
+
     await expect(
       resultsTable.locator("tbody tr").nth(0).locator("td").nth(1),
-    ).toHaveText("Permit to be set trap etc - cause injury to wild bird");
+    ).toHaveText("WC81229");
     await expect(
       resultsTable.locator("tbody tr").nth(0).locator("td").nth(2),
+    ).toHaveText(
+      "Permit to be set trap etc - cause injury to wild bird!Repealed",
+    );
+    await this.verifyRepealedTagVisible("WC81229");
+    await expect(
+      resultsTable.locator("tbody tr").nth(0).locator("td").nth(3),
     ).toHaveText(
       "Contrary to sections 5(1)(f) and 21(1) of the Wildlife and Countryside Act 1981.",
     );
     await expect(
-      resultsTable.locator("tbody tr").nth(0).locator("td").nth(3),
+      resultsTable.locator("tbody tr").nth(0).locator("td").nth(4),
     ).toHaveText("From 17 Mar 1998 to 17 Apr 1998");
+
     await expect(
       this.page
         .locator("tbody tr")
-        .nth(0)
+        .nth(1)
         .locator("td")
-        .nth(4)
+        .nth(0)
         .getByRole("link", { name: "Add" }),
     ).toHaveAttribute(
       "href",
       `/case-registration/suspect-${suspectIndex}/charge-${chargeIndex}/add-charge-details`,
     );
-
-    await expect(
-      resultsTable.locator("tbody tr").nth(1).locator("td").nth(0),
-    ).toHaveText("PB92005");
     await expect(
       resultsTable.locator("tbody tr").nth(1).locator("td").nth(1),
-    ).toHaveText("Attempt to injure a badger");
+    ).toHaveText("PB92005");
     await expect(
       resultsTable.locator("tbody tr").nth(1).locator("td").nth(2),
+    ).toHaveText("Attempt to injure a badger");
+    await expect(
+      resultsTable.locator("tbody tr").nth(1).locator("td").nth(3),
     ).toHaveText(
       "Contrary to sections 1(1) and 12 of the Protection of Badgers Act 1992.",
     );
+    await this.verifyRepealedTagNotVisible("PB92005");
     await expect(
-      resultsTable.locator("tbody tr").nth(1).locator("td").nth(3),
+      resultsTable.locator("tbody tr").nth(1).locator("td").nth(4),
     ).toHaveText("From 17 Mar 1998");
-    await expect(
-      this.page
-        .locator("tbody tr")
-        .nth(0)
-        .locator("td")
-        .nth(4)
-        .getByRole("link", { name: "Add" }),
-    ).toHaveAttribute(
-      "href",
-      `/case-registration/suspect-${suspectIndex}/charge-${chargeIndex}/add-charge-details`,
-    );
 
-    await expect(
-      resultsTable.locator("tbody tr").nth(2).locator("td").nth(0),
-    ).toHaveText("TH68040");
-    await expect(
-      resultsTable.locator("tbody tr").nth(2).locator("td").nth(1),
-    ).toHaveText("Burglary dwelling - attempt grievous bodily harm");
-    await expect(
-      resultsTable.locator("tbody tr").nth(2).locator("td").nth(2),
-    ).toHaveText("Contrary to section 9(1)(b) of the Theft Act 1968.");
-    await expect(
-      resultsTable.locator("tbody tr").nth(2).locator("td").nth(3),
-    ).toHaveText("From 17 Mar 1998");
     await expect(
       resultsTable
         .locator("tbody tr")
         .nth(2)
         .locator("td")
-        .nth(4)
+        .nth(0)
         .getByRole("link", { name: "Add" }),
     ).toHaveAttribute(
       "href",
       `/case-registration/suspect-${suspectIndex}/charge-${chargeIndex}/add-charge-details`,
     );
+
+    await expect(
+      resultsTable.locator("tbody tr").nth(2).locator("td").nth(1),
+    ).toHaveText("TH68040");
+    await expect(
+      resultsTable.locator("tbody tr").nth(2).locator("td").nth(2),
+    ).toHaveText("Burglary dwelling - attempt grievous bodily harm");
+    await this.verifyRepealedTagNotVisible("TH68040");
+    await expect(
+      resultsTable.locator("tbody tr").nth(2).locator("td").nth(3),
+    ).toHaveText("Contrary to section 9(1)(b) of the Theft Act 1968.");
+    await expect(
+      resultsTable.locator("tbody tr").nth(2).locator("td").nth(4),
+    ).toHaveText("From 17 Mar 1998");
   }
 
   async addOffence(index: number) {
@@ -177,5 +184,20 @@ export class ChargesOffenceSearchPagePage {
 
   async searchOffence() {
     await this.page.getByRole("button", { name: "Search" }).click();
+  }
+
+  async verifyRepealedTagVisible(code: string) {
+    await expect(
+      this.page.getByTestId(`offence-repealed-warning-${code}`),
+    ).toBeVisible();
+    await expect(
+      this.page.getByTestId(`offence-repealed-warning-${code}`),
+    ).toHaveText("!Repealed");
+  }
+
+  async verifyRepealedTagNotVisible(code: string) {
+    await expect(
+      this.page.getByTestId(`offence-repealed-warning-${code}`),
+    ).not.toBeVisible();
   }
 }
