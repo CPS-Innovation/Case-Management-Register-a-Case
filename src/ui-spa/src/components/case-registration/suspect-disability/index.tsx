@@ -71,8 +71,8 @@ const SuspectDisabilityPage = () => {
 
     if (!suspectDisabilityRadio) {
       errors.suspectDisabilityRadio = {
-        errorSummaryText: "Select whether the defendant has a disability",
-        inputErrorText: "Select whether the defendant has a disability",
+        errorSummaryText: "Select whether the suspect has a disability",
+        inputErrorText: "Select whether the suspect has a disability",
       };
       setDisabilityFormDataErrors(errors);
       setShowSkip(true);

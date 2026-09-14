@@ -26,7 +26,7 @@ export class SuspectDisabilityPage {
     ).toBeVisible();
     await expect(
       this.page.getByTestId("suspect-disability-radio-link"),
-    ).toHaveText("Select whether the defendant has a disability");
+    ).toHaveText("Select whether the suspect has a disability");
     await expect(this.page.getByTestId("suspect-detail-skip-link")).toHaveText(
       "I do not have disability information",
     );
@@ -43,7 +43,7 @@ export class SuspectDisabilityPage {
     ).toBeVisible();
     await expect(
       this.page.getByTestId("suspect-disability-radio-link"),
-    ).toHaveText("Select whether the defendant has a disability");
+    ).toHaveText("Select whether the suspect has a disability");
     await this.page.getByTestId("suspect-disability-radio-link").click();
     await expect(
       this.page.locator("#suspect-disability-radio-yes"),

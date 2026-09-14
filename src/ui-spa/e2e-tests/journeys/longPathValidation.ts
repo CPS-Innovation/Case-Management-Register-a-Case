@@ -216,7 +216,7 @@ export async function completeLongPathValidation(
     [
       {
         testId: "suspect-disability-radio-link",
-        message: "Select whether the defendant has a disability",
+        message: "Select whether the suspect has a disability",
       },
     ],
   );
