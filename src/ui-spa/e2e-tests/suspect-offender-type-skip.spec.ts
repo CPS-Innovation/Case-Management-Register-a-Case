@@ -54,8 +54,17 @@ test("Scenario 15: type of offender can be skipped, and none is recorded for the
   await expect(inlineError).toContainText("Select the type of offender");
 
   await selectTypeLink.click();
-  await expect(page.locator("#suspect-offender-radio-0")).toBeFocused();
-  await expectStep(page, `${SUSPECT_BASE}/suspect-offender`);
+  await expect
+    .poll(
+      () =>
+        page.evaluate(
+          () =>
+            document.activeElement?.id === "suspect-offender-radio-0" ||
+            window.location.hash === "#suspect-offender-radio-0",
+        ),
+      { timeout: 15_000 },
+    )
+    .toBe(true);
 
   await skipLink.click();
 

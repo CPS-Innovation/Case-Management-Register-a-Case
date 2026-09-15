@@ -196,6 +196,23 @@ export async function completeLongPathValidation(
   await suspectDOBPage.addDOBYear(String(dob.getFullYear()));
   await suspectDOBPage.saveAndContinue();
 
+  const suspectOffenderTypesPage = new SuspectOffenderTypesPage(page);
+  await expectStep(page, "/case-registration/suspect-0/suspect-offender");
+  await submitEmptyAndAssertErrors(
+    page,
+    () => suspectOffenderTypesPage.saveAndContinue(),
+    "suspect-offender-types-error-summary",
+    [
+      {
+        testId: "suspect-offender-radio-link",
+        message: "Select the type of offender",
+      },
+    ],
+  );
+  await suspectOffenderTypesPage.selectOffenderTypePYO();
+  await suspectOffenderTypesPage.addArrestDate(isoDate(arrestDate));
+  await suspectOffenderTypesPage.saveAndContinue();
+
   const suspectGenderPage = new SuspectGenderPage(page);
   await expectStep(page, "/case-registration/suspect-0/suspect-gender");
   await submitEmptyAndAssertErrors(
@@ -307,23 +324,6 @@ export async function completeLongPathValidation(
   );
   await suspectASNPage.addASNText("123456");
   await suspectASNPage.saveAndContinue();
-
-  const suspectOffenderTypesPage = new SuspectOffenderTypesPage(page);
-  await expectStep(page, "/case-registration/suspect-0/suspect-offender");
-  await submitEmptyAndAssertErrors(
-    page,
-    () => suspectOffenderTypesPage.saveAndContinue(),
-    "suspect-offender-types-error-summary",
-    [
-      {
-        testId: "suspect-offender-radio-link",
-        message: "Select the type of offender",
-      },
-    ],
-  );
-  await suspectOffenderTypesPage.selectOffenderTypePYO();
-  await suspectOffenderTypesPage.addArrestDate(isoDate(arrestDate));
-  await suspectOffenderTypesPage.saveAndContinue();
 
   const suspectSummaryPage = new SuspectSummaryPage(page);
   await expectStep(page, "/case-registration/suspect-summary");

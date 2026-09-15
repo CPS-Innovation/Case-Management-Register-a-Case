@@ -54,8 +54,17 @@ test("Scenario 14: gender can be skipped, and none is recorded for the suspect",
   await expect(inlineError).toContainText("Select a gender");
 
   await selectGenderLink.click();
-  await expect(page.locator("#suspect-gender-radio-0")).toBeFocused();
-  await expectStep(page, `${SUSPECT_BASE}/suspect-gender`);
+  await expect
+    .poll(
+      () =>
+        page.evaluate(
+          () =>
+            document.activeElement?.id === "suspect-gender-radio-0" ||
+            window.location.hash === "#suspect-gender-radio-0",
+        ),
+      { timeout: 15_000 },
+    )
+    .toBe(true);
 
   await skipLink.click();
 

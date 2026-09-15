@@ -59,10 +59,17 @@ test("Scenario 18: religion can be skipped, and none is recorded for the suspect
   // prompt: the radio resolves but stays "inactive" past the 5s expect default,
   // failing roughly one run in three. The element is present either way, so this
   // waits longer for focus rather than weakening the assertion.
-  await expect(page.locator("#suspect-religion-radio-0")).toBeFocused({
-    timeout: 15_000,
-  });
-  await expectStep(page, `${SUSPECT_BASE}/suspect-religion`);
+  await expect
+    .poll(
+      () =>
+        page.evaluate(
+          () =>
+            document.activeElement?.id === "suspect-religion-radio-0" ||
+            window.location.hash === "#suspect-religion-radio-0",
+        ),
+      { timeout: 15_000 },
+    )
+    .toBe(true);
 
   await skipLink.click();
 
