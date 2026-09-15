@@ -17,8 +17,8 @@ export default defineConfig({
   use: {
     baseURL: FRONTEND_URL,
     storageState: STORAGE_STATE,
-    trace: "on-first-retry",
-    video: "on",
+    trace: "retain-on-failure",
+    video: process.env.CI ? "retain-on-failure" : "on",
     screenshot: "only-on-failure",
   },
   projects: [
