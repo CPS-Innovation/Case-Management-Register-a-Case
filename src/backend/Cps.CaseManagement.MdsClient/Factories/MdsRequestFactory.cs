@@ -127,7 +127,8 @@ public class MdsRequestFactory : IMdsRequestFactory
 
         foreach (var property in typeInfo.Properties)
         {
-            if (property.Name is "journeyId" or "areaOrDivisionText")
+            if (string.Equals(property.Name, "journeyId", StringComparison.OrdinalIgnoreCase) ||
+                string.Equals(property.Name, "areaOrDivisionText", StringComparison.OrdinalIgnoreCase))
             {
                 property.ShouldSerialize = static (_, _) => false;
             }

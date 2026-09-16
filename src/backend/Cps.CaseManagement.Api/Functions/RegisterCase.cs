@@ -34,7 +34,7 @@ public class RegisterCase(ILogger<RegisterCase> logger, IMdsService mdsService, 
     [CmsAuthValuesAuth]
     [BearerTokenAuth]
     [OpenApiParameter(name: HttpHeaderKeys.CorrelationId, In = Microsoft.OpenApi.Models.ParameterLocation.Header, Required = true, Type = typeof(string), Description = "Correlation identifier for tracking the request.")]
-    [OpenApiRequestBody(ContentType.ApplicationJson, typeof(CaseRegistrationRequest), Description = "Body containing the NetApp connection to create")]
+    [OpenApiRequestBody(ContentType.ApplicationJson, typeof(CaseRegistrationRequest), Description = "Body containing the case registration details to create.")]
     [OpenApiResponseWithBody(statusCode: HttpStatusCode.OK, contentType: ContentType.ApplicationJson, bodyType: typeof(CaseRegistrationResponseDto), Description = ApiResponseDescriptions.Success)]
     [OpenApiResponseWithBody(statusCode: HttpStatusCode.BadRequest, contentType: ContentType.TextPlain, typeof(string), Description = ApiResponseDescriptions.BadRequest)]
     [OpenApiResponseWithBody(statusCode: HttpStatusCode.Unauthorized, contentType: ContentType.TextPlain, typeof(string), Description = ApiResponseDescriptions.Unauthorized)]
