@@ -146,7 +146,7 @@ export async function completeLongPathValidation(
   await caseDetailsPage.enterWitnessCareUnit(WITNESS_CARE_UNIT);
   await caseDetailsPage.submitAndExpectExistingUrnError(existingUrn);
   await caseDetailsPage.enterUrn(urn);
-  await caseDetailsPage.saveAndContinue();
+  await caseDetailsPage.saveAndContinueWithFreeUrn(urn);
 
   // Add suspect.
   const addSuspectPage = new AddSuspectPage(page);
