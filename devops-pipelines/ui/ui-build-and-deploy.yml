@@ -14,25 +14,32 @@ variables:
 stages:
   - template: ../templates/ui-build-and-deploy-stages.yml
     parameters:
-      environment: 'dev'
+      environment: "dev"
       requireValidation: false
 
   - template: ../templates/ui-build-and-deploy-stages.yml
     parameters:
-      environment: 'staging'
+      environment: "staging"
       requireValidation: true
       notifyUsers: $(preprodNotifyUsers)
       approvers: $(preprodApprovers)
       deployToSlot: true
-      slotName: 'stg'
-      
+      slotName: "stg"
+
+  - stage: Run_E2E_Tests
+    displayName: "Run E2E tests"
+    jobs:
+      - template: ../templates/e2e-playwright-test-job.yml
+        parameters:
+          environment: "staging"
+
   - template: ../templates/ui-build-and-deploy-stages.yml
     parameters:
-      environment: 'prod'
+      environment: "prod"
       requireValidation: true
       notifyUsers: $(prodNotifyUsers)
       approvers: $(prodApprovers)
-      agentPool: 'CMRC Prod Pool'
-      azureSubscription: 'Azure Pipeline: CMRC - Prod'
+      agentPool: "CMRC Prod Pool"
+      azureSubscription: "Azure Pipeline: CMRC - Prod"
       deployToSlot: true
-      slotName: 'stg'
+      slotName: "stg"
