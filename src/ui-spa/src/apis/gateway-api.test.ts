@@ -1163,6 +1163,7 @@ describe("gateway-api", () => {
     const mockRequest = { mockRequestData: {} } as any;
     (globalThis.fetch as any).mockResolvedValue({
       ok: false,
+      status: 500,
     });
     await logTelemetryEvent(mockRequest);
 
@@ -1179,7 +1180,7 @@ describe("gateway-api", () => {
     );
     expect(fetch).toHaveBeenCalledTimes(1);
     expect(consoleWarnMock).toHaveBeenCalledWith(
-      "logging telemetry event failed",
+      "Logging telemetry event failed with status: 500",
     );
   });
 

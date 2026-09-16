@@ -461,7 +461,9 @@ export const logTelemetryEvent = async (payload: TelemetryPayload) => {
       body: JSON.stringify(payload),
     });
     if (!response.ok) {
-      console.warn("logging telemetry event failed");
+      console.warn(
+        `Logging telemetry event failed with status: ${response.status}`,
+      );
     }
   } catch (error) {
     // Fail silently to ensure UI flows remain unblocked
