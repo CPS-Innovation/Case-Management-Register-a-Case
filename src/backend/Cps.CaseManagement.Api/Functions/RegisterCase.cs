@@ -76,7 +76,9 @@ public class RegisterCase(ILogger<RegisterCase> logger, IMdsService mdsService, 
             EventTimestamp = DateTime.UtcNow,
             Urn = result.Urn,
             CaseId = result.CaseId,
-            Username = context.Username
+            Username = context.Username,
+            JourneyId = caseRegistrationRequest.Value.JourneyId,
+            AreaOrDivisionText = caseRegistrationRequest.Value.AreaOrDivisionText
         });
 
         return new OkObjectResult(result);

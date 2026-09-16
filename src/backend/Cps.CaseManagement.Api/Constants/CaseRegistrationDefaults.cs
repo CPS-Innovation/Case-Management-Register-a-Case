@@ -49,4 +49,9 @@ public static class CaseRegistrationDefaults
     public const int MaxAgeYears = 120;
 
     public const int HearingDateYearsWindow = 2;
+
+    /// <summary>
+    /// Maximum length for the optional frontend journey identifier used in telemetry.
+    /// </summary>
+    public const int JourneyIdMaxLength = 100;
 }
