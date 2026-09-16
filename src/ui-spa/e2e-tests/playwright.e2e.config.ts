@@ -8,7 +8,7 @@ export default defineConfig({
   fullyParallel: true,
   forbidOnly: !!process.env.CI,
   retries: process.env.CI ? 2 : 0,
-  workers: process.env.CI ? 1 : undefined,
+  workers: process.env.CI ? 2 : undefined,
   reporter: [
     ["list"],
     ["html", { outputFolder: "./playwright-report", open: "never" }],
@@ -17,8 +17,8 @@ export default defineConfig({
   use: {
     baseURL: FRONTEND_URL,
     storageState: STORAGE_STATE,
-    trace: "on-first-retry",
-    video: "on",
+    trace: process.env.CI ? "off" : "retain-on-failure",
+    video: process.env.CI ? "retain-on-failure" : "on",
     screenshot: "only-on-failure",
   },
   projects: [

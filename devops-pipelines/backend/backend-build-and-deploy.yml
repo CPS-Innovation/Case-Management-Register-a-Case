@@ -10,71 +10,78 @@ trigger:
 pr: none
 
 variables:
-- group: 'cmrc-deployment-global'
-- name: 'buildConfiguration'
-  value: 'Release'
-- name: 'dotNetVersion'
-  value: '10.x'
-- name: 'buildArtifact'
-  value: 'cmrc-main-api-drop'
+  - group: "cmrc-deployment-global"
+  - name: "buildConfiguration"
+    value: "Release"
+  - name: "dotNetVersion"
+    value: "10.x"
+  - name: "buildArtifact"
+    value: "cmrc-main-api-drop"
 
 stages:
   - stage: Build
-    displayName: 'Build Main API'
-    pool: 'CMRC PreProd Pool'
+    displayName: "Build Main API"
+    pool: "CMRC PreProd Pool"
     jobs:
       - job: Build_Main_API
-        displayName: 'Build Main API'
+        displayName: "Build Main API"
         steps:
           - template: ../templates/dotnet-build-steps.yml
             parameters:
-              projectPath: 'src/backend/Cps.CaseManagement.Api/Cps.CaseManagement.Api.csproj'
+              projectPath: "src/backend/Cps.CaseManagement.Api/Cps.CaseManagement.Api.csproj"
               projectName: $(buildArtifact)
               buildConfiguration: $(buildConfiguration)
               dotNetVersion: $(dotNetVersion)
               useLocalNuGet: true
               publishOutput: true
               runTests: false
-  
+
   - template: ../templates/backend-deploy-stages.yml
     parameters:
-      buildStageName: 'Build'        
-      environment: 'dev'
+      buildStageName: "Build"
+      environment: "dev"
       requireValidation: false
       buildArtifact: $(buildArtifact)
 
   - stage: Run_Postman_Tests_dev
-    displayName: 'Dev - Run Postman Tests'
-    dependsOn: 'Deploy_Backend_dev' # final stage of /templates/backend-deploy-stages.yml
-    pool: 'CMRC PreProd Pool'
+    displayName: "Dev - Run Postman Tests"
+    dependsOn: "Deploy_Backend_dev" # final stage of /templates/backend-deploy-stages.yml
+    pool: "CMRC PreProd Pool"
     jobs:
-    - template: ../templates/postman-test-job.yml
-      parameters:
-        appName: 'fa-cmrc-api-dev'
-        environment: 'dev'
-        postmanCollectionPath: '$(System.DefaultWorkingDirectory)/src/backend/postman/RegisterCaseAPITests.postman_collection.json'
-        nodeVersion: '24.x'
+      - template: ../templates/postman-test-job.yml
+        parameters:
+          appName: "fa-cmrc-api-dev"
+          environment: "dev"
+          postmanCollectionPath: "$(System.DefaultWorkingDirectory)/src/backend/postman/RegisterCaseAPITests.postman_collection.json"
+          nodeVersion: "24.x"
 
   - template: ../templates/backend-deploy-stages.yml
     parameters:
-      buildStageName: 'Build'
-      environment: 'staging'
+      buildStageName: "Build"
+      environment: "staging"
       requireValidation: true
       notifyUsers: $(preprodNotifyUsers)
       approvers: $(preprodApprovers)
       deployToSlot: true
-      slotName: 'stg'
+      slotName: "stg"
       buildArtifact: $(buildArtifact)
+
+  - stage: Run_E2E_Tests
+    displayName: "Run E2E tests"
+    jobs:
+      - template: ../templates/e2e-playwright-test-job.yml
+        parameters:
+          environment: "staging"
 
   - template: ../templates/backend-deploy-stages.yml
     parameters:
-      buildStageName: 'Build'
-      environment: 'prod'
+      buildStageName: "Build"
+      environment: "prod"
       requireValidation: true
       notifyUsers: $(prodNotifyUsers)
       approvers: $(prodApprovers)
-      agentPool: 'CMRC Prod Pool'
-      azureSubscription: 'Azure Pipeline: CMRC - Prod'
+      agentPool: "CMRC Prod Pool"
+      azureSubscription: "Azure Pipeline: CMRC - Prod"
       deployToSlot: true
-      slotName: 'stg'
+      slotName: "stg"
       buildArtifact: $(buildArtifact)
