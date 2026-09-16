@@ -15,6 +15,7 @@ import {
   getOffenderTypes,
   getPoliceUnits,
   getOffences,
+  logTelemetryEvent,
 } from "./gateway-api";
 import { ApiError } from "../common/errors/ApiError";
 
@@ -30,14 +31,17 @@ vi.mock("../config", () => ({
 vi.mock("uuid", () => ({
   v4: () => "mock-uuid",
 }));
+let consoleWarnMock: any;
 
 describe("gateway-api", () => {
   beforeEach(() => {
     globalThis.fetch = vi.fn();
+    consoleWarnMock = vi.spyOn(console, "warn").mockImplementation(() => {});
   });
 
-  beforeEach(() => {
+  afterEach(() => {
     vi.clearAllMocks();
+    consoleWarnMock.mockRestore();
   });
 
   it("getCaseAreasAndRegisteringUnits - success", async () => {
@@ -1129,6 +1133,77 @@ describe("gateway-api", () => {
     );
     await expect(submitCaseRegistration(mockRequest)).rejects.toThrow(
       "API Error: https://mocked-out-api/api/v1/cases returned 200 OK - response schema validation failed",
+    );
+  });
+
+  it("logTelemetryEvent - posts payload to gateway telemetry endpoint with common headers", async () => {
+    const mockRequest = { mockRequestData: {} } as any;
+
+    (globalThis.fetch as any).mockResolvedValue({
+      ok: true,
+    });
+    await logTelemetryEvent(mockRequest);
+
+    expect(fetch).toHaveBeenCalledWith(
+      "https://mocked-out-api/api/v1/telemetry",
+      expect.objectContaining({
+        method: "POST",
+        credentials: "include",
+        headers: {
+          Authorization: "Bearer access-token",
+          "Correlation-Id": "mock-uuid",
+        },
+      }),
+    );
+    expect(fetch).toHaveBeenCalledTimes(1);
+    expect(consoleWarnMock).not.toHaveBeenCalled();
+  });
+
+  it("logs a warning when response is not ok", async () => {
+    const mockRequest = { mockRequestData: {} } as any;
+    (globalThis.fetch as any).mockResolvedValue({
+      ok: false,
+      status: 500,
+    });
+    await logTelemetryEvent(mockRequest);
+
+    expect(fetch).toHaveBeenCalledWith(
+      "https://mocked-out-api/api/v1/telemetry",
+      expect.objectContaining({
+        method: "POST",
+        credentials: "include",
+        headers: {
+          Authorization: "Bearer access-token",
+          "Correlation-Id": "mock-uuid",
+        },
+      }),
+    );
+    expect(fetch).toHaveBeenCalledTimes(1);
+    expect(consoleWarnMock).toHaveBeenCalledWith(
+      "Logging telemetry event failed with status: 500",
+    );
+  });
+
+  it("catches network/auth errors and warns", async () => {
+    const mockRequest = { mockRequestData: {} } as any;
+    (globalThis.fetch as any).mockRejectedValue(new Error("network down"));
+    await logTelemetryEvent(mockRequest);
+
+    expect(fetch).toHaveBeenCalledWith(
+      "https://mocked-out-api/api/v1/telemetry",
+      expect.objectContaining({
+        method: "POST",
+        credentials: "include",
+        headers: {
+          Authorization: "Bearer access-token",
+          "Correlation-Id": "mock-uuid",
+        },
+      }),
+    );
+    expect(fetch).toHaveBeenCalledTimes(1);
+    expect(consoleWarnMock).toHaveBeenCalledWith(
+      "Logging telemetry event failed due to network or auth error:",
+      Error("network down"),
     );
   });
 });
