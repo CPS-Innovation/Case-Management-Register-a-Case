@@ -10,6 +10,10 @@ public class CaseRegisteredEvent : BaseTelemetryEvent
 
     public string Username { get; set; } = string.Empty;
 
+    public string? JourneyId { get; set; }
+
+    public string? AreaOrDivisionText { get; set; }
+
     public override (IDictionary<string, string> Properties, IDictionary<string, double?> Metrics) ToTelemetryEventProps()
     {
         return (
@@ -17,7 +21,9 @@ public class CaseRegisteredEvent : BaseTelemetryEvent
             {
                 ["urn"] = Urn,
                 ["caseId"] = CaseId.ToString(),
-                ["username"] = Username
+                ["username"] = Username,
+                ["journeyId"] = JourneyId ?? string.Empty,
+                ["areaOrDivisionText"] = AreaOrDivisionText ?? string.Empty
             },
             new Dictionary<string, double?>());
     }

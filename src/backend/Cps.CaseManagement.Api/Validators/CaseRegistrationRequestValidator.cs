@@ -41,6 +41,8 @@ public class CaseRegistrationRequestValidator : AbstractValidator<CaseRegistrati
             .Matches(CaseRegistrationInputPatterns.Alphanumeric)
             .WithMessage($"OicShoulderNumber {CaseRegistrationInputPatterns.AlphanumericMessage}");
         this.RuleFor(x => x.OicPoliceUnit).MaximumLength(CaseRegistrationDefaults.ShortTextMaxLength);
+        this.RuleFor(x => x.JourneyId).MaximumLength(CaseRegistrationDefaults.JourneyIdMaxLength);
+        this.RuleFor(x => x.AreaOrDivisionText).MaximumLength(CaseRegistrationDefaults.ShortTextMaxLength);
 
         this.RuleFor(x => x.HearingDate)
             .GreaterThanOrEqualTo(DateTime.Today.AddYears(-CaseRegistrationDefaults.HearingDateYearsWindow))

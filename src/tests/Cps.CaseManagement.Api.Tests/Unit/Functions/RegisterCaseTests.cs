@@ -144,7 +144,9 @@ public class RegisterCaseTest
                 e.Urn == expectedResponse.Urn &&
                 e.CaseId == expectedResponse.CaseId &&
                 e.Username == username &&
-                e.CorrelationId == correlationId)),
+                e.CorrelationId == correlationId &&
+                e.JourneyId == caseDetails.JourneyId &&
+                e.AreaOrDivisionText == caseDetails.AreaOrDivisionText)),
             Times.Once);
     }
 
@@ -254,6 +256,37 @@ public class RegisterCaseTest
         Assert.Equal("Operation Nightingale", defendant.Surname);
     }
 
+    [Fact]
+    public async Task Run_WithMissingJourneyIdAndArea_TracksEventWithNullTelemetryFields()
+    {
+        var caseDetails = CreateValidCaseRegistrationRequest();
+        caseDetails.JourneyId = null;
+        caseDetails.AreaOrDivisionText = null;
+        var correlationId = _fixture.Create<Guid>();
+
+        _requestValidatorMock
+            .Setup(x => x.GetJsonBody<CaseRegistrationRequest, CaseRegistrationRequestValidator>(It.IsAny<HttpRequest>()))
+            .ReturnsAsync(new ValidatableRequest<CaseRegistrationRequest>
+            {
+                IsValid = true,
+                Value = caseDetails
+            });
+
+        _mdsServiceMock.Setup(x => x.RegisterCaseAsync(It.IsAny<MdsRegisterCaseArg>()))
+            .ReturnsAsync(new CaseRegistrationResponseDto { CaseId = 12345, Urn = "12AB1234567" });
+
+        var functionContext = FunctionContextStubHelper.CreateFunctionContextStub(correlationId, _fixture.Create<string>(), _fixture.Create<string>());
+        var httpRequest = CreateHttpRequestFromJson(caseDetails, correlationId);
+
+        await _function.Run(httpRequest, functionContext);
+
+        _telemetryClientMock.Verify(
+            t => t.TrackEvent(It.Is<CaseRegisteredEvent>(e =>
+                e.JourneyId == null &&
+                e.AreaOrDivisionText == null)),
+            Times.Once);
+    }
+
     private static HttpRequest CreateHttpRequestFromJson(object obj, Guid correlationId)
     {
         var req = HttpRequestStubHelper.CreateHttpRequest(correlationId);
@@ -307,7 +340,9 @@ public class RegisterCaseTest
             MonitoringCodes = new List<CaseRegistrationMonitoringCode>
             {
                 new CaseRegistrationMonitoringCode("MON1", true)
-            }
+            },
+            JourneyId = "journey-123",
+            AreaOrDivisionText = "London"
         };
     }
 }
