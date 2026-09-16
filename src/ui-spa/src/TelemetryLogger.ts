@@ -1,17 +1,15 @@
 import { logTelemetryEvent } from "./apis/gateway-api";
-type PageName = "HomePage";
 
 export const TelemetryType = {
-  Event: 0,
-  Exception: 1,
-  Metric: 2,
-  PageView: 3,
-  Trace: 4,
+  Event: "Event",
+  Exception: "Exception",
+  Metric: "Metric",
+  PageView: "PageView",
+  Trace: "Trace",
 } as const;
 
 export type TelemetryPayload = {
   telemetryType: (typeof TelemetryType)[keyof typeof TelemetryType];
-  eventTimestamp: string;
   properties: Record<string, unknown>[];
 };
 
@@ -23,10 +21,7 @@ export type CustomEventName = keyof TelemetryEventPropsMap;
 export type TelemetryEventProps<T extends CustomEventName> =
   TelemetryEventPropsMap[T];
 
-export type TelemetryPageViewProps = [
-  { journeyId: string },
-  Record<string, unknown>,
-];
+export type TelemetryPageViewProps = [Record<string, unknown>];
 
 export class TelemetryService {
   async trackEvent<T extends CustomEventName>(
@@ -35,19 +30,17 @@ export class TelemetryService {
   ): Promise<void> {
     const payload: TelemetryPayload = {
       telemetryType: TelemetryType.Event,
-      eventTimestamp: new Date().toISOString(),
       properties: [{ name: eventName }, ...properties],
     };
     await logTelemetryEvent(payload);
   }
 
   async trackPageView(
-    pageName: PageName,
+    pageName: string,
     properties: TelemetryPageViewProps,
   ): Promise<void> {
     const payload: TelemetryPayload = {
       telemetryType: TelemetryType.PageView,
-      eventTimestamp: new Date().toISOString(),
       properties: [{ pageName: pageName }, ...properties],
     };
     await logTelemetryEvent(payload);
@@ -59,8 +52,14 @@ export class TelemetryService {
   ): Promise<void> {
     const payload: TelemetryPayload = {
       telemetryType: TelemetryType.Exception,
-      eventTimestamp: new Date().toISOString(),
-      properties: [{ error: error.message }, ...properties],
+      properties: [
+        {
+          exceptionMessage: error.message,
+          errorName: error.name,
+          errorStack: error.stack ?? "",
+        },
+        ...properties,
+      ],
     };
     await logTelemetryEvent(payload);
   }
@@ -68,7 +67,6 @@ export class TelemetryService {
   async trackTrace(properties: Record<string, unknown>[] = []): Promise<void> {
     const payload: TelemetryPayload = {
       telemetryType: TelemetryType.Trace,
-      eventTimestamp: new Date().toISOString(),
       properties: [...properties],
     };
     await logTelemetryEvent(payload);

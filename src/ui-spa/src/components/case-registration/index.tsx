@@ -15,7 +15,6 @@ import { DEFAULT_COMPLEXITY_DESCRIPTION } from "../../common/constants/general";
 import useErrorSummaryList from "../../common/hooks/useErrorSummaryList";
 import { useNavigate } from "react-router";
 import PageContentWrapper from "../common/PageContentWrapper";
-import { telemetryService } from "../../TelemetryLogger";
 import styles from "./index.module.scss";
 
 const CaseRegistrationPage = () => {
@@ -275,8 +274,6 @@ const CaseRegistrationPage = () => {
 
     if (!validateFormData()) return;
     setDisableBtns(true);
-    //Sample use case
-    telemetryService.trackEvent("JourneyStarted", [{ journeyId: "1" }]);
 
     let nextRoute = "/case-registration/areas";
     if (state.formData.navigation.fromCaseSummaryPage) {

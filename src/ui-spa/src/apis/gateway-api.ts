@@ -450,16 +450,24 @@ export const submitCaseRegistration = async (
 };
 
 export const logTelemetryEvent = async (payload: TelemetryPayload) => {
-  const url = `${GATEWAY_BASE_URL}/api/v1/telemetry`;
-  const response = await fetch(url, {
-    method: "POST",
-    credentials: "include",
-    headers: {
-      ...(await buildCommonHeaders()),
-    },
-    body: JSON.stringify(payload),
-  });
-  if (!response.ok) {
-    console.warn("logging telemetry event failed");
+  try {
+    const url = `${GATEWAY_BASE_URL}/api/v1/telemetry`;
+    const response = await fetch(url, {
+      method: "POST",
+      credentials: "include",
+      headers: {
+        ...(await buildCommonHeaders()),
+      },
+      body: JSON.stringify(payload),
+    });
+    if (!response.ok) {
+      console.warn("logging telemetry event failed");
+    }
+  } catch (error) {
+    // Fail silently to ensure UI flows remain unblocked
+    console.warn(
+      "Logging telemetry event failed due to network or auth error:",
+      error,
+    );
   }
 };
