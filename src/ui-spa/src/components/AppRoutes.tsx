@@ -33,7 +33,7 @@ import ChangeRegisteringUnitConfirmationPage from "./case-registration/change-re
 import RemoveAllSuspectsConfirmationPage from "./case-registration/remove-all-suspects-confirmation";
 import CancelCaseRegistrationConfirmationPage from "./case-registration/cancel-case-registration-confirmation";
 import ProtectedRoutes from "./ProtectedRoutes";
-import { usePageView } from "../common/hooks/usePageView";
+import usePageView from "../common/hooks/usePageView";
 
 const AppRoutes = () => {
   usePageView();

@@ -37,14 +37,17 @@ describe("TelemetryService", () => {
   });
 
   it("trackPageView sends a PageView payload with pageName and additional props", async () => {
-    await telemetryService.trackPageView("HomePage", [{ foo: "bar" } as any]);
+    await telemetryService.trackPageView("HomePage", [
+      { foo: "bar" },
+      { id: "123" },
+    ]);
 
     expect(logTelemetryEvent).toHaveBeenCalledTimes(1);
     const sent = getSentPayload();
 
     const expected = {
       telemetryType: TelemetryType.PageView,
-      properties: [{ pageName: "HomePage" }, { foo: "bar" }],
+      properties: [{ pageName: "HomePage" }, { foo: "bar" }, { id: "123" }],
     };
 
     expect(sent).toEqual(expected);

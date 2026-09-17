@@ -4,7 +4,7 @@ import { telemetryService } from "../../TelemetryLogger";
 import { CaseRegistrationFormContext } from "../providers/CaseRegistrationProvider";
 import { pageTitles } from "../constants/pageTitles";
 
-export const usePageView = () => {
+const usePageView = () => {
   const { state } = useContext(CaseRegistrationFormContext);
   const location = useLocation();
   const lastPath = useRef<string | null>(null);
@@ -21,14 +21,18 @@ export const usePageView = () => {
     const lastSlashIndex = location.pathname.lastIndexOf("/");
     const lastSegment = location.pathname.substring(lastSlashIndex);
     const pageName = pageTitles[lastSegment];
+
     telemetryService.trackPageView(pageName, [
       {
         journeyId: state.telemetryData.journeyId,
+      },
+      {
         path: location.pathname,
       },
     ]);
 
     lastPath.current = location.pathname;
-    console.log("location.pathname:", location.pathname);
   }, [location, state.telemetryData.journeyId]);
 };
+
+export default usePageView;

@@ -22,7 +22,7 @@ export type CustomEventName = keyof TelemetryEventPropsMap;
 export type TelemetryEventProps<T extends CustomEventName> =
   TelemetryEventPropsMap[T];
 
-export type TelemetryPageViewProps = [Record<string, unknown>];
+export type TelemetryPageViewProps = Record<string, unknown>[];
 
 export class TelemetryService {
   async trackEvent<T extends CustomEventName>(
