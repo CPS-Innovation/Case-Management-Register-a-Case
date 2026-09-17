@@ -164,6 +164,9 @@ export type CaseRegistrationState = {
     suspectOffenderTypes?: OffenderTypes | null;
     offencesSearchResults?: Offences | null;
   };
+  telemetryData: {
+    journeyId: string;
+  };
 };
 
 export const suspectInitialState: SuspectFormData = {
@@ -260,6 +263,10 @@ export const initialState: CaseRegistrationState = {
     suspectEthnicities: null,
     suspectReligions: null,
     suspectOffenderTypes: null,
+  },
+
+  telemetryData: {
+    journeyId: "",
   },
 };
 
@@ -484,6 +491,12 @@ export type CaseRegistrationActions =
     }
   | {
       type: "REMOVE_ALL_SUSPECTS";
+    }
+  | {
+      type: "SET_TELEMETRY_JOURNEY_ID";
+      payload: {
+        journeyId: string;
+      };
     };
 
 export type DispatchType = React.Dispatch<CaseRegistrationActions>;
@@ -875,6 +888,16 @@ export const caseRegistrationReducer = (
         formData: {
           ...state.formData,
           suspects: [],
+        },
+      };
+    }
+
+    case "SET_TELEMETRY_JOURNEY_ID": {
+      return {
+        ...state,
+        telemetryData: {
+          ...state.telemetryData,
+          journeyId: action.payload.journeyId,
         },
       };
     }

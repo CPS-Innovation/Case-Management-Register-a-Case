@@ -1,12 +1,22 @@
-import { useRef, useEffect, useState, useCallback, useMemo } from "react";
+import {
+  useRef,
+  useEffect,
+  useState,
+  useCallback,
+  useMemo,
+  useContext,
+} from "react";
 import { Radios, Button, ErrorSummary } from "../../govuk";
 import { type GeneralRadioValue } from "../../../common/reducers/caseRegistrationReducer";
 import { HOME_PAGE_URL } from "../../../config";
 import { useNavigate, useLocation } from "react-router";
 import PageContentWrapper from "../../common/PageContentWrapper";
+import { telemetryService } from "../../../TelemetryLogger";
+import { CaseRegistrationFormContext } from "../../../common/providers/CaseRegistrationProvider";
 import styles from "../index.module.scss";
 
 const CancelCaseRegistrationConfirmationPage = () => {
+  const { state } = useContext(CaseRegistrationFormContext);
   const navigate = useNavigate();
   const {
     state: { backRoute },
@@ -90,6 +100,9 @@ const CancelCaseRegistrationConfirmationPage = () => {
     if (!validateFormData()) return;
 
     if (formData.cancelRegistrationRadio === "yes") {
+      telemetryService.trackEvent("JourneyCancelled", [
+        { journeyId: state.telemetryData.journeyId },
+      ]);
       globalThis.location.href = HOME_PAGE_URL;
       return;
     }
