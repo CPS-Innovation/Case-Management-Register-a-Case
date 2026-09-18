@@ -15,7 +15,7 @@ export type TelemetryPayload = {
 
 export type TelemetryEventPropsMap = {
   JourneyStarted: [{ journeyId: string }];
-  JourneyCancelled: [{ journeyId: string }];
+  JourneyCancelled: [{ journeyId: string }, { cancelledFrom: string }];
 };
 export type CustomEventName = keyof TelemetryEventPropsMap;
 

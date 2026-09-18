@@ -277,6 +277,15 @@ const CaseRegistrationPage = () => {
     if (!validateFormData()) return;
     setDisableBtns(true);
 
+    if (!state.telemetryData.journeyId) {
+      const journeyId = uuidv4();
+      dispatch({
+        type: "SET_TELEMETRY_JOURNEY_ID",
+        payload: { journeyId },
+      });
+      telemetryService.trackEvent("JourneyStarted", [{ journeyId }]);
+    }
+
     let nextRoute = "/case-registration/areas";
     if (state.formData.navigation.fromCaseSummaryPage) {
       nextRoute = "/case-registration/case-summary";
@@ -310,14 +319,6 @@ const CaseRegistrationPage = () => {
         type: "SET_NAVIGATION_DATA",
         payload: { fromCaseSummaryPage: false },
       });
-    }
-    if (!state.telemetryData.journeyId) {
-      const journeyId = uuidv4();
-      dispatch({
-        type: "SET_TELEMETRY_JOURNEY_ID",
-        payload: { journeyId },
-      });
-      telemetryService.trackEvent("JourneyStarted", [{ journeyId }]);
     }
 
     navigate(nextRoute);

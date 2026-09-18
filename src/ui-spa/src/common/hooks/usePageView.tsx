@@ -8,31 +8,28 @@ const usePageView = () => {
   const { state } = useContext(CaseRegistrationFormContext);
   const location = useLocation();
   const lastPath = useRef<string | null>(null);
-
+  const cleanPath = location.pathname.replace(/\/+$/, "") || "/";
   useEffect(() => {
-    if (lastPath.current === location.pathname) return;
-    if (
-      location.pathname !== "/case-registration" &&
-      !state.telemetryData.journeyId
-    ) {
+    if (lastPath.current === cleanPath) return;
+    if (cleanPath !== "/case-registration" && !state.telemetryData.journeyId) {
       return;
     }
 
-    const lastSlashIndex = location.pathname.lastIndexOf("/");
-    const lastSegment = location.pathname.substring(lastSlashIndex);
-    const pageName = pageTitles[lastSegment];
+    const lastSlashIndex = cleanPath.lastIndexOf("/");
+    const lastSegment = cleanPath.substring(lastSlashIndex);
+    const pageName = pageTitles[lastSegment] || "Unknown Page";
 
     telemetryService.trackPageView(pageName, [
       {
         journeyId: state.telemetryData.journeyId,
       },
       {
-        path: location.pathname,
+        path: cleanPath,
       },
     ]);
 
-    lastPath.current = location.pathname;
-  }, [location, state.telemetryData.journeyId]);
+    lastPath.current = cleanPath;
+  }, [cleanPath, state.telemetryData.journeyId]);
 };
 
 export default usePageView;

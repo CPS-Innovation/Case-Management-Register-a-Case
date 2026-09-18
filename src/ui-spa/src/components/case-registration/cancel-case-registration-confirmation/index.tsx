@@ -102,6 +102,7 @@ const CancelCaseRegistrationConfirmationPage = () => {
     if (formData.cancelRegistrationRadio === "yes") {
       telemetryService.trackEvent("JourneyCancelled", [
         { journeyId: state.telemetryData.journeyId },
+        { cancelledFrom: backRoute || "unknown" },
       ]);
       globalThis.location.href = HOME_PAGE_URL;
       return;
