@@ -321,15 +321,17 @@ public class TelemetryClientTest
             Times.Never);
     }
 
-    [Fact]
-    public void TrackPageView_WithEmptyPageName_DoesNotCallTrackPageView()
+    [Theory]
+    [InlineData("")]
+    [InlineData("   ")]
+    public void TrackPageView_WithEmptyPageName_DoesNotCallTrackPageView(string pageName)
     {
         // Arrange
         var telemetryEvent = new TestTelemetryEvent
         {
             Properties = new Dictionary<string, string>
             {
-                { "pageName", string.Empty }
+                { "pageName", pageName }
             }
         };
 

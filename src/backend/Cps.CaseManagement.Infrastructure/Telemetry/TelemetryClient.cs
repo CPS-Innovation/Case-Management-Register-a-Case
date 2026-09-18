@@ -67,12 +67,7 @@ public class TelemetryClient(IAppInsightsTelemetryClient telemetryClient) : ITel
 
         var (properties, metrics) = PrepareTelemetryEventProps(telemetryEvent);
 
-        if (properties == null || !properties.ContainsKey(PageNameKey))
-            return;
-
-        var pageName = properties[PageNameKey]?.ToString() ?? string.Empty;
-
-        if (string.IsNullOrEmpty(pageName))
+        if (properties == null || !properties.TryGetValue(PageNameKey, out var pageName) || string.IsNullOrWhiteSpace(pageName))
             return;
 
         _telemetryClient.TrackPageView(pageName, properties, metrics);
