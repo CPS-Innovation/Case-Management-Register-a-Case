@@ -7,6 +7,8 @@ export const caseRegistrationRequestDataSchema = z.object({
     uniqueRef: z.string(),
     year: z.number(),
   }),
+  journeyId: z.string(),
+  areaOrDivisionText: z.string(),
   registeringAreaId: z.number(),
   registeringUnitId: z.number(),
   allocatedWcuId: z.number(),
