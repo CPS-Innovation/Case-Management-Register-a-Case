@@ -67,15 +67,10 @@ public class TelemetryClient(IAppInsightsTelemetryClient telemetryClient) : ITel
 
         var (properties, metrics) = PrepareTelemetryEventProps(telemetryEvent);
 
-        if (!properties.ContainsKey(PageNameKey))
+        if (properties == null || !properties.TryGetValue(PageNameKey, out var pageName) || string.IsNullOrWhiteSpace(pageName))
             return;
 
-        var pageName = properties?[PageNameKey]?.ToString() ?? string.Empty;
-
-        if (string.IsNullOrEmpty(pageName))
-            return;
-
-        _telemetryClient.TrackPageView(pageName);
+        _telemetryClient.TrackPageView(pageName, properties, metrics);
     }
 
     public void TrackTrace(BaseTelemetryEvent telemetryEvent)
@@ -122,6 +117,9 @@ public class TelemetryClient(IAppInsightsTelemetryClient telemetryClient) : ITel
     private (IDictionary<string, string> Properties, IDictionary<string, double>? Metrics) PrepareTelemetryEventProps(BaseTelemetryEvent telemetryEvent, bool isFailure = false)
     {
         var (properties, metrics) = telemetryEvent.ToTelemetryEventProps();
+
+        properties ??= new Dictionary<string, string>();
+        metrics ??= new Dictionary<string, double?>();
 
         var nonNullMetrics = metrics.Where(kvp => kvp.Value.HasValue)
                                     .ToDictionary(kvp => kvp.Key, kvp => kvp.Value!.Value);

@@ -234,7 +234,72 @@ public class TelemetryClientTest
 
         // Assert
         _mockAppInsightsTelemetryClient.Verify(
-            x => x.TrackPageView("HomePage"),
+            x => x.TrackPageView(
+                "HomePage",
+                It.Is<IDictionary<string, string>>(p => p.ContainsKey("pageName") && p["pageName"] == "HomePage"),
+                It.IsAny<IDictionary<string, double>>()),
+            Times.Once);
+    }
+
+    [Fact]
+    public void TrackPageView_WithUiTelemetryEvent_PassesJourneyId()
+    {
+        // Arrange
+        var telemetryEvent = new BaseUiTelemetryEvent
+        {
+            Properties = new List<Dictionary<string, object>>
+            {
+                new() { { "pageName", "CaseSummary" } },
+                new() { { "journeyId", "journey-123" } }
+            }
+        };
+
+        // Act
+        _telemetryClient.TrackPageView(telemetryEvent);
+
+        // Assert
+        _mockAppInsightsTelemetryClient.Verify(
+            x => x.TrackPageView(
+                "CaseSummary",
+                It.Is<IDictionary<string, string>>(p =>
+                    p.ContainsKey("journeyId") &&
+                    p["journeyId"] == "journey-123"),
+                It.IsAny<IDictionary<string, double>>()),
+            Times.Once);
+    }
+
+    [Fact]
+    public void TrackPageView_WithCustomPropertiesAndMetrics_PassesJourneyIdAndMetrics()
+    {
+        // Arrange
+        var telemetryEvent = new TestTelemetryEvent
+        {
+            Properties = new Dictionary<string, string>
+            {
+                { "pageName", "CaseSummary" },
+                { "journeyId", "journey-123" }
+            },
+            Metrics = new Dictionary<string, double?>
+            {
+                { "duration", 1.5 }
+            }
+        };
+
+        // Act
+        _telemetryClient.TrackPageView(telemetryEvent);
+
+        // Assert
+        _mockAppInsightsTelemetryClient.Verify(
+            x => x.TrackPageView(
+                "CaseSummary",
+                It.Is<IDictionary<string, string>>(p =>
+                    p.ContainsKey("pageName") &&
+                    p["pageName"] == "CaseSummary" &&
+                    p.ContainsKey("journeyId") &&
+                    p["journeyId"] == "journey-123"),
+                It.Is<IDictionary<string, double>>(m =>
+                    m.ContainsKey("duration") &&
+                    m["duration"] == 1.5)),
             Times.Once);
     }
 
@@ -249,7 +314,70 @@ public class TelemetryClientTest
 
         // Assert
         _mockAppInsightsTelemetryClient.Verify(
-            x => x.TrackPageView(It.IsAny<string>()),
+            x => x.TrackPageView(
+                It.IsAny<string>(),
+                It.IsAny<IDictionary<string, string>>(),
+                It.IsAny<IDictionary<string, double>>()),
+            Times.Never);
+    }
+
+    [Theory]
+    [InlineData("")]
+    [InlineData("   ")]
+    public void TrackPageView_WithEmptyPageName_DoesNotCallTrackPageView(string pageName)
+    {
+        // Arrange
+        var telemetryEvent = new TestTelemetryEvent
+        {
+            Properties = new Dictionary<string, string>
+            {
+                { "pageName", pageName }
+            }
+        };
+
+        // Act
+        _telemetryClient.TrackPageView(telemetryEvent);
+
+        // Assert
+        _mockAppInsightsTelemetryClient.Verify(
+            x => x.TrackPageView(
+                It.IsAny<string>(),
+                It.IsAny<IDictionary<string, string>>(),
+                It.IsAny<IDictionary<string, double>>()),
+            Times.Never);
+    }
+
+    [Fact]
+    public void TrackPageView_WithNullEvent_DoesNothing()
+    {
+        // Act
+        _telemetryClient.TrackPageView(null!);
+
+        // Assert
+        _mockAppInsightsTelemetryClient.Verify(
+            x => x.TrackPageView(
+                It.IsAny<string>(),
+                It.IsAny<IDictionary<string, string>>(),
+                It.IsAny<IDictionary<string, double>>()),
+            Times.Never);
+    }
+
+    [Fact]
+    public void TrackPageView_WithNullPropertyPayload_DoesNotThrow()
+    {
+        // Arrange
+        var telemetryEvent = new NullPropsTelemetryEvent();
+
+        // Act
+        var exception = Record.Exception(() => _telemetryClient.TrackPageView(telemetryEvent));
+
+        // Assert
+        Assert.Null(exception);
+        _mockAppInsightsTelemetryClient.Verify(
+            x => x.TrackPageView(
+                It.IsAny<string>(),
+                It.IsAny<IDictionary<string, string>>(),
+                It.IsAny<IDictionary<string, double>>()),
             Times.Never);
     }
 
@@ -450,6 +578,14 @@ public class TelemetryClientTest
                 Properties ?? new Dictionary<string, string>(),
                 Metrics ?? new Dictionary<string, double?>()
             );
+        }
+    }
+
+    private class NullPropsTelemetryEvent : BaseTelemetryEvent
+    {
+        public override (IDictionary<string, string> Properties, IDictionary<string, double?> Metrics) ToTelemetryEventProps()
+        {
+            return (null!, null!);
         }
     }
 }

@@ -6,8 +6,17 @@ public class BaseUiTelemetryEvent : BaseTelemetryEvent
 
     public override (IDictionary<string, string> Properties, IDictionary<string, double?> Metrics) ToTelemetryEventProps()
     {
-        var telemetryProperties = Properties.SelectMany(dict => dict)
-                                    .ToDictionary(kvp => kvp.Key, kvp => kvp.Value);
+        var telemetryProperties = new Dictionary<string, object>();
+        if (Properties != null)
+        {
+            foreach (var dict in Properties.Where(d => d != null))
+            {
+                foreach (var kvp in dict)
+                {
+                    telemetryProperties[kvp.Key] = kvp.Value;
+                }
+            }
+        }
 
         if (telemetryProperties == null || telemetryProperties.Count == 0)
         {
