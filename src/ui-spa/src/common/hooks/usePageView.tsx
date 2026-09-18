@@ -11,7 +11,8 @@ const usePageView = () => {
   const cleanPath = location.pathname.replace(/\/+$/, "") || "/";
   useEffect(() => {
     if (lastPath.current === cleanPath) return;
-    if (cleanPath !== "/case-registration" && !state.telemetryData.journeyId) {
+
+    if (!state.telemetryData.journeyId) {
       return;
     }
 
