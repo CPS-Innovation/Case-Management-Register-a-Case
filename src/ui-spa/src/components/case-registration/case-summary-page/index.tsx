@@ -146,6 +146,7 @@ const CaseSummaryPage = () => {
     const requestData = getCaseRegistrationRequestData(
       state.formData,
       state.apiData.caseMonitoringCodes!,
+      state.telemetryData.journeyId,
       policeUnit,
     );
 

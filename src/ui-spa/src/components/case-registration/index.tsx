@@ -15,6 +15,8 @@ import { DEFAULT_COMPLEXITY_DESCRIPTION } from "../../common/constants/general";
 import useErrorSummaryList from "../../common/hooks/useErrorSummaryList";
 import { useNavigate } from "react-router";
 import PageContentWrapper from "../common/PageContentWrapper";
+import { v4 as uuidv4 } from "uuid";
+import { telemetryService } from "../../TelemetryLogger";
 import styles from "./index.module.scss";
 
 const CaseRegistrationPage = () => {
@@ -274,6 +276,15 @@ const CaseRegistrationPage = () => {
 
     if (!validateFormData()) return;
     setDisableBtns(true);
+
+    if (!state.telemetryData.journeyId) {
+      const journeyId = uuidv4();
+      dispatch({
+        type: "SET_TELEMETRY_JOURNEY_ID",
+        payload: { journeyId },
+      });
+      telemetryService.trackEvent("JourneyStarted", [{ journeyId }]);
+    }
 
     let nextRoute = "/case-registration/areas";
     if (state.formData.navigation.fromCaseSummaryPage) {
