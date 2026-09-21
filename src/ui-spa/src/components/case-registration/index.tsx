@@ -8,7 +8,7 @@ import {
   getCaseAreasAndWitnessCareUnits,
   getCaseComplexities,
 } from "../../apis/gateway-api";
-import { useQuery } from "@tanstack/react-query";
+import useAuthedQuery from "../../common/hooks/useAuthedQuery";
 import { useIsAreaSensitive } from "../../common/hooks/useIsAreaSensitive";
 import { sanitizeOperationNameText } from "../../common/utils/sanitizeOperationNameText";
 import { DEFAULT_COMPLEXITY_DESCRIPTION } from "../../common/constants/general";
@@ -17,6 +17,7 @@ import { useNavigate } from "react-router";
 import PageContentWrapper from "../common/PageContentWrapper";
 import { v4 as uuidv4 } from "uuid";
 import { telemetryService } from "../../TelemetryLogger";
+import { Spinner } from "../common/Spinner";
 import styles from "./index.module.scss";
 
 const CaseRegistrationPage = () => {
@@ -46,30 +47,26 @@ const CaseRegistrationPage = () => {
     operationNameText: state.formData.operationNameText || "",
   });
 
-  const { data: areasData, error: areaDataError } = useQuery({
+  const { data: areasData, isLoading: isAreaLoading } = useAuthedQuery({
     queryKey: ["areas"],
     queryFn: getCaseAreasAndRegisteringUnits,
     retry: false,
     enabled: !state.apiData.areasAndRegisteringUnits,
   });
 
-  const { data: witnessCareUnitsData, error: witnessCareUnitsError } = useQuery(
-    {
-      queryKey: ["witness-care-units"],
-      queryFn: getCaseAreasAndWitnessCareUnits,
-      retry: false,
-      enabled: !state.apiData.areasAndWitnessCareUnits,
-    },
-  );
+  const { data: witnessCareUnitsData } = useAuthedQuery({
+    queryKey: ["witness-care-units"],
+    queryFn: getCaseAreasAndWitnessCareUnits,
+    retry: false,
+    enabled: !state.apiData.areasAndWitnessCareUnits,
+  });
 
-  const { data: caseComplexitiesData, error: caseComplexitiesError } = useQuery(
-    {
-      queryKey: ["case-complexities"],
-      queryFn: () => getCaseComplexities(),
-      enabled: !state.apiData.caseComplexities,
-      retry: false,
-    },
-  );
+  const { data: caseComplexitiesData } = useAuthedQuery({
+    queryKey: ["case-complexities"],
+    queryFn: () => getCaseComplexities(),
+    enabled: !state.apiData.caseComplexities,
+    retry: false,
+  });
 
   const [formDataErrors, setFormDataErrors] = useState<FormDataErrors>({});
 
@@ -162,18 +159,6 @@ const CaseRegistrationPage = () => {
     setFormDataErrors(errors);
     return isValid;
   };
-
-  useEffect(() => {
-    if (areaDataError) throw areaDataError;
-  }, [areaDataError]);
-
-  useEffect(() => {
-    if (witnessCareUnitsError) throw witnessCareUnitsError;
-  }, [witnessCareUnitsError]);
-
-  useEffect(() => {
-    if (caseComplexitiesError) throw caseComplexitiesError;
-  }, [caseComplexitiesError]);
 
   useEffect(() => {
     if (areasData && !state.apiData.areasAndRegisteringUnits) {
@@ -347,6 +332,16 @@ const CaseRegistrationPage = () => {
     }));
   };
 
+  if (isAreaLoading) {
+    return (
+      <PageContentWrapper>
+        <div className={styles.pageLoadingSpinnerWrapper}>
+          <Spinner data-testid="page-loading-spinner" diameterPx={50} />
+          <div aria-live="polite">Loading...</div>
+        </div>
+      </PageContentWrapper>
+    );
+  }
   return (
     <div>
       <PageContentWrapper>
