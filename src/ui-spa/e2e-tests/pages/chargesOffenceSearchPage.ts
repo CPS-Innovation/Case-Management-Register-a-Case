@@ -1,6 +1,14 @@
 import { type Page, type Locator, expect } from "@playwright/test";
 import { ChargesOffenceSearchPagePage as IntegrationChargesOffenceSearchPage } from "../../integration-tests/pages/chargesOffenceSearchPage";
 
+const RESULTS_COLUMNS = [
+  "Actions",
+  "CJS code",
+  "Description",
+  "Statute name and section",
+  "Effective dates",
+];
+
 // Reuses the integration offence-search page object (identical selectors) and
 // adds e2e-only assertions against the real /api/v1/offences response: an
 // offence code with no matches (covering both "zero results" and an invalid
@@ -38,6 +46,26 @@ export class ChargesOffenceSearchPage extends IntegrationChargesOffenceSearchPag
     await expect(
       this.resultsWrapper().getByText("0 results for", { exact: false }),
     ).toBeVisible();
+  }
+
+  async searchAndVerifyActionsColumnIsFirst(
+    offenceCode: string,
+  ): Promise<void> {
+    await this.submitSearch(offenceCode);
+
+    const resultsTable = this.resultsWrapper().getByRole("table");
+    await expect(resultsTable).toBeVisible();
+
+    await expect(resultsTable.locator("th")).toHaveText(RESULTS_COLUMNS);
+
+    const firstRowCells = resultsTable
+      .locator("tbody tr")
+      .first()
+      .locator("td");
+    await expect(
+      firstRowCells.first().getByRole("link", { name: "Add" }),
+    ).toBeVisible();
+    await expect(firstRowCells.nth(1)).toHaveText(offenceCode);
   }
 
   async searchAndAddFirstOffence(offenceCode: string): Promise<void> {
