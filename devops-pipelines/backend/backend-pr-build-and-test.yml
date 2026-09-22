@@ -4,6 +4,7 @@ pr:
   branches:
     include:
       - main
+      - development
   paths:
     include:
       - src/backend/*
@@ -32,17 +33,3 @@ stages:
               runTests: true
               checkFormatting: true
               testResultsDirectory: $(testResultsDirectory)
-
-      - job: Build_Main_API
-        displayName: 'Build Main API'
-        dependsOn: Build_And_Test_Solution
-        steps:
-          # Build and publish Main API
-          - template: ../templates/dotnet-build-steps.yml
-            parameters:
-              projectPath: 'src/backend/Cps.CaseManagement.Api/Cps.CaseManagement.Api.csproj'
-              projectName: 'cmrc-main-api-drop'
-              buildConfiguration: $(buildConfiguration)
-              dotNetVersion: $(dotNetVersion)
-              publishOutput: false
-              runTests: false

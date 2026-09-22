@@ -1,0 +1,52 @@
+trigger:
+  batch: true
+  branches:
+    include:
+      - development
+  paths:
+    include:
+      - src/backend/*
+
+pr: none
+
+variables:
+  - name: "buildConfiguration"
+    value: "Release"
+  - name: "dotNetVersion"
+    value: "10.x"
+  - name: "buildArtifact"
+    value: "cmrc-main-api-drop"
+
+stages:
+  - stage: Build
+    displayName: "Build Main API"
+    pool: "CMRC PreProd Pool"
+    jobs:
+      - job: Build_Main_API
+        displayName: "Build Main API"
+        steps:
+          - template: ../templates/dotnet-build-steps.yml
+            parameters:
+              projectPath: "src/backend/Cps.CaseManagement.Api/Cps.CaseManagement.Api.csproj"
+              projectName: $(buildArtifact)
+              dotNetVersion: $(dotNetVersion)
+              publishOutput: true
+              runTests: false
+
+  - template: ../templates/backend-deploy-stages.yml
+    parameters:
+      buildStageName: "Build"
+      environment: "dev"
+      buildArtifact: $(buildArtifact)
+
+  - stage: Run_Postman_Tests_dev
+    displayName: "Dev - Run Postman Tests"
+    dependsOn: "Deploy_Backend_dev" # final stage of /templates/backend-deploy-stages.yml
+    pool: "CMRC PreProd Pool"
+    jobs:
+      - template: ../templates/postman-test-job.yml
+        parameters:
+          appName: "fa-cmrc-api-dev"
+          environment: "dev"
+          postmanCollectionPath: "$(System.DefaultWorkingDirectory)/src/backend/postman/RegisterCaseAPITests.postman_collection.json"
+          nodeVersion: "24.x"

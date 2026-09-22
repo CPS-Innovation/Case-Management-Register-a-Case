@@ -30,56 +30,41 @@ stages:
             parameters:
               projectPath: "src/backend/Cps.CaseManagement.Api/Cps.CaseManagement.Api.csproj"
               projectName: $(buildArtifact)
-              buildConfiguration: $(buildConfiguration)
               dotNetVersion: $(dotNetVersion)
-              useLocalNuGet: true
               publishOutput: true
               runTests: false
-
-  - template: ../templates/backend-deploy-stages.yml
-    parameters:
-      buildStageName: "Build"
-      environment: "dev"
-      requireValidation: false
-      buildArtifact: $(buildArtifact)
-
-  - stage: Run_Postman_Tests_dev
-    displayName: "Dev - Run Postman Tests"
-    dependsOn: "Deploy_Backend_dev" # final stage of /templates/backend-deploy-stages.yml
-    pool: "CMRC PreProd Pool"
-    jobs:
-      - template: ../templates/postman-test-job.yml
-        parameters:
-          appName: "fa-cmrc-api-dev"
-          environment: "dev"
-          postmanCollectionPath: "$(System.DefaultWorkingDirectory)/src/backend/postman/RegisterCaseAPITests.postman_collection.json"
-          nodeVersion: "24.x"
+              releaseVersionArg: "/p:Version=$(releaseVersion)"
+              releaseSourceVersionArg: "/p:SourceRevisionId=$(Build.SourceVersion)"
 
   - template: ../templates/backend-deploy-stages.yml
     parameters:
       buildStageName: "Build"
       environment: "staging"
-      requireValidation: true
-      notifyUsers: $(preprodNotifyUsers)
-      approvers: $(preprodApprovers)
       deployToSlot: true
       slotName: "stg"
       buildArtifact: $(buildArtifact)
 
-  - stage: Run_E2E_Tests
-    displayName: "Run E2E tests"
+  - stage: Release_Gate
+    displayName: "Release Gate"
     jobs:
-      - template: ../templates/e2e-playwright-test-job.yml
-        parameters:
-          environment: "staging"
+      - job: Manual_Validation
+        pool: server
+        timeoutInMinutes: 6500
+        steps:
+          - task: ManualValidation@1
+            displayName: Request Validation
+            timeoutInMinutes: 6480
+            inputs:
+              notifyUsers: $(prodNotifyUsers)
+              approvers: $(prodApprovers)
+              allowApproversToApproveTheirOwnRuns: true
+              instructions: "Approval is required to deploy to production."
+              onTimeout: "reject"
 
   - template: ../templates/backend-deploy-stages.yml
     parameters:
       buildStageName: "Build"
       environment: "prod"
-      requireValidation: true
-      notifyUsers: $(prodNotifyUsers)
-      approvers: $(prodApprovers)
       agentPool: "CMRC Prod Pool"
       azureSubscription: "Azure Pipeline: CMRC - Prod"
       deployToSlot: true
