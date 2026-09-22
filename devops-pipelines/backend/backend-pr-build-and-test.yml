@@ -28,7 +28,6 @@ stages:
             parameters:
               projectPath: 'src/backend/Cps.CaseManagement.sln'
               projectName: 'Backend Solution'
-              buildConfiguration: '$(buildConfiguration)'
               dotNetVersion: $(dotNetVersion)
               publishOutput: false
               runTests: true
