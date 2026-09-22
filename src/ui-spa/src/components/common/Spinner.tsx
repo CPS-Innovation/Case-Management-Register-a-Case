@@ -2,7 +2,7 @@ import classes from "./Spinner.module.scss";
 
 type Props = {
   diameterPx: number;
-};
+} & React.HTMLAttributes<HTMLDivElement>;
 
 export const Spinner: React.FC<Props> = ({ diameterPx, ...props }) => (
   <div

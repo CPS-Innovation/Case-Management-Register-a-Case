@@ -1,5 +1,5 @@
 import { useQuery, type UseQueryOptions } from "@tanstack/react-query";
-import { useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router";
 import { ApiError } from "../errors/ApiError";
 import { useEffect } from "react";
 
@@ -19,7 +19,7 @@ const useAuthedQuery = <TData, TError = Error>(
 
   useEffect(() => {
     if (query.error instanceof ApiError && query.error.code === 401) {
-      navigate("/unauthorised");
+      navigate("/unauthorised", { replace: true });
     }
   }, [query.error, navigate]);
 

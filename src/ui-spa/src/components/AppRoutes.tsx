@@ -168,8 +168,8 @@ const AppRoutes = () => {
         path="/case-registration/cancel-case-registration-confirmation"
         element={<CancelCaseRegistrationConfirmationPage />}
       />
-      <Route path="*" element={<Navigate to="/case-registration" replace />} />
       <Route path="/unauthorised" element={<UnAuthorisedPage />} />
+      <Route path="*" element={<Navigate to="/case-registration" replace />} />
     </Routes>
   );
 };

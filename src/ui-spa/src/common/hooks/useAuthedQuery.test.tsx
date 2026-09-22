@@ -14,12 +14,12 @@ vi.mock("@tanstack/react-query", () => ({
   useQuery: vi.fn(),
 }));
 
-vi.mock("react-router-dom", () => ({
+vi.mock("react-router", () => ({
   useNavigate: vi.fn(),
 }));
 
 import { useQuery } from "@tanstack/react-query";
-import { useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router";
 import useAuthedQuery from "./useAuthedQuery";
 import { ApiError } from "../errors/ApiError";
 
@@ -44,23 +44,27 @@ describe("useAuthedQuery", () => {
   });
 
   it("navigates to /unauthorised when query.error is ApiError with code 401", async () => {
-    const apiErr = Object.create(ApiError.prototype);
-    apiErr.code = 401;
-    apiErr.message = "unauth";
+    const apiErr = new ApiError("unauth", "/api/v1/units", {
+      status: 401,
+      statusText: "Unauthorized",
+    });
 
     useQueryMock.mockReturnValue({ error: apiErr });
 
     render(<TestComponent options={{ queryKey: ["k"] }} />);
 
     await waitFor(() => {
-      expect(navigateFn).toHaveBeenCalledWith("/unauthorised");
+      expect(navigateFn).toHaveBeenCalledWith("/unauthorised", {
+        replace: true,
+      });
     });
   });
 
   it("does not navigate for non-401 ApiError", async () => {
-    const apiErr = Object.create(ApiError.prototype);
-    apiErr.code = 403;
-
+    const apiErr = new ApiError("unauth", "/api/v1/units", {
+      status: 403,
+      statusText: "Forbidden",
+    });
     useQueryMock.mockReturnValue({ error: apiErr });
 
     render(<TestComponent options={{ queryKey: ["k"] }} />);
