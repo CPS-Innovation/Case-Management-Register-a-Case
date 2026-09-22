@@ -8,6 +8,7 @@ pr:
   paths:
     include:
       - src/backend/*
+      - src/tests/*
 
 variables:
   buildConfiguration: 'Release'
