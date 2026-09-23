@@ -38,6 +38,7 @@ import {
   caseRegistrationResponseSchema,
 } from "../schemas";
 import { ApiError } from "../common/errors/ApiError";
+import { type TelemetryPayload } from "../TelemetryLogger";
 
 export const CORRELATION_ID = "Correlation-Id";
 
@@ -446,4 +447,29 @@ export const submitCaseRegistration = async (
     "caseRegistrationResponseSchema",
   );
   return result;
+};
+
+export const logTelemetryEvent = async (payload: TelemetryPayload) => {
+  try {
+    const url = `${GATEWAY_BASE_URL}/api/v1/telemetry`;
+    const response = await fetch(url, {
+      method: "POST",
+      credentials: "include",
+      headers: {
+        ...(await buildCommonHeaders()),
+      },
+      body: JSON.stringify(payload),
+    });
+    if (!response.ok) {
+      console.warn(
+        `Logging telemetry event failed with status: ${response.status}`,
+      );
+    }
+  } catch (error) {
+    // Fail silently to ensure UI flows remain unblocked
+    console.warn(
+      "Logging telemetry event failed due to network or auth error:",
+      error,
+    );
+  }
 };

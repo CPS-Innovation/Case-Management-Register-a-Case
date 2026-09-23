@@ -29,9 +29,27 @@ public class AppInsightsTelemetryClientWrapper : IAppInsightsTelemetryClient
         _telemetryClient.TrackMetric(name, value, properties);
     }
 
-    public void TrackPageView(string name)
+    public void TrackPageView(string name, IDictionary<string, string>? properties = null, IDictionary<string, double>? metrics = null)
     {
-        _telemetryClient.TrackPageView(name);
+        var pageViewTelemetry = new PageViewTelemetry(name);
+
+        if (properties != null)
+        {
+            foreach (var property in properties)
+            {
+                pageViewTelemetry.Properties[property.Key] = property.Value;
+            }
+        }
+
+        if (metrics != null)
+        {
+            foreach (var metric in metrics)
+            {
+                pageViewTelemetry.Metrics[metric.Key] = metric.Value;
+            }
+        }
+
+        _telemetryClient.TrackPageView(pageViewTelemetry);
     }
 
     public void TrackTrace(string message, SeverityLevel severityLevel, IDictionary<string, string>? properties = null)

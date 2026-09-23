@@ -2,14 +2,18 @@ namespace Cps.CaseManagement.MdsClient.Factories;
 
 using System.Text;
 using System.Text.Json;
+using System.Text.Json.Serialization.Metadata;
 using Cps.CaseManagement.MdsClient.Models.Args;
 using Cps.CaseManagement.MdsClient.Models.Constants;
+using Cps.CaseManagement.MdsClient.Models.Entities;
 using Microsoft.AspNetCore.WebUtilities;
 
 public class MdsRequestFactory : IMdsRequestFactory
 {
     private const string CorrelationId = "Correlation-Id";
     private const string CmsAuthValues = "Cms-Auth-Values";
+
+    private static readonly JsonSerializerOptions RegisterCaseSerializerOptions = CreateRegisterCaseSerializerOptions();
 
     public HttpRequestMessage CreateGetTitlesRequest(MdsBaseArgDto arg) =>
         BuildRequest(HttpMethod.Get, "api/titles", arg);
@@ -59,7 +63,10 @@ public class MdsRequestFactory : IMdsRequestFactory
     public HttpRequestMessage CreateRegisterCaseRequest(MdsRegisterCaseArg arg)
     {
         var request = BuildRequest(HttpMethod.Post, "api/cases", arg);
-        request.Content = new StringContent(JsonSerializer.Serialize(arg.CaseDetails), Encoding.UTF8, "application/json");
+        request.Content = new StringContent(
+            JsonSerializer.Serialize(arg.CaseDetails, RegisterCaseSerializerOptions),
+            Encoding.UTF8,
+            "application/json");
         return request;
     }
 
@@ -98,5 +105,33 @@ public class MdsRequestFactory : IMdsRequestFactory
         request.Headers.Add(CorrelationId, arg.CorrelationId.ToString());
         request.Headers.Add(CmsAuthValues, arg.CmsAuthValues);
         return request;
+    }
+
+    private static JsonSerializerOptions CreateRegisterCaseSerializerOptions()
+    {
+        return new JsonSerializerOptions
+        {
+            TypeInfoResolver = new DefaultJsonTypeInfoResolver
+            {
+                Modifiers = { ExcludeTelemetryProperties }
+            }
+        };
+    }
+
+    private static void ExcludeTelemetryProperties(JsonTypeInfo typeInfo)
+    {
+        if (typeInfo.Type != typeof(CaseRegistrationRequest))
+        {
+            return;
+        }
+
+        foreach (var property in typeInfo.Properties)
+        {
+            if (string.Equals(property.Name, "journeyId", StringComparison.OrdinalIgnoreCase) ||
+                string.Equals(property.Name, "areaOrDivisionText", StringComparison.OrdinalIgnoreCase))
+            {
+                property.ShouldSerialize = static (_, _) => false;
+            }
+        }
     }
 }

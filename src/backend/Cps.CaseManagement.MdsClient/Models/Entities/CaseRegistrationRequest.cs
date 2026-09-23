@@ -66,4 +66,10 @@ public class CaseRegistrationRequest
 
     [JsonPropertyName("oicPoliceUnit")]
     public string OicPoliceUnit { get; set; } = string.Empty;
+
+    [JsonPropertyName("journeyId")]
+    public string? JourneyId { get; set; }
+
+    [JsonPropertyName("areaOrDivisionText")]
+    public string? AreaOrDivisionText { get; set; }
 }

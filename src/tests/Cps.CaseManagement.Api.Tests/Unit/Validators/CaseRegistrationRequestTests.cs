@@ -1068,4 +1068,40 @@ public class CaseRegistrationRequestValidatorTests
         var result = _validator.TestValidate(req);
         result.ShouldHaveValidationErrorFor(x => x.OicShoulderNumber);
     }
+
+    [Fact]
+    public void JourneyId_Null_ShouldPass()
+    {
+        var req = GetValidRequest();
+        req.JourneyId = null;
+        var result = _validator.TestValidate(req);
+        result.ShouldNotHaveValidationErrorFor(x => x.JourneyId);
+    }
+
+    [Fact]
+    public void JourneyId_TooLong_ShouldFail()
+    {
+        var req = GetValidRequest();
+        req.JourneyId = new string('A', CaseRegistrationDefaults.JourneyIdMaxLength + 1);
+        var result = _validator.TestValidate(req);
+        result.ShouldHaveValidationErrorFor(x => x.JourneyId);
+    }
+
+    [Fact]
+    public void AreaOrDivisionText_Null_ShouldPass()
+    {
+        var req = GetValidRequest();
+        req.AreaOrDivisionText = null;
+        var result = _validator.TestValidate(req);
+        result.ShouldNotHaveValidationErrorFor(x => x.AreaOrDivisionText);
+    }
+
+    [Fact]
+    public void AreaOrDivisionText_TooLong_ShouldFail()
+    {
+        var req = GetValidRequest();
+        req.AreaOrDivisionText = new string('A', CaseRegistrationDefaults.ShortTextMaxLength + 1);
+        var result = _validator.TestValidate(req);
+        result.ShouldHaveValidationErrorFor(x => x.AreaOrDivisionText);
+    }
 }

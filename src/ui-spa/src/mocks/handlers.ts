@@ -134,6 +134,10 @@ export const setupHandlers = (baseUrl: string, apiMockSource: string) => {
       await delay(RESPONSE_DELAY);
       return HttpResponse.json(results);
     }),
+    http.post(`${baseUrl}/api/v1/telemetry`, async () => {
+      await delay(RESPONSE_DELAY);
+      return HttpResponse.json(true);
+    }),
   ];
 };
 

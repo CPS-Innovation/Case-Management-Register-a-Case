@@ -14,6 +14,7 @@ import {
 export const getCaseRegistrationRequestData = (
   formData: CaseRegistrationFormData,
   monitoringCodesData: CaseMonitoringCode[],
+  journeyId: string,
   policeUnit?: PoliceUnit,
 ): CaseRegistrationRequestData => {
   const monitoringCodes = monitoringCodesData
@@ -56,6 +57,8 @@ export const getCaseRegistrationRequestData = (
     oicPoliceUnit: policeUnit ? policeUnit.code : "",
     defendants: getSuspectRequestData(formData.suspects, formData.victimsList),
     victims: getVictimRequestData(formData.victimsList),
+    journeyId: journeyId,
+    areaOrDivisionText: formData.areaOrDivisionText.description,
   };
 
   const validatedData =

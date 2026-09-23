@@ -141,6 +141,9 @@ describe("caseRegistrationReducer", () => {
         },
       },
       apiData: apiData,
+      telemetryData: {
+        journeyId: "",
+      },
     };
     const action: CaseRegistrationActions = { type: "RESET_FORM_DATA" };
     const state = caseRegistrationReducer(modifiedState, action);
@@ -1586,6 +1589,25 @@ describe("caseRegistrationReducer", () => {
 
     const state = caseRegistrationReducer(modifiedState, action);
     expect(state).toEqual(modifiedState);
+  });
+
+  it("SET_TELEMETRY_JOURNEY_ID should set the telemetryData journeyId", () => {
+    const startState = {
+      ...initialState,
+      formData: {
+        ...initialState.formData,
+      },
+    };
+
+    const action = {
+      type: "SET_TELEMETRY_JOURNEY_ID" as const,
+      payload: { journeyId: "J1" },
+    };
+
+    const next = caseRegistrationReducer(startState, action);
+
+    expect(next.telemetryData.journeyId).toBe("J1");
+    expect(next.apiData).toEqual(startState.apiData);
   });
 });
 describe("getResetFieldValues", () => {

@@ -99,10 +99,13 @@ describe("getCaseRegistrationRequestData", () => {
       },
       defendants: [],
       victims: [],
+      journeyId: "JOURNEY_ID",
+      areaOrDivisionText: "Area 1",
     };
     const result = getCaseRegistrationRequestData(
       formData,
       monitoringCodesData,
+      "JOURNEY_ID",
     );
     expect(result).toEqual(expectedResult);
   });
@@ -201,10 +204,13 @@ describe("getCaseRegistrationRequestData", () => {
       },
       defendants: [],
       victims: [],
+      journeyId: "JOURNEY_ID",
+      areaOrDivisionText: "Area 1",
     };
     const result = getCaseRegistrationRequestData(
       formData,
       monitoringCodesData,
+      "JOURNEY_ID",
       {
         unitId: 2091,
         unitDescription: "Plymouth Magistrates Court Unit",
@@ -383,11 +389,14 @@ describe("getCaseRegistrationRequestData", () => {
       oicRank: "PC",
       oicShoulderNumber: "12",
       oicSurname: "last",
+      journeyId: "JOURNEY_ID",
+      areaOrDivisionText: "CAMBRIDGESHIRE",
     };
 
     const result = getCaseRegistrationRequestData(
       formData,
       monitoringCodesData,
+      "JOURNEY_ID",
     );
     expect(result).toEqual(expectedResult);
   });
@@ -755,11 +764,14 @@ describe("getCaseRegistrationRequestData", () => {
       oicRank: "PC",
       oicShoulderNumber: "12",
       oicSurname: "last",
+      journeyId: "JOURNEY_ID",
+      areaOrDivisionText: "CAMBRIDGESHIRE",
     };
 
     const result = getCaseRegistrationRequestData(
       formData,
       monitoringCodesData,
+      "JOURNEY_ID",
     );
     expect(result).toEqual(expectedResult);
   });

@@ -3,7 +3,9 @@ import { fileURLToPath } from "node:url";
 import dotenv from "dotenv";
 
 const here = path.dirname(fileURLToPath(import.meta.url));
-dotenv.config({ path: path.join(here, ".env.e2e.local") });
+if (!process.env.CI) {
+  dotenv.config({ path: path.join(here, ".env.e2e.local") });
+}
 
 export const STORAGE_STATE = path.join(here, ".auth", "state.json");
 
@@ -11,7 +13,7 @@ const required = (name: string): string => {
   const value = process.env[name];
   if (!value) {
     throw new Error(
-      `Missing required env var ${name}. Set it in e2e-tests/.env.e2e.local`,
+      `Missing required env var ${name}. Add it to your environment or set it in e2e-tests/.env.e2e.local`,
     );
   }
   return value;
