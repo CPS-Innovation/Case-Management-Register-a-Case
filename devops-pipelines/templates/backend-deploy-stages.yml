@@ -25,15 +25,16 @@ parameters:
   - name: slotName
     type: string
     default: ""
-  - name: buildStageName
+  - name: dependsOn
     type: string
+    default: ""
   - name: buildArtifact
     type: string
 
 stages:
   - stage: Deploy_Backend_${{ parameters.environment }}
     displayName: "${{ parameters.environment }} - Deploy Backend"
-    dependsOn: ${{ parameters.buildStageName }}
+    dependsOn: ${{ parameters.dependsOn }}
     variables:
       - template: ./variables/backend-deploy-vars.yml
         parameters:

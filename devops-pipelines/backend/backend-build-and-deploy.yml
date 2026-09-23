@@ -38,7 +38,7 @@ stages:
 
   - template: ../templates/backend-deploy-stages.yml
     parameters:
-      buildStageName: "Build"
+      dependsOn: "Build"
       environment: "staging"
       deployToSlot: true
       slotName: "stg"
@@ -63,7 +63,7 @@ stages:
 
   - template: ../templates/backend-deploy-stages.yml
     parameters:
-      buildStageName: "Build"
+      dependsOn: "Release_Gate"
       environment: "prod"
       agentPool: "CMRC Prod Pool"
       azureSubscription: "Azure Pipeline: CMRC - Prod"

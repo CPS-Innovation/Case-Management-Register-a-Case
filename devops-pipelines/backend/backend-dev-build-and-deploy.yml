@@ -35,7 +35,7 @@ stages:
 
   - template: ../templates/backend-deploy-stages.yml
     parameters:
-      buildStageName: "Build"
+      dependsOn: "Build"
       environment: "dev"
       buildArtifact: $(buildArtifact)
 
