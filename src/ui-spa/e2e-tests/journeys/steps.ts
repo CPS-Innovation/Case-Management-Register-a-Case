@@ -1,7 +1,7 @@
 import { expect, type Page } from "@playwright/test";
 import { CaseRegistrationHomePage } from "../../integration-tests/pages/caseRegistrationHomePage";
 import { CaseAreasPage } from "../../integration-tests/pages/caseAreasPage";
-import { CaseDetailsPage } from "../../integration-tests/pages/caseDetailsPage";
+import { CaseDetailsPage } from "../pages/caseDetailsPage";
 import { CaseMonitoringPage } from "../../integration-tests/pages/caseMonitoringPage";
 import { CaseAssigneePage } from "../../integration-tests/pages/caseAssigneePage";
 import { CaseRegistrationSummaryPage } from "../../integration-tests/pages/caseRegistrationSummaryPage";
@@ -51,9 +51,16 @@ export async function startAtHomePage(
   await homePage.saveAndContinue();
 }
 
+export interface CaseDetailsOptions {
+  // Set when the caller has deliberately picked an already-registered URN and
+  // wants to assert the error itself, instead of moving on to a free one.
+  expectDuplicateUrn?: boolean;
+}
+
 export async function enterAreasAndCaseDetails(
   page: Page,
   urn: UrnParts,
+  { expectDuplicateUrn = false }: CaseDetailsOptions = {},
 ): Promise<void> {
   const areasPage = new CaseAreasPage(page);
   await expectStep(page, "/case-registration/areas");
@@ -62,13 +69,18 @@ export async function enterAreasAndCaseDetails(
 
   const detailsPage = new CaseDetailsPage(page);
   await expectStep(page, "/case-registration/case-details");
-  await detailsPage.enterUrnPoliceForce(urn.policeForce);
-  await detailsPage.enterUrnPoliceUnit(urn.policeUnit);
-  await detailsPage.enterUrnUniqueReference(urn.uniqueReference);
-  await detailsPage.enterUrnYearReference(urn.yearReference);
+  await detailsPage.enterUrn(urn);
   await detailsPage.enterRegisteringUnit(REGISTERING_UNIT);
   await detailsPage.enterWitnessCareUnit(WITNESS_CARE_UNIT);
-  await detailsPage.saveAndContinue();
+
+  if (expectDuplicateUrn) {
+    await detailsPage.saveAndContinue();
+    return;
+  }
+
+  // Replaces the URN in place if the generated reference is already taken, so
+  // the journey carries on with the URN the case is actually registered under.
+  await detailsPage.saveAndContinueWithFreeUrn(urn);
 }
 
 export function watchAssigneeLookups(page: Page) {
