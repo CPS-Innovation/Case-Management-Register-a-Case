@@ -8,8 +8,7 @@ describe("ApiError", () => {
         status: 500,
         statusText: "Internal Server Error",
       },
-      { retry: "true" },
-      "test api error",
+      { customProperties: { retry: "true" }, customMessage: "test api error" },
     );
 
     expect(error).toEqual(
