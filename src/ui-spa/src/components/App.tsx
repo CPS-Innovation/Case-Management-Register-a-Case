@@ -12,7 +12,7 @@ const queryClient = new QueryClient();
 function App() {
   return (
     <BrowserRouter>
-      <ErrorBoundary fallbackRender={ErrorBoundaryFallback}>
+      <ErrorBoundary FallbackComponent={ErrorBoundaryFallback}>
         <QueryClientProvider client={queryClient}>
           <CaseRegistrationProvider>
             <Auth>

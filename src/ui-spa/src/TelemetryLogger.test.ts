@@ -62,15 +62,19 @@ describe("TelemetryService", () => {
     expect(logTelemetryEvent).toHaveBeenCalledTimes(1);
     const sent = getSentPayload();
 
-    const exceptionProp = sent.properties[0];
+    const exceptionProp = sent.properties;
     const expected = {
       telemetryType: TelemetryType.Exception,
 
       properties: [
         {
-          exceptionMessage: exceptionProp.exceptionMessage,
-          errorName: exceptionProp.errorName,
-          errorStack: exceptionProp.errorStack,
+          exceptionMessage: exceptionProp[0].exceptionMessage,
+        },
+        {
+          errorName: exceptionProp[1].errorName,
+        },
+        {
+          errorStack: exceptionProp[2].errorStack,
         },
         { k: "v" },
       ],

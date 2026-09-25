@@ -1,9 +1,27 @@
-import type { FallbackProps } from "react-error-boundary";
+import { useEffect } from "react";
+import { ApiError } from "../common/errors/ApiError";
 import Layout from "./Layout";
 import PageContentWrapper from "./common/PageContentWrapper";
+import { telemetryService } from "../TelemetryLogger";
 import styles from "./ErrorBoundaryFallback.module.scss";
 
-export const ErrorBoundaryFallback = ({ error }: FallbackProps) => {
+export const ErrorBoundaryFallback = ({
+  error,
+}: {
+  error: Error | ApiError;
+}) => {
+  useEffect(() => {
+    if (error instanceof ApiError) {
+      telemetryService.trackException(error, [
+        {
+          correlationId: error.correlationId,
+        },
+      ]);
+      return;
+    }
+    telemetryService.trackException(error);
+  }, [error]);
+
   return (
     <Layout>
       <PageContentWrapper>
@@ -13,11 +31,20 @@ export const ErrorBoundaryFallback = ({ error }: FallbackProps) => {
           </h1>
 
           <p className="govuk-body-l">
-            Please try this case again later. If the problem continues, contact
-            the product team.
+            Contact the product team and give them the error code.
           </p>
-
-          <p className="govuk-inset-text">{error?.toString()}</p>
+          {error instanceof ApiError ? (
+            <p
+              className="govuk-inset-text"
+              data-testid="txt-error-correlation-id"
+            >
+              Error code: {error?.correlationId}
+            </p>
+          ) : (
+            <p className="govuk-inset-text" data-testid="txt-error-message">
+              Error code: {error?.message}
+            </p>
+          )}
         </div>
       </PageContentWrapper>
     </Layout>

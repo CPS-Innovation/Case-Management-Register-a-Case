@@ -56,7 +56,9 @@ export class TelemetryService {
       properties: [
         {
           exceptionMessage: error.message,
-          errorName: error.name,
+        },
+        { errorName: error.name },
+        {
           errorStack: error.stack ?? "",
         },
         ...properties,
