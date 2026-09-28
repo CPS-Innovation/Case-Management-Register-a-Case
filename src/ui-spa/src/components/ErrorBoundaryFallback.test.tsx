@@ -1,16 +1,14 @@
 import { render, screen, waitFor } from "@testing-library/react";
 import { type Mock, describe, it, expect, vi, beforeEach } from "vitest";
-
+import { ErrorBoundaryFallback } from "./ErrorBoundaryFallback";
+import { ApiError } from "../common/errors/ApiError";
+import { MemoryRouter } from "react-router";
+import { telemetryService } from "../TelemetryLogger";
 vi.mock("../TelemetryLogger", () => ({
   telemetryService: {
     trackException: vi.fn(),
   },
 }));
-
-import { telemetryService } from "../TelemetryLogger";
-import { ErrorBoundaryFallback } from "./ErrorBoundaryFallback";
-import { ApiError } from "../common/errors/ApiError";
-import { MemoryRouter } from "react-router-dom";
 
 beforeEach(() => {
   vi.clearAllMocks();
