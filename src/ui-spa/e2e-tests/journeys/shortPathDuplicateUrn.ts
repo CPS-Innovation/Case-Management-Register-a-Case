@@ -1,5 +1,5 @@
 import { expect, type Page } from "@playwright/test";
-import { CaseDetailsPage } from "../../integration-tests/pages/caseDetailsPage";
+import { CaseDetailsPage } from "../pages/caseDetailsPage";
 import { generateUniqueUrn } from "../utils/generateUrn";
 import { expectStep } from "../utils/expectStep";
 import {
@@ -28,12 +28,17 @@ export async function completeShortPathDuplicateUrn(
     freeUrn = generateUniqueUrn();
   }
 
+  // Registering this first case is what makes the URN "existing"; if the
+  // generated reference was already taken, enterAreasAndCaseDetails moves
+  // existingUrn on to a free one, which the second visit below then reuses.
   await startAtHomePage(page, { operationName, hasSuspect: false });
   await enterAreasAndCaseDetails(page, existingUrn);
   await completeAssigneeAndSubmit(page, existingUrn, operationName);
 
   await startAtHomePage(page, { operationName, hasSuspect: false });
-  await enterAreasAndCaseDetails(page, existingUrn);
+  await enterAreasAndCaseDetails(page, existingUrn, {
+    expectDuplicateUrn: true,
+  });
 
   const detailsPage = new CaseDetailsPage(page);
   await expectStep(page, "/case-registration/case-details");
@@ -42,7 +47,7 @@ export async function completeShortPathDuplicateUrn(
     "URN already exists, please change reference text and try again",
   );
   await detailsPage.enterUrnUniqueReference(freeUrn.uniqueReference);
-  await detailsPage.saveAndContinue();
+  await detailsPage.saveAndContinueWithFreeUrn(freeUrn);
 
   await completeMonitoringAndAssignee(page);
   await verifySummaryAndSubmit(page, freeUrn, {

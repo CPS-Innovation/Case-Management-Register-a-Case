@@ -3,6 +3,14 @@ import { ChargesOffenceSearchPagePage as IntegrationChargesOffenceSearchPage } f
 
 const REPEALED_TAG_PREFIX = "offence-repealed-warning-";
 
+const RESULTS_COLUMNS = [
+  "Actions",
+  "CJS code",
+  "Description",
+  "Statute name and section",
+  "Effective dates",
+];
+
 interface Offence {
   code: string;
   description: string;
@@ -48,6 +56,26 @@ export class ChargesOffenceSearchPage extends IntegrationChargesOffenceSearchPag
     await expect(
       this.resultsWrapper().getByText("0 results for", { exact: false }),
     ).toBeVisible();
+  }
+
+  async searchAndVerifyActionsColumnIsFirst(
+    offenceCode: string,
+  ): Promise<void> {
+    await this.submitSearch(offenceCode);
+
+    const resultsTable = this.resultsWrapper().getByRole("table");
+    await expect(resultsTable).toBeVisible();
+
+    await expect(resultsTable.locator("th")).toHaveText(RESULTS_COLUMNS);
+
+    const firstRowCells = resultsTable
+      .locator("tbody tr")
+      .first()
+      .locator("td");
+    await expect(
+      firstRowCells.first().getByRole("link", { name: "Add" }),
+    ).toBeVisible();
+    await expect(firstRowCells.nth(1)).toHaveText(offenceCode);
   }
 
   async searchAndAddFirstOffence(offenceCode: string): Promise<void> {
