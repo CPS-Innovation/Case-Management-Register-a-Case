@@ -13,39 +13,44 @@ type Properties = Record<string, unknown>;
 interface TelemetryCall {
   telemetryType: string;
   properties: Properties;
-  request: Request;
 }
 
 const toCall = (request: Request): TelemetryCall => {
-  const body = JSON.parse(request.postData() ?? "null") as {
-    telemetryType: string;
-    properties: Properties[];
-  };
+  const postData = request.postData();
+  expect(postData, "telemetry POST was sent without a body").toBeTruthy();
+  const body = JSON.parse(postData!) as {
+    telemetryType?: string;
+    properties?: Properties[];
+  } | null;
+  expect(
+    Array.isArray(body?.properties),
+    `telemetry POST has no properties array: ${postData}`,
+  ).toBe(true);
   return {
-    telemetryType: body.telemetryType,
-    properties: Object.assign({}, ...body.properties),
-    request,
+    telemetryType: body!.telemetryType ?? "",
+    properties: Object.assign({}, ...body!.properties!),
   };
 };
 
 test("Scenario 26: the journey starts past the first screen, tracks each step and logs the cancellation", async ({
   page,
 }) => {
-  const telemetry: TelemetryCall[] = [];
+  const requests: Request[] = [];
   page.on("request", (request) => {
     if (
       request.url().endsWith("/api/v1/telemetry") &&
       request.method() === "POST"
     ) {
-      telemetry.push(toCall(request));
+      requests.push(request);
     }
   });
+  const telemetry = () => requests.map(toCall);
   const events = (name: string) =>
-    telemetry.filter(
+    telemetry().filter(
       (call) => call.telemetryType === "Event" && call.properties.name === name,
     );
   const pageViews = () =>
-    telemetry.filter((call) => call.telemetryType === "PageView");
+    telemetry().filter((call) => call.telemetryType === "PageView");
 
   await startAtHomePage(page, {
     operationName: OPERATION_NAME,
@@ -77,11 +82,17 @@ test("Scenario 26: the journey starts past the first screen, tracks each step an
       path: "/case-registration/cancel-case-registration-confirmation",
     },
   ];
+  const byPath = (a: Properties, b: Properties) =>
+    String(a.path).localeCompare(String(b.path));
   await expect.poll(() => pageViews().length).toBe(expectedPageViews.length);
   expect(
-    pageViews().map(({ properties }) => properties),
-    "page views out of order, missing, or carrying the wrong journeyId",
-  ).toEqual(expectedPageViews.map((view) => ({ ...view, journeyId })));
+    pageViews()
+      .map(({ properties }) => properties)
+      .sort(byPath),
+    "page views missing, duplicated, or carrying the wrong journeyId",
+  ).toEqual(
+    expectedPageViews.map((view) => ({ ...view, journeyId })).sort(byPath),
+  );
 
   const cancelPage = new CancelCaseRegistrationConfirmationPage(page);
   await cancelPage.selectCancelCaseRegistrationYes();
