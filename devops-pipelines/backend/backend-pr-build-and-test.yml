@@ -21,7 +21,7 @@ pool: "CMRC PreProd Pool"
 stages:
   - stage: Build_And_Test_Backend
     condition: not(and(
-        eq(variables.prSourceBranch, 'development' ),
+        eq(variables.prSourceBranch, 'subtask/FCT2-22142_Add-separate-test-flow-for-PRs-from-development-to-main' ),
         eq(variables.prTargetBranch, 'main')
       ))
     displayName: "Build, Test & Package"
