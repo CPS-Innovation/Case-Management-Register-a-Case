@@ -42,3 +42,18 @@ stages:
               runTests: true
               checkFormatting: true
               testResultsDirectory: $(testResultsDirectory)
+
+  - stage: Run_Postman_Tests
+    condition: and(
+        eq(variables.prSourceBranch, 'development' ),
+        eq(variables.prTargetBranch, 'main' )
+      )
+    dependsOn: []
+    displayName: "Run Postman Tests on Dev"
+    jobs:
+      - template: ../templates/postman-test-job.yml
+        parameters:
+          appName: "fa-cmrc-api-dev"
+          environment: "dev"
+          postmanCollectionPath: "$(System.DefaultWorkingDirectory)/src/backend/postman/RegisterCaseAPITests.postman_collection.json"
+          nodeVersion: "24.x"
