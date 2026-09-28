@@ -90,7 +90,7 @@ export const getCaseAreasAndRegisteringUnits: () => Promise<CaseAreasAndRegister
 
     if (!response.ok) {
       throw new ApiError(
-        `Getting case areas and registering units failed1112`,
+        `Getting case areas and registering units failed`,
         url,
         response,
         { correlationId: headers[CORRELATION_ID] },

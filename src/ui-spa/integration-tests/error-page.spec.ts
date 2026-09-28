@@ -12,8 +12,6 @@ test("Should show the error page with correlation id if api fails", async ({
       await delay(200);
       correlationId = req.request.headers?.get?.("correlation-id") ?? "";
 
-      console.log("request", correlationId);
-
       return new HttpResponse(null, { status: 500 });
     }),
   );
