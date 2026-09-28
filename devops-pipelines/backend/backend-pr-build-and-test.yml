@@ -11,25 +11,49 @@ pr:
       - src/tests/*
 
 variables:
-  buildConfiguration: 'Release'
-  dotNetVersion: '10.x'
-  testResultsDirectory: '$(Agent.TempDirectory)/TestResults'
+  - name: prSourceBranch
+    value: $[variables['System.PullRequest.SourceBranch']]
+  - name: prTargetBranch
+    value: $[variables['System.PullRequest.TargetBranch']]
 
-pool: 'CMRC PreProd Pool'
+pool: "CMRC PreProd Pool"
 
 stages:
   - stage: Build_And_Test_Backend
-    displayName: 'Build, Test & Package'
+    condition: not(and(
+        eq(variables.prSourceBranch, 'development' ),
+        eq(variables.prTargetBranch, 'main')
+      ))
+    displayName: "Build, Test & Package"
+    variables:
+      buildConfiguration: "Release"
+      dotNetVersion: "10.x"
+      testResultsDirectory: "$(Agent.TempDirectory)/TestResults"
     jobs:
       - job: Build_And_Test_Solution
-        displayName: 'Build & Test Solution'
+        displayName: "Build & Test Solution"
         steps:
           - template: ../templates/dotnet-build-steps.yml
             parameters:
-              projectPath: 'src/backend/Cps.CaseManagement.sln'
-              projectName: 'Backend Solution'
+              projectPath: "src/backend/Cps.CaseManagement.sln"
+              projectName: "Backend Solution"
               dotNetVersion: $(dotNetVersion)
               publishOutput: false
               runTests: true
               checkFormatting: true
               testResultsDirectory: $(testResultsDirectory)
+
+  - stage: Run_Postman_Tests
+    condition: and(
+        eq(variables.prSourceBranch, 'development' ),
+        eq(variables.prTargetBranch, 'main' )
+      )
+    dependsOn: []
+    displayName: "Run Postman Tests on Dev"
+    jobs:
+      - template: ../templates/postman-test-job.yml
+        parameters:
+          appName: "fa-cmrc-api-dev"
+          environment: "dev"
+          postmanCollectionPath: "$(System.DefaultWorkingDirectory)/src/backend/postman/RegisterCaseAPITests.postman_collection.json"
+          nodeVersion: "24.x"
