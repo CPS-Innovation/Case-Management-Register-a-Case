@@ -9,6 +9,9 @@ vi.mock("../TelemetryLogger", () => ({
     trackException: vi.fn(),
   },
 }));
+vi.mock("uuid", () => ({
+  v4: () => "mock-uuid",
+}));
 
 beforeEach(() => {
   vi.clearAllMocks();
@@ -40,7 +43,17 @@ describe("ErrorBoundaryFallback", () => {
 
     expect((telemetryService.trackException as Mock).mock.calls[0]).toEqual([
       apiErr,
-      [{ correlationId: "corr-123" }],
+      [
+        {
+          referenceId: "corr-123",
+        },
+        {
+          errorSource: "API_ERROR",
+        },
+        {
+          route: "/",
+        },
+      ],
     ]);
 
     expect(screen.getByTestId("txt-error-page-heading")).toHaveTextContent(
@@ -69,6 +82,17 @@ describe("ErrorBoundaryFallback", () => {
 
     expect((telemetryService.trackException as Mock).mock.calls[0]).toEqual([
       err,
+      [
+        {
+          referenceId: "mock-uuid",
+        },
+        {
+          errorSource: "UI_UNHANDLED_EXCEPTION",
+        },
+        {
+          route: "/",
+        },
+      ],
     ]);
 
     expect(screen.getByTestId("txt-error-page-heading")).toHaveTextContent(
@@ -79,6 +103,6 @@ describe("ErrorBoundaryFallback", () => {
         "Contact the product team and give them the error code.",
       ),
     ).toBeInTheDocument();
-    expect(screen.getByText("Error code: boom")).toBeInTheDocument();
+    expect(screen.getByText("Error code: mock-uuid")).toBeInTheDocument();
   });
 });

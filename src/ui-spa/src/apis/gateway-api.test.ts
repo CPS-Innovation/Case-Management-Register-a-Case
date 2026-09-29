@@ -147,6 +147,13 @@ describe("gateway-api", () => {
     );
   });
 
+  it("getCaseAreasAndRegisteringUnits - catches network/auth errors and warns", async () => {
+    (globalThis.fetch as any).mockRejectedValue(new Error("network down"));
+    await expect(getCaseAreasAndRegisteringUnits()).rejects.toThrow(
+      "API Error: https://mocked-out-api/api/v1/units returned 0 Network Error - Error: network down",
+    );
+  });
+
   it("getCaseAreasAndWitnessCareUnits - success", async () => {
     const mockBody = [
       {
@@ -228,6 +235,13 @@ describe("gateway-api", () => {
     );
   });
 
+  it("getCaseAreasAndWitnessCareUnits - catches network/auth errors and warns", async () => {
+    (globalThis.fetch as any).mockRejectedValue(new Error("network down"));
+    await expect(getCaseAreasAndWitnessCareUnits()).rejects.toThrow(
+      "API Error: https://mocked-out-api/api/v1/wms-units returned 0 Network Error - Error: network down",
+    );
+  });
+
   it("validateUrn - success", async () => {
     const mockBody = true;
     (globalThis.fetch as any).mockResolvedValue({
@@ -285,6 +299,13 @@ describe("gateway-api", () => {
     await expect(validateUrn("URN123")).rejects.toBeInstanceOf(ApiError);
     await expect(validateUrn("URN123")).rejects.toThrow(
       "API Error: https://mocked-out-api/api/v1/urns/URN123/exists returned 200 OK - response schema validation failed",
+    );
+  });
+
+  it("validateUrn - catches network/auth errors and warns", async () => {
+    (globalThis.fetch as any).mockRejectedValue(new Error("network down"));
+    await expect(validateUrn("URN123")).rejects.toThrow(
+      "API Error: https://mocked-out-api/api/v1/urns/URN123/exists returned 0 Network Error - Error: network down",
     );
   });
 
@@ -350,6 +371,13 @@ describe("gateway-api", () => {
     );
   });
 
+  it("getCourtsByUnitId - catches network/auth errors and warns", async () => {
+    (globalThis.fetch as any).mockRejectedValue(new Error("network down"));
+    await expect(getCourtsByUnitId(20)).rejects.toThrow(
+      "API Error: https://mocked-out-api/api/v1/courts/20 returned 0 Network Error - Error: network down",
+    );
+  });
+
   it("getCaseComplexities - success", async () => {
     const mockBody = [
       { shortCode: "A", description: "Low" },
@@ -409,6 +437,12 @@ describe("gateway-api", () => {
     await expect(getCaseComplexities()).rejects.toBeInstanceOf(ApiError);
     await expect(getCaseComplexities()).rejects.toThrow(
       "API Error: https://mocked-out-api/api/v1/complexities returned 200 OK - response schema validation failed",
+    );
+  });
+  it("getCaseComplexities - catches network/auth errors and warns", async () => {
+    (globalThis.fetch as any).mockRejectedValue(new Error("network down"));
+    await expect(getCaseComplexities()).rejects.toThrow(
+      "API Error: https://mocked-out-api/api/v1/complexities returned 0 Network Error - Error: network down",
     );
   });
 
@@ -477,6 +511,13 @@ describe("gateway-api", () => {
     );
   });
 
+  it("getCaseMonitoringCodes - catches network/auth errors and warns", async () => {
+    (globalThis.fetch as any).mockRejectedValue(new Error("network down"));
+    await expect(getCaseMonitoringCodes()).rejects.toThrow(
+      "API Error: https://mocked-out-api/api/v1/monitoring-codes returned 0 Network Error - Error: network down",
+    );
+  });
+
   it("getCaseProsecutors - success", async () => {
     const mockBody = [
       { id: 1, description: "Prosecutor A" },
@@ -536,6 +577,13 @@ describe("gateway-api", () => {
     await expect(getCaseProsecutors(20)).rejects.toBeInstanceOf(ApiError);
     await expect(getCaseProsecutors(20)).rejects.toThrow(
       "API Error: https://mocked-out-api/api/v1/prosecutors/20 returned 200 OK - response schema validation failed",
+    );
+  });
+
+  it("getCaseProsecutors - catches network/auth errors and warns", async () => {
+    (globalThis.fetch as any).mockRejectedValue(new Error("network down"));
+    await expect(getCaseProsecutors(20)).rejects.toThrow(
+      "API Error: https://mocked-out-api/api/v1/prosecutors/20 returned 0 Network Error - Error: network down",
     );
   });
 
@@ -599,6 +647,13 @@ describe("gateway-api", () => {
     await expect(getCaseCaseworkers(20)).rejects.toBeInstanceOf(ApiError);
     await expect(getCaseCaseworkers(20)).rejects.toThrow(
       "API Error: https://mocked-out-api/api/v1/caseworkers/20 returned 200 OK - response schema validation failed",
+    );
+  });
+
+  it("getCaseCaseworkers - catches network/auth errors and warns", async () => {
+    (globalThis.fetch as any).mockRejectedValue(new Error("network down"));
+    await expect(getCaseCaseworkers(20)).rejects.toThrow(
+      "API Error: https://mocked-out-api/api/v1/caseworkers/20 returned 0 Network Error - Error: network down",
     );
   });
 
@@ -668,6 +723,13 @@ describe("gateway-api", () => {
     );
   });
 
+  it("getInvestigatorTitles - catches network/auth errors and warns", async () => {
+    (globalThis.fetch as any).mockRejectedValue(new Error("network down"));
+    await expect(getInvestigatorTitles()).rejects.toThrow(
+      "API Error: https://mocked-out-api/api/v1/titles returned 0 Network Error - Error: network down",
+    );
+  });
+
   it("getGenders - success", async () => {
     const mockBody = [
       { shortCode: "male", description: "Male" },
@@ -727,6 +789,13 @@ describe("gateway-api", () => {
     await expect(getGenders()).rejects.toBeInstanceOf(ApiError);
     await expect(getGenders()).rejects.toThrow(
       "API Error: https://mocked-out-api/api/v1/genders returned 200 OK - response schema validation failed",
+    );
+  });
+
+  it("getGenders - catches network/auth errors and warns", async () => {
+    (globalThis.fetch as any).mockRejectedValue(new Error("network down"));
+    await expect(getGenders()).rejects.toThrow(
+      "API Error: https://mocked-out-api/api/v1/genders returned 0 Network Error - Error: network down",
     );
   });
 
@@ -793,6 +862,13 @@ describe("gateway-api", () => {
     );
   });
 
+  it("getEthnicities - catches network/auth errors and warns", async () => {
+    (globalThis.fetch as any).mockRejectedValue(new Error("network down"));
+    await expect(getEthnicities()).rejects.toThrow(
+      "API Error: https://mocked-out-api/api/v1/ethnicities returned 0 Network Error - Error: network down",
+    );
+  });
+
   it("getReligions - success", async () => {
     const mockBody = [
       { shortCode: "christianity", description: "Christianity" },
@@ -853,6 +929,13 @@ describe("gateway-api", () => {
     await expect(getReligions()).rejects.toBeInstanceOf(ApiError);
     await expect(getReligions()).rejects.toThrow(
       "API Error: https://mocked-out-api/api/v1/religions returned 200 OK - response schema validation failed",
+    );
+  });
+
+  it("getReligions - catches network/auth errors and warns", async () => {
+    (globalThis.fetch as any).mockRejectedValue(new Error("network down"));
+    await expect(getReligions()).rejects.toThrow(
+      "API Error: https://mocked-out-api/api/v1/religions returned 0 Network Error - Error: network down",
     );
   });
 
@@ -922,6 +1005,13 @@ describe("gateway-api", () => {
     );
   });
 
+  it("getOffenderTypes - catches network/auth errors and warns", async () => {
+    (globalThis.fetch as any).mockRejectedValue(new Error("network down"));
+    await expect(getOffenderTypes()).rejects.toThrow(
+      "API Error: https://mocked-out-api/api/v1/offender-categories returned 0 Network Error - Error: network down",
+    );
+  });
+
   it("getPoliceUnits - success", async () => {
     const mockBody = [
       {
@@ -988,7 +1078,12 @@ describe("gateway-api", () => {
       "API Error: https://mocked-out-api/api/v1/police-units returned 200 OK - response schema validation failed",
     );
   });
-
+  it("getPoliceUnits - catches network/auth errors and warns", async () => {
+    (globalThis.fetch as any).mockRejectedValue(new Error("network down"));
+    await expect(getPoliceUnits()).rejects.toThrow(
+      "API Error: https://mocked-out-api/api/v1/police-units returned 0 Network Error - Error: network down",
+    );
+  });
   it("getOffences - success", async () => {
     const mockBody = {
       offences: [
@@ -1070,6 +1165,12 @@ describe("gateway-api", () => {
       "API Error: https://mocked-out-api/api/v1/offences?legislation-partial=true&description-partial=true&items-per-page=100&multisearch-partial=true&multisearch=search-text returned 200 OK - response schema validation failed",
     );
   });
+  it("getOffences - catches network/auth errors and warns", async () => {
+    (globalThis.fetch as any).mockRejectedValue(new Error("network down"));
+    await expect(getOffences("search-text", 100)).rejects.toThrow(
+      "API Error: https://mocked-out-api/api/v1/offences?legislation-partial=true&description-partial=true&items-per-page=100&multisearch-partial=true&multisearch=search-text returned 0 Network Error - Error: network down",
+    );
+  });
 
   it("submitCaseRegistration - success", async () => {
     const mockRequest = { mockRequestData: {} } as any;
@@ -1092,6 +1193,7 @@ describe("gateway-api", () => {
       }),
     );
   });
+
   it("submitCaseRegistration - failure throws ApiError", async () => {
     const mockRequest = { mockRequestData: {} } as any;
     (globalThis.fetch as any).mockResolvedValue({
@@ -1133,6 +1235,13 @@ describe("gateway-api", () => {
     );
     await expect(submitCaseRegistration(mockRequest)).rejects.toThrow(
       "API Error: https://mocked-out-api/api/v1/cases returned 200 OK - response schema validation failed",
+    );
+  });
+
+  it("submitCaseRegistration - catches network/auth errors and warns", async () => {
+    (globalThis.fetch as any).mockRejectedValue(new Error("network down"));
+    await expect(submitCaseRegistration("search-text", 100)).rejects.toThrow(
+      "API Error: https://mocked-out-api/api/v1/cases returned 0 Network Error - Error: network down",
     );
   });
 
