@@ -54,41 +54,64 @@ export const parseAndValidateResponse = async <T>(
   url: string,
   schema: z.ZodType<T>,
   contextText: string,
+  correlationId: string,
 ): Promise<T> => {
   let parsedJson: unknown;
   try {
     parsedJson = await response.json();
   } catch (error) {
-    throw new ApiError(`${error}`, url, response);
+    throw new ApiError(`${error}`, url, response, {
+      correlationId,
+    });
   }
 
   const result = schema.safeParse(parsedJson);
 
   if (!result.success) {
     console.warn(`${contextText} validation failed`, result.error);
-    throw new ApiError(`response schema validation failed`, url, response);
+    throw new ApiError(`response schema validation failed`, url, response, {
+      correlationId,
+    });
   }
 
   return result.data;
 };
 
+const fetchOrThrow = async (
+  url: string,
+  headers: Record<string, string>,
+): Promise<Response> => {
+  let response: Response;
+  try {
+    response = await fetch(url, {
+      method: "GET",
+      credentials: "include",
+      headers,
+    });
+  } catch (networkError) {
+    throw new ApiError(
+      `${networkError}`,
+      url,
+      { status: 0, statusText: "Network Error" },
+      {
+        correlationId: headers[CORRELATION_ID],
+      },
+    );
+  }
+  return response;
+};
+
 export const getCaseAreasAndRegisteringUnits: () => Promise<CaseAreasAndRegisteringUnits> =
   async () => {
     const url = `${GATEWAY_BASE_URL}/api/v1/units`;
-
-    const response = await fetch(url, {
-      method: "GET",
-      credentials: "include",
-      headers: {
-        ...(await buildCommonHeaders()),
-      },
-    });
-
+    const headers = await buildCommonHeaders();
+    const response = await fetchOrThrow(url, headers);
     if (!response.ok) {
       throw new ApiError(
         `Getting case areas and registering units failed`,
         url,
         response,
+        { correlationId: headers[CORRELATION_ID] },
       );
     }
 
@@ -97,26 +120,23 @@ export const getCaseAreasAndRegisteringUnits: () => Promise<CaseAreasAndRegister
       url,
       caseAreasAndRegisteringUnitsSchema,
       "caseAreasAndRegisteringUnitsSchema",
+      headers[CORRELATION_ID],
     );
+
     return result;
   };
 
 export const getCaseAreasAndWitnessCareUnits = async () => {
   const url = `${GATEWAY_BASE_URL}/api/v1/wms-units`;
+  const headers = await buildCommonHeaders();
 
-  const response = await fetch(url, {
-    method: "GET",
-    credentials: "include",
-    headers: {
-      ...(await buildCommonHeaders()),
-    },
-  });
-
+  const response = await fetchOrThrow(url, headers);
   if (!response.ok) {
     throw new ApiError(
       `Getting case areas and witness care units failed`,
       url,
       response,
+      { correlationId: headers[CORRELATION_ID] },
     );
   }
 
@@ -125,23 +145,21 @@ export const getCaseAreasAndWitnessCareUnits = async () => {
     url,
     caseAreasAndWitnessCareUnitsSchema,
     "caseAreasAndWitnessCareUnitsSchema",
+    headers[CORRELATION_ID],
   );
+
   return result;
 };
 
 export const validateUrn = async (urn: string) => {
   const url = `${GATEWAY_BASE_URL}/api/v1/urns/${urn}/exists`;
-
-  const response = await fetch(url, {
-    method: "GET",
-    credentials: "include",
-    headers: {
-      ...(await buildCommonHeaders()),
-    },
-  });
+  const headers = await buildCommonHeaders();
+  const response = await fetchOrThrow(url, headers);
 
   if (!response.ok) {
-    throw new ApiError(`URN validation failed`, url, response);
+    throw new ApiError(`URN validation failed`, url, response, {
+      correlationId: headers[CORRELATION_ID],
+    });
   }
 
   const result = await parseAndValidateResponse<ValidateUrn>(
@@ -149,22 +167,20 @@ export const validateUrn = async (urn: string) => {
     url,
     validateUrnSchema,
     "validateUrnSchema",
+    headers[CORRELATION_ID],
   );
   return result;
 };
 
 export const getCourtsByUnitId = async (registeringUnitId: number) => {
   const url = `${GATEWAY_BASE_URL}/api/v1/courts/${registeringUnitId}`;
-  const response = await fetch(url, {
-    method: "GET",
-    credentials: "include",
-    headers: {
-      ...(await buildCommonHeaders()),
-    },
-  });
+  const headers = await buildCommonHeaders();
+  const response = await fetchOrThrow(url, headers);
 
   if (!response.ok) {
-    throw new ApiError(`getting courts by unit ID failed`, url, response);
+    throw new ApiError(`getting courts by unit ID failed`, url, response, {
+      correlationId: headers[CORRELATION_ID],
+    });
   }
 
   const result = await parseAndValidateResponse<CourtLocations>(
@@ -172,22 +188,20 @@ export const getCourtsByUnitId = async (registeringUnitId: number) => {
     url,
     courtLocationsSchema,
     "courtLocationsSchema",
+    headers[CORRELATION_ID],
   );
   return result;
 };
 
 export const getCaseComplexities = async () => {
   const url = `${GATEWAY_BASE_URL}/api/v1/complexities`;
-  const response = await fetch(url, {
-    method: "GET",
-    credentials: "include",
-    headers: {
-      ...(await buildCommonHeaders()),
-    },
-  });
+  const headers = await buildCommonHeaders();
+  const response = await fetchOrThrow(url, headers);
 
   if (!response.ok) {
-    throw new ApiError(`getting case complexities failed`, url, response);
+    throw new ApiError(`getting case complexities failed`, url, response, {
+      correlationId: headers[CORRELATION_ID],
+    });
   }
 
   const result = await parseAndValidateResponse<CaseComplexities>(
@@ -195,22 +209,20 @@ export const getCaseComplexities = async () => {
     url,
     caseComplexitiesSchema,
     "caseComplexitiesSchema",
+    headers[CORRELATION_ID],
   );
   return result;
 };
 
 export const getCaseMonitoringCodes = async () => {
   const url = `${GATEWAY_BASE_URL}/api/v1/monitoring-codes`;
-  const response = await fetch(url, {
-    method: "GET",
-    credentials: "include",
-    headers: {
-      ...(await buildCommonHeaders()),
-    },
-  });
+  const headers = await buildCommonHeaders();
+  const response = await fetchOrThrow(url, headers);
 
   if (!response.ok) {
-    throw new ApiError(`getting monitoring codes failed`, url, response);
+    throw new ApiError(`getting monitoring codes failed`, url, response, {
+      correlationId: headers[CORRELATION_ID],
+    });
   }
 
   const result = await parseAndValidateResponse<CaseMonitoringCodes>(
@@ -218,22 +230,20 @@ export const getCaseMonitoringCodes = async () => {
     url,
     caseMonitoringCodesSchema,
     "caseMonitoringCodesSchema",
+    headers[CORRELATION_ID],
   );
   return result;
 };
 
 export const getCaseProsecutors = async (registeringUnitId: number) => {
   const url = `${GATEWAY_BASE_URL}/api/v1/prosecutors/${registeringUnitId}`;
-  const response = await fetch(url, {
-    method: "GET",
-    credentials: "include",
-    headers: {
-      ...(await buildCommonHeaders()),
-    },
-  });
+  const headers = await buildCommonHeaders();
+  const response = await fetchOrThrow(url, headers);
 
   if (!response.ok) {
-    throw new ApiError(`getting prosecutors by unit ID failed`, url, response);
+    throw new ApiError(`getting prosecutors by unit ID failed`, url, response, {
+      correlationId: headers[CORRELATION_ID],
+    });
   }
 
   const result = await parseAndValidateResponse<CaseProsecutors>(
@@ -241,22 +251,20 @@ export const getCaseProsecutors = async (registeringUnitId: number) => {
     url,
     caseProsecutorsSchema,
     "caseProsecutorsSchema",
+    headers[CORRELATION_ID],
   );
   return result;
 };
 
 export const getCaseCaseworkers = async (registeringUnitId: number) => {
   const url = `${GATEWAY_BASE_URL}/api/v1/caseworkers/${registeringUnitId}`;
-  const response = await fetch(url, {
-    method: "GET",
-    credentials: "include",
-    headers: {
-      ...(await buildCommonHeaders()),
-    },
-  });
+  const headers = await buildCommonHeaders();
+  const response = await fetchOrThrow(url, headers);
 
   if (!response.ok) {
-    throw new ApiError(`getting caseworkers by unit ID failed`, url, response);
+    throw new ApiError(`getting caseworkers by unit ID failed`, url, response, {
+      correlationId: headers[CORRELATION_ID],
+    });
   }
 
   const result = await parseAndValidateResponse<CaseCaseworkers>(
@@ -264,21 +272,20 @@ export const getCaseCaseworkers = async (registeringUnitId: number) => {
     url,
     caseCaseworkersSchema,
     "caseCaseworkersSchema",
+    headers[CORRELATION_ID],
   );
   return result;
 };
 
 export const getInvestigatorTitles = async () => {
   const url = `${GATEWAY_BASE_URL}/api/v1/titles`;
-  const response = await fetch(url, {
-    method: "GET",
-    credentials: "include",
-    headers: {
-      ...(await buildCommonHeaders()),
-    },
-  });
+  const headers = await buildCommonHeaders();
+  const response = await fetchOrThrow(url, headers);
+
   if (!response.ok) {
-    throw new ApiError(`getting investigator titles failed`, url, response);
+    throw new ApiError(`getting investigator titles failed`, url, response, {
+      correlationId: headers[CORRELATION_ID],
+    });
   }
 
   const result = await parseAndValidateResponse<InvestigatorTitles>(
@@ -286,21 +293,20 @@ export const getInvestigatorTitles = async () => {
     url,
     investigatorTitlesSchema,
     "investigatorTitlesSchema",
+    headers[CORRELATION_ID],
   );
   return result;
 };
 
 export const getGenders = async () => {
   const url = `${GATEWAY_BASE_URL}/api/v1/genders`;
-  const response = await fetch(url, {
-    method: "GET",
-    credentials: "include",
-    headers: {
-      ...(await buildCommonHeaders()),
-    },
-  });
+  const headers = await buildCommonHeaders();
+  const response = await fetchOrThrow(url, headers);
+
   if (!response.ok) {
-    throw new ApiError(`getting genders failed`, url, response);
+    throw new ApiError(`getting genders failed`, url, response, {
+      correlationId: headers[CORRELATION_ID],
+    });
   }
 
   const result = await parseAndValidateResponse<Genders>(
@@ -308,21 +314,20 @@ export const getGenders = async () => {
     url,
     gendersSchema,
     "gendersSchema",
+    headers[CORRELATION_ID],
   );
   return result;
 };
 
 export const getEthnicities = async () => {
   const url = `${GATEWAY_BASE_URL}/api/v1/ethnicities`;
-  const response = await fetch(url, {
-    method: "GET",
-    credentials: "include",
-    headers: {
-      ...(await buildCommonHeaders()),
-    },
-  });
+  const headers = await buildCommonHeaders();
+  const response = await fetchOrThrow(url, headers);
+
   if (!response.ok) {
-    throw new ApiError(`getting ethnicities failed`, url, response);
+    throw new ApiError(`getting ethnicities failed`, url, response, {
+      correlationId: headers[CORRELATION_ID],
+    });
   }
 
   const result = await parseAndValidateResponse<Ethnicities>(
@@ -330,21 +335,20 @@ export const getEthnicities = async () => {
     url,
     ethnicitiesSchema,
     "ethnicitiesSchema",
+    headers[CORRELATION_ID],
   );
   return result;
 };
 
 export const getReligions = async () => {
   const url = `${GATEWAY_BASE_URL}/api/v1/religions`;
-  const response = await fetch(url, {
-    method: "GET",
-    credentials: "include",
-    headers: {
-      ...(await buildCommonHeaders()),
-    },
-  });
+  const headers = await buildCommonHeaders();
+  const response = await fetchOrThrow(url, headers);
+
   if (!response.ok) {
-    throw new ApiError(`getting religions failed`, url, response);
+    throw new ApiError(`getting religions failed`, url, response, {
+      correlationId: headers[CORRELATION_ID],
+    });
   }
 
   const result = await parseAndValidateResponse<Religions>(
@@ -352,21 +356,20 @@ export const getReligions = async () => {
     url,
     religionsSchema,
     "religionsSchema",
+    headers[CORRELATION_ID],
   );
   return result;
 };
 
 export const getOffenderTypes = async () => {
   const url = `${GATEWAY_BASE_URL}/api/v1/offender-categories`;
-  const response = await fetch(url, {
-    method: "GET",
-    credentials: "include",
-    headers: {
-      ...(await buildCommonHeaders()),
-    },
-  });
+  const headers = await buildCommonHeaders();
+  const response = await fetchOrThrow(url, headers);
+
   if (!response.ok) {
-    throw new ApiError(`getting offender categories failed`, url, response);
+    throw new ApiError(`getting offender categories failed`, url, response, {
+      correlationId: headers[CORRELATION_ID],
+    });
   }
 
   const result = await parseAndValidateResponse<OffenderTypes>(
@@ -374,21 +377,20 @@ export const getOffenderTypes = async () => {
     url,
     offenderTypesSchema,
     "offenderTypesSchema",
+    headers[CORRELATION_ID],
   );
   return result;
 };
 
 export const getPoliceUnits = async () => {
   const url = `${GATEWAY_BASE_URL}/api/v1/police-units`;
-  const response = await fetch(url, {
-    method: "GET",
-    credentials: "include",
-    headers: {
-      ...(await buildCommonHeaders()),
-    },
-  });
+  const headers = await buildCommonHeaders();
+  const response = await fetchOrThrow(url, headers);
+
   if (!response.ok) {
-    throw new ApiError(`getting police units failed`, url, response);
+    throw new ApiError(`getting police units failed`, url, response, {
+      correlationId: headers[CORRELATION_ID],
+    });
   }
 
   const result = await parseAndValidateResponse<PoliceUnits>(
@@ -396,6 +398,7 @@ export const getPoliceUnits = async () => {
     url,
     policeUnitsSchema,
     "policeUnitsSchema",
+    headers[CORRELATION_ID],
   );
   return result;
 };
@@ -405,15 +408,13 @@ export const getOffences = async (
   resultsPerPage: number,
 ) => {
   const url = `${GATEWAY_BASE_URL}/api/v1/offences?legislation-partial=true&description-partial=true&items-per-page=${resultsPerPage}&multisearch-partial=true&multisearch=${searchText}`;
-  const response = await fetch(url, {
-    method: "GET",
-    credentials: "include",
-    headers: {
-      ...(await buildCommonHeaders()),
-    },
-  });
+  const headers = await buildCommonHeaders();
+  const response = await fetchOrThrow(url, headers);
+
   if (!response.ok) {
-    throw new ApiError(`getting offences failed`, url, response);
+    throw new ApiError(`getting offences failed`, url, response, {
+      correlationId: headers[CORRELATION_ID],
+    });
   }
 
   const result = await parseAndValidateResponse<Offences>(
@@ -421,23 +422,38 @@ export const getOffences = async (
     url,
     offencesSchema,
     "offencesSchema",
+    headers[CORRELATION_ID],
   );
   return result;
 };
+
 export const submitCaseRegistration = async (
   data: CaseRegistrationRequestData,
 ) => {
   const url = `${GATEWAY_BASE_URL}/api/v1/cases`;
-  const response = await fetch(url, {
-    method: "POST",
-    credentials: "include",
-    headers: {
-      ...(await buildCommonHeaders()),
-    },
-    body: JSON.stringify(data),
-  });
+  const headers = await buildCommonHeaders();
+  let response: Response;
+  try {
+    response = await fetch(url, {
+      method: "POST",
+      credentials: "include",
+      headers,
+      body: JSON.stringify(data),
+    });
+  } catch (networkError) {
+    throw new ApiError(
+      `${networkError}`,
+      url,
+      { status: 0, statusText: "Network Error" },
+      {
+        correlationId: headers[CORRELATION_ID],
+      },
+    );
+  }
   if (!response.ok) {
-    throw new ApiError(`registering case api failed `, url, response);
+    throw new ApiError(`registering case api failed `, url, response, {
+      correlationId: headers[CORRELATION_ID],
+    });
   }
 
   const result = await parseAndValidateResponse<CaseRegistrationResponse>(
@@ -445,19 +461,21 @@ export const submitCaseRegistration = async (
     url,
     caseRegistrationResponseSchema,
     "caseRegistrationResponseSchema",
+    headers[CORRELATION_ID],
   );
   return result;
 };
 
-export const logTelemetryEvent = async (payload: TelemetryPayload) => {
+export const logTelemetryEvent = async (
+  payload: TelemetryPayload,
+): Promise<void> => {
   try {
     const url = `${GATEWAY_BASE_URL}/api/v1/telemetry`;
+    const headers = await buildCommonHeaders();
     const response = await fetch(url, {
       method: "POST",
       credentials: "include",
-      headers: {
-        ...(await buildCommonHeaders()),
-      },
+      headers,
       body: JSON.stringify(payload),
     });
     if (!response.ok) {

@@ -8,8 +8,11 @@ describe("ApiError", () => {
         status: 500,
         statusText: "Internal Server Error",
       },
-      { retry: "true" },
-      "test api error",
+      {
+        customProperties: { retry: "true" },
+        customMessage: "test api error",
+        correlationId: "test-corr-id-123",
+      },
     );
 
     expect(error).toEqual(
@@ -23,6 +26,7 @@ describe("ApiError", () => {
           retry: "true",
         },
         customMessage: "test api error",
+        correlationId: "test-corr-id-123",
       }),
     );
   });
