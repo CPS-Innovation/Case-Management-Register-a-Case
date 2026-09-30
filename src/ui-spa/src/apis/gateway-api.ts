@@ -77,27 +77,35 @@ export const parseAndValidateResponse = async <T>(
   return result.data;
 };
 
+const fetchOrThrow = async (
+  url: string,
+  headers: Record<string, string>,
+): Promise<Response> => {
+  let response: Response;
+  try {
+    response = await fetch(url, {
+      method: "GET",
+      credentials: "include",
+      headers,
+    });
+  } catch (networkError) {
+    throw new ApiError(
+      `${networkError}`,
+      url,
+      { status: 0, statusText: "Network Error" },
+      {
+        correlationId: headers[CORRELATION_ID],
+      },
+    );
+  }
+  return response;
+};
+
 export const getCaseAreasAndRegisteringUnits: () => Promise<CaseAreasAndRegisteringUnits> =
   async () => {
     const url = `${GATEWAY_BASE_URL}/api/v1/units`;
     const headers = await buildCommonHeaders();
-    let response: Response;
-    try {
-      response = await fetch(url, {
-        method: "GET",
-        credentials: "include",
-        headers,
-      });
-    } catch (networkError) {
-      throw new ApiError(
-        `${networkError}`,
-        url,
-        { status: 0, statusText: "Network Error" },
-        {
-          correlationId: headers[CORRELATION_ID],
-        },
-      );
-    }
+    const response = await fetchOrThrow(url, headers);
     if (!response.ok) {
       throw new ApiError(
         `Getting case areas and registering units failed`,
@@ -122,25 +130,7 @@ export const getCaseAreasAndWitnessCareUnits = async () => {
   const url = `${GATEWAY_BASE_URL}/api/v1/wms-units`;
   const headers = await buildCommonHeaders();
 
-  let response: Response;
-
-  try {
-    response = await fetch(url, {
-      method: "GET",
-      credentials: "include",
-      headers,
-    });
-  } catch (networkError) {
-    throw new ApiError(
-      `${networkError}`,
-      url,
-      { status: 0, statusText: "Network Error" },
-      {
-        correlationId: headers[CORRELATION_ID],
-      },
-    );
-  }
-
+  const response = await fetchOrThrow(url, headers);
   if (!response.ok) {
     throw new ApiError(
       `Getting case areas and witness care units failed`,
@@ -164,24 +154,7 @@ export const getCaseAreasAndWitnessCareUnits = async () => {
 export const validateUrn = async (urn: string) => {
   const url = `${GATEWAY_BASE_URL}/api/v1/urns/${urn}/exists`;
   const headers = await buildCommonHeaders();
-  let response: Response;
-
-  try {
-    response = await fetch(url, {
-      method: "GET",
-      credentials: "include",
-      headers,
-    });
-  } catch (networkError) {
-    throw new ApiError(
-      `${networkError}`,
-      url,
-      { status: 0, statusText: "Network Error" },
-      {
-        correlationId: headers[CORRELATION_ID],
-      },
-    );
-  }
+  const response = await fetchOrThrow(url, headers);
 
   if (!response.ok) {
     throw new ApiError(`URN validation failed`, url, response, {
@@ -202,23 +175,7 @@ export const validateUrn = async (urn: string) => {
 export const getCourtsByUnitId = async (registeringUnitId: number) => {
   const url = `${GATEWAY_BASE_URL}/api/v1/courts/${registeringUnitId}`;
   const headers = await buildCommonHeaders();
-  let response: Response;
-  try {
-    response = await fetch(url, {
-      method: "GET",
-      credentials: "include",
-      headers,
-    });
-  } catch (networkError) {
-    throw new ApiError(
-      `${networkError}`,
-      url,
-      { status: 0, statusText: "Network Error" },
-      {
-        correlationId: headers[CORRELATION_ID],
-      },
-    );
-  }
+  const response = await fetchOrThrow(url, headers);
 
   if (!response.ok) {
     throw new ApiError(`getting courts by unit ID failed`, url, response, {
@@ -239,23 +196,7 @@ export const getCourtsByUnitId = async (registeringUnitId: number) => {
 export const getCaseComplexities = async () => {
   const url = `${GATEWAY_BASE_URL}/api/v1/complexities`;
   const headers = await buildCommonHeaders();
-  let response: Response;
-  try {
-    response = await fetch(url, {
-      method: "GET",
-      credentials: "include",
-      headers,
-    });
-  } catch (networkError) {
-    throw new ApiError(
-      `${networkError}`,
-      url,
-      { status: 0, statusText: "Network Error" },
-      {
-        correlationId: headers[CORRELATION_ID],
-      },
-    );
-  }
+  const response = await fetchOrThrow(url, headers);
 
   if (!response.ok) {
     throw new ApiError(`getting case complexities failed`, url, response, {
@@ -276,23 +217,7 @@ export const getCaseComplexities = async () => {
 export const getCaseMonitoringCodes = async () => {
   const url = `${GATEWAY_BASE_URL}/api/v1/monitoring-codes`;
   const headers = await buildCommonHeaders();
-  let response: Response;
-  try {
-    response = await fetch(url, {
-      method: "GET",
-      credentials: "include",
-      headers,
-    });
-  } catch (networkError) {
-    throw new ApiError(
-      `${networkError}`,
-      url,
-      { status: 0, statusText: "Network Error" },
-      {
-        correlationId: headers[CORRELATION_ID],
-      },
-    );
-  }
+  const response = await fetchOrThrow(url, headers);
 
   if (!response.ok) {
     throw new ApiError(`getting monitoring codes failed`, url, response, {
@@ -313,23 +238,7 @@ export const getCaseMonitoringCodes = async () => {
 export const getCaseProsecutors = async (registeringUnitId: number) => {
   const url = `${GATEWAY_BASE_URL}/api/v1/prosecutors/${registeringUnitId}`;
   const headers = await buildCommonHeaders();
-  let response: Response;
-  try {
-    response = await fetch(url, {
-      method: "GET",
-      credentials: "include",
-      headers,
-    });
-  } catch (networkError) {
-    throw new ApiError(
-      `${networkError}`,
-      url,
-      { status: 0, statusText: "Network Error" },
-      {
-        correlationId: headers[CORRELATION_ID],
-      },
-    );
-  }
+  const response = await fetchOrThrow(url, headers);
 
   if (!response.ok) {
     throw new ApiError(`getting prosecutors by unit ID failed`, url, response, {
@@ -350,23 +259,7 @@ export const getCaseProsecutors = async (registeringUnitId: number) => {
 export const getCaseCaseworkers = async (registeringUnitId: number) => {
   const url = `${GATEWAY_BASE_URL}/api/v1/caseworkers/${registeringUnitId}`;
   const headers = await buildCommonHeaders();
-  let response: Response;
-  try {
-    response = await fetch(url, {
-      method: "GET",
-      credentials: "include",
-      headers,
-    });
-  } catch (networkError) {
-    throw new ApiError(
-      `${networkError}`,
-      url,
-      { status: 0, statusText: "Network Error" },
-      {
-        correlationId: headers[CORRELATION_ID],
-      },
-    );
-  }
+  const response = await fetchOrThrow(url, headers);
 
   if (!response.ok) {
     throw new ApiError(`getting caseworkers by unit ID failed`, url, response, {
@@ -387,23 +280,7 @@ export const getCaseCaseworkers = async (registeringUnitId: number) => {
 export const getInvestigatorTitles = async () => {
   const url = `${GATEWAY_BASE_URL}/api/v1/titles`;
   const headers = await buildCommonHeaders();
-  let response: Response;
-  try {
-    response = await fetch(url, {
-      method: "GET",
-      credentials: "include",
-      headers,
-    });
-  } catch (networkError) {
-    throw new ApiError(
-      `${networkError}`,
-      url,
-      { status: 0, statusText: "Network Error" },
-      {
-        correlationId: headers[CORRELATION_ID],
-      },
-    );
-  }
+  const response = await fetchOrThrow(url, headers);
 
   if (!response.ok) {
     throw new ApiError(`getting investigator titles failed`, url, response, {
@@ -424,23 +301,7 @@ export const getInvestigatorTitles = async () => {
 export const getGenders = async () => {
   const url = `${GATEWAY_BASE_URL}/api/v1/genders`;
   const headers = await buildCommonHeaders();
-  let response: Response;
-  try {
-    response = await fetch(url, {
-      method: "GET",
-      credentials: "include",
-      headers,
-    });
-  } catch (networkError) {
-    throw new ApiError(
-      `${networkError}`,
-      url,
-      { status: 0, statusText: "Network Error" },
-      {
-        correlationId: headers[CORRELATION_ID],
-      },
-    );
-  }
+  const response = await fetchOrThrow(url, headers);
 
   if (!response.ok) {
     throw new ApiError(`getting genders failed`, url, response, {
@@ -461,23 +322,7 @@ export const getGenders = async () => {
 export const getEthnicities = async () => {
   const url = `${GATEWAY_BASE_URL}/api/v1/ethnicities`;
   const headers = await buildCommonHeaders();
-  let response: Response;
-  try {
-    response = await fetch(url, {
-      method: "GET",
-      credentials: "include",
-      headers,
-    });
-  } catch (networkError) {
-    throw new ApiError(
-      `${networkError}`,
-      url,
-      { status: 0, statusText: "Network Error" },
-      {
-        correlationId: headers[CORRELATION_ID],
-      },
-    );
-  }
+  const response = await fetchOrThrow(url, headers);
 
   if (!response.ok) {
     throw new ApiError(`getting ethnicities failed`, url, response, {
@@ -498,23 +343,8 @@ export const getEthnicities = async () => {
 export const getReligions = async () => {
   const url = `${GATEWAY_BASE_URL}/api/v1/religions`;
   const headers = await buildCommonHeaders();
-  let response: Response;
-  try {
-    response = await fetch(url, {
-      method: "GET",
-      credentials: "include",
-      headers,
-    });
-  } catch (networkError) {
-    throw new ApiError(
-      `${networkError}`,
-      url,
-      { status: 0, statusText: "Network Error" },
-      {
-        correlationId: headers[CORRELATION_ID],
-      },
-    );
-  }
+  const response = await fetchOrThrow(url, headers);
+
   if (!response.ok) {
     throw new ApiError(`getting religions failed`, url, response, {
       correlationId: headers[CORRELATION_ID],
@@ -534,23 +364,7 @@ export const getReligions = async () => {
 export const getOffenderTypes = async () => {
   const url = `${GATEWAY_BASE_URL}/api/v1/offender-categories`;
   const headers = await buildCommonHeaders();
-  let response: Response;
-  try {
-    response = await fetch(url, {
-      method: "GET",
-      credentials: "include",
-      headers,
-    });
-  } catch (networkError) {
-    throw new ApiError(
-      `${networkError}`,
-      url,
-      { status: 0, statusText: "Network Error" },
-      {
-        correlationId: headers[CORRELATION_ID],
-      },
-    );
-  }
+  const response = await fetchOrThrow(url, headers);
 
   if (!response.ok) {
     throw new ApiError(`getting offender categories failed`, url, response, {
@@ -571,23 +385,7 @@ export const getOffenderTypes = async () => {
 export const getPoliceUnits = async () => {
   const url = `${GATEWAY_BASE_URL}/api/v1/police-units`;
   const headers = await buildCommonHeaders();
-  let response: Response;
-  try {
-    response = await fetch(url, {
-      method: "GET",
-      credentials: "include",
-      headers,
-    });
-  } catch (networkError) {
-    throw new ApiError(
-      `${networkError}`,
-      url,
-      { status: 0, statusText: "Network Error" },
-      {
-        correlationId: headers[CORRELATION_ID],
-      },
-    );
-  }
+  const response = await fetchOrThrow(url, headers);
 
   if (!response.ok) {
     throw new ApiError(`getting police units failed`, url, response, {
@@ -611,24 +409,7 @@ export const getOffences = async (
 ) => {
   const url = `${GATEWAY_BASE_URL}/api/v1/offences?legislation-partial=true&description-partial=true&items-per-page=${resultsPerPage}&multisearch-partial=true&multisearch=${searchText}`;
   const headers = await buildCommonHeaders();
-
-  let response: Response;
-  try {
-    response = await fetch(url, {
-      method: "GET",
-      credentials: "include",
-      headers,
-    });
-  } catch (networkError) {
-    throw new ApiError(
-      `${networkError}`,
-      url,
-      { status: 0, statusText: "Network Error" },
-      {
-        correlationId: headers[CORRELATION_ID],
-      },
-    );
-  }
+  const response = await fetchOrThrow(url, headers);
 
   if (!response.ok) {
     throw new ApiError(`getting offences failed`, url, response, {
@@ -685,7 +466,9 @@ export const submitCaseRegistration = async (
   return result;
 };
 
-export const logTelemetryEvent = async (payload: TelemetryPayload) => {
+export const logTelemetryEvent = async (
+  payload: TelemetryPayload,
+): Promise<void> => {
   try {
     const url = `${GATEWAY_BASE_URL}/api/v1/telemetry`;
     const headers = await buildCommonHeaders();

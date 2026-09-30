@@ -1239,8 +1239,9 @@ describe("gateway-api", () => {
   });
 
   it("submitCaseRegistration - catches network/auth errors and warns", async () => {
+    const mockRequest = { mockRequestData: {} } as any;
     (globalThis.fetch as any).mockRejectedValue(new Error("network down"));
-    await expect(submitCaseRegistration("search-text", 100)).rejects.toThrow(
+    await expect(submitCaseRegistration(mockRequest)).rejects.toThrow(
       "API Error: https://mocked-out-api/api/v1/cases returned 0 Network Error - Error: network down",
     );
   });
