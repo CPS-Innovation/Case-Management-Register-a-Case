@@ -19,7 +19,7 @@ export const ErrorBoundaryFallback = ({
   }, [error]);
 
   useEffect(() => {
-    telemetryService.trackException(error, [
+    void telemetryService.trackException(error, [
       {
         referenceId: referenceId,
       },
