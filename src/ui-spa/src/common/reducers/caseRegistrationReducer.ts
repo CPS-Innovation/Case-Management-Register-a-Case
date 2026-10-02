@@ -16,6 +16,7 @@ import type {
   Offence,
 } from "../../schemas";
 import { v4 as uuidv4 } from "uuid";
+import { PRE_CHARGE_DECISION_CODE } from "../../common/constants/general";
 
 export type CaseRegistrationField =
   | "operationNameRadio"
@@ -641,12 +642,14 @@ export const caseRegistrationReducer = (
       const suspects = state.formData.suspects.filter(
         (suspect) => suspect.suspectId !== suspectId,
       );
+      const mergedFormData = {
+        ...state.formData,
+        suspects,
+      };
+      const finalFormData = applyPreChargeMonitoringIfNeeded(mergedFormData);
       return {
         ...state,
-        formData: {
-          ...state.formData,
-          suspects,
-        },
+        formData: finalFormData,
       };
     }
 
@@ -666,12 +669,14 @@ export const caseRegistrationReducer = (
         ...suspect,
         charges: newCharges,
       };
+      const mergedFormData = {
+        ...state.formData,
+        suspects,
+      };
+      const finalFormData = applyPreChargeMonitoringIfNeeded(mergedFormData);
       return {
         ...state,
-        formData: {
-          ...state.formData,
-          suspects,
-        },
+        formData: finalFormData,
       };
     }
 
@@ -699,12 +704,14 @@ export const caseRegistrationReducer = (
         ...suspect,
         charges: filteredCharges,
       };
+      const mergedFormData = {
+        ...state.formData,
+        suspects,
+      };
+      const finalFormData = applyPreChargeMonitoringIfNeeded(mergedFormData);
       return {
         ...state,
-        formData: {
-          ...state.formData,
-          suspects,
-        },
+        formData: finalFormData,
       };
     }
 
@@ -1003,4 +1010,32 @@ const resetSuspectAdditionalDetails = (
   }
 
   return resetValues;
+};
+
+const applyPreChargeMonitoringIfNeeded = (
+  formData: CaseRegistrationFormData,
+): CaseRegistrationFormData => {
+  const suspects = formData.suspects;
+  const allHasCharges = suspects.length
+    ? suspects.every((s) => s.charges.length)
+    : false;
+  const current = formData.caseMonitoringCodesCheckboxes ?? [];
+  const hasCode = current.includes(PRE_CHARGE_DECISION_CODE);
+
+  let newFormData = { ...formData };
+  if (!allHasCharges && formData.firstHearingRadio === "yes") {
+    newFormData = {
+      ...newFormData,
+      firstHearingRadio: "no",
+      firstHearingCourtLocationText: { id: null, description: "" },
+      firstHearingDateText: "",
+    };
+  }
+  if (!allHasCharges && !hasCode && formData.wantToAddChargesRadio) {
+    return {
+      ...newFormData,
+      caseMonitoringCodesCheckboxes: [...current, PRE_CHARGE_DECISION_CODE],
+    };
+  }
+  return newFormData;
 };
