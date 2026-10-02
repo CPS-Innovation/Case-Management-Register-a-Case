@@ -99,21 +99,6 @@ const ChargesSummaryPage = () => {
         payload: { fromChargeSummaryPage: false },
       });
     }
-    if (chargesCount) {
-      navigate("/case-registration/first-hearing");
-      return;
-    }
-    if (
-      state.formData.navigation.changeCaseSuspects ||
-      state.formData.navigation.changeCaseCharges
-    ) {
-      dispatch({
-        type: "SET_NAVIGATION_DATA",
-        payload: { changeCaseSuspects: false, changeCaseCharges: false },
-      });
-      navigate("/case-registration/case-summary");
-      return;
-    }
     navigate("/case-registration/case-monitoring-codes");
   };
 

@@ -11,6 +11,7 @@ import { validateUrn } from "../../../apis/gateway-api";
 import useErrorSummaryList from "../../../common/hooks/useErrorSummaryList";
 import { useNavigate } from "react-router";
 import PageContentWrapper from "../../common/PageContentWrapper";
+import { PRE_CHARGE_DECISION_CODE } from "../../../common/constants/general";
 import styles from "../index.module.scss";
 import pageStyles from "./index.module.scss";
 
@@ -425,7 +426,11 @@ const CaseDetailsPage = () => {
       return;
     }
     if (state.formData.navigation.changeCaseArea) {
-      if (state.formData.firstHearingRadio) {
+      if (
+        !state.formData.caseMonitoringCodesCheckboxes?.includes(
+          PRE_CHARGE_DECISION_CODE,
+        )
+      ) {
         navigate("/case-registration/first-hearing");
         return;
       }

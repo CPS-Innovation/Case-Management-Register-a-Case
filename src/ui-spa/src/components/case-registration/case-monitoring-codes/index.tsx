@@ -81,15 +81,11 @@ const CaseMonitoringCodesPage = () => {
     if (state.formData.navigation.fromCaseSummaryPage) {
       return "/case-registration/case-summary";
     }
-    if (chargesCount) {
-      return "/case-registration/first-hearing";
-    }
     if (state.formData.suspects.length > 0) {
-      return "/case-registration/want-to-add-charges";
+      return "/case-registration/charges-summary";
     }
     return "/case-registration/case-details";
   }, [
-    chargesCount,
     state.formData.suspects.length,
     state.formData.navigation.fromCaseSummaryPage,
   ]);
@@ -162,6 +158,14 @@ const CaseMonitoringCodesPage = () => {
       type: "SET_FIELDS",
       payload: { data: { ...formData } },
     });
+    if (
+      !formData.caseMonitoringCodesCheckboxes?.includes(
+        PRE_CHARGE_DECISION_CODE,
+      )
+    ) {
+      navigate("/case-registration/first-hearing");
+      return;
+    }
     if (
       state.formData.navigation.fromCaseSummaryPage ||
       state.formData.navigation.changeCaseSuspects ||
