@@ -8,8 +8,6 @@ import { getCourtsByUnitId } from "../../../apis/gateway-api";
 import { useQuery } from "@tanstack/react-query";
 import { useNavigate } from "react-router";
 import { isOnOrAfterChargeDates } from "../../../common/utils/chargeDatesUtil";
-import { isMonitoringCodeOptional } from "../../../common/utils/isMonitoringCodeOptional";
-import { PRE_CHARGE_DECISION_CODE } from "../../../common/constants/general";
 import useErrorSummaryList from "../../../common/hooks/useErrorSummaryList";
 import PageContentWrapper from "../../common/PageContentWrapper";
 import styles from "../index.module.scss";

@@ -16,7 +16,6 @@ import { WantToAddChargesPage } from "./pages/wantToAddChargesPage";
 import { CaseMonitoringPage } from "./pages/caseMonitoringPage";
 import { CaseAssigneePage } from "./pages/caseAssigneePage";
 import { CaseRegistrationSummaryPage } from "./pages/caseRegistrationSummaryPage";
-import { FirstHearingDetailsPage } from "./pages/firstHearingDetailsPage";
 
 test("Should successfully complete multiple suspect journey", async ({
   page,
@@ -702,14 +701,13 @@ test("Should successfully complete multiple suspect journey", async ({
   );
   await chargesSummaryPage.selectAddMoreChargesNo();
   await chargesSummaryPage.saveAndContinue();
-  const firstHearingDetailsPage = new FirstHearingDetailsPage(page);
-  await firstHearingDetailsPage.verifyUrl();
-  await firstHearingDetailsPage.verifyBackLink(
-    "/case-registration/charges-summary",
-  );
-  await firstHearingDetailsPage.errorValidations();
-  await firstHearingDetailsPage.selectAddFirstHearingDetailsNo();
-  await firstHearingDetailsPage.saveAndContinue();
+
+  await caseMonitoringPage.verifyUrl();
+  // monitoring code is not optional
+  await caseMonitoringPage.verifyPreChargeCheckboxChecked();
+  await caseMonitoringPage.saveAndContinue();
+  await caseMonitoringPage.verifyErrorSummaryClear();
+
   await caseRegistrationSummaryPage.verifyUrl();
   await caseRegistrationSummaryPage.verifyAddNewSuspectElements(4);
   await caseRegistrationSummaryPage.verifySuspectSummaryRows([
