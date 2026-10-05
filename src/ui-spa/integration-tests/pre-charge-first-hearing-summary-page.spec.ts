@@ -271,15 +271,15 @@ test("verify Pre-Charge  is added to monitoring codes when removing a suspect an
   await caseRegistrationSummaryPage.removeSuspectCharge(0, 0);
 
   const chargeRemoveConfirmationPage = new ChargeRemoveConfirmationPage(page);
-  await chargeRemoveConfirmationPage.verifyPageElements(
+  await chargeRemoveConfirmationPage.verifyUrl();
+  await chargeRemoveConfirmationPage.verifyBackLink(
     "/case-registration/case-summary",
   );
+  await chargeRemoveConfirmationPage.verifyPageElements(true);
   await chargeRemoveConfirmationPage.saveAndContinue();
   await caseRegistrationSummaryPage.removeSuspectCharge(0, 0);
 
-  await chargeRemoveConfirmationPage.verifyPageElements(
-    "/case-registration/case-summary",
-  );
+  await chargeRemoveConfirmationPage.verifyPageElements(true);
   await chargeRemoveConfirmationPage.saveAndContinue();
   await caseRegistrationSummaryPage.verifyChargesSummaryDetails(0, []);
 
