@@ -23,7 +23,7 @@ import { useQuery } from "@tanstack/react-query";
 import useErrorSummaryList from "../../../common/hooks/useErrorSummaryList";
 import { useNavigate } from "react-router";
 import PageContentWrapper from "../../common/PageContentWrapper";
-import { PRE_CHARGE_DECISION_CODE } from "../../../common/constants/general";
+import { showFirstHearing } from "../../../common/utils/showFirstHearing";
 import pageStyles from "./index.module.scss";
 import styles from "../index.module.scss";
 
@@ -90,11 +90,7 @@ const CaseAssigneePage = () => {
     if (state.formData.navigation.fromCaseSummaryPage) {
       return "/case-registration/case-summary";
     }
-    if (
-      !state.formData.caseMonitoringCodesCheckboxes?.includes(
-        PRE_CHARGE_DECISION_CODE,
-      )
-    ) {
+    if (showFirstHearing(state.formData.caseMonitoringCodesCheckboxes)) {
       return "/case-registration/first-hearing";
     }
 

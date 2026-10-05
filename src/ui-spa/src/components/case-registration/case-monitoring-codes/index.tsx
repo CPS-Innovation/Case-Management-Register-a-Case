@@ -9,6 +9,7 @@ import { type CaseMonitoringCodes } from "../../../schemas";
 import { isMonitoringCodeOptional } from "../../../common/utils/isMonitoringCodeOptional";
 import useErrorSummaryList from "../../../common/hooks/useErrorSummaryList";
 import { PRE_CHARGE_DECISION_CODE } from "../../../common/constants/general";
+import { showFirstHearing } from "../../../common/utils/showFirstHearing";
 import PageContentWrapper from "../../common/PageContentWrapper";
 import pageStyles from "./index.module.scss";
 import styles from "../index.module.scss";
@@ -156,11 +157,7 @@ const CaseMonitoringCodesPage = () => {
       type: "SET_FIELDS",
       payload: { data: { ...formData } },
     });
-    if (
-      !formData.caseMonitoringCodesCheckboxes?.includes(
-        PRE_CHARGE_DECISION_CODE,
-      )
-    ) {
+    if (showFirstHearing(formData.caseMonitoringCodesCheckboxes)) {
       navigate("/case-registration/first-hearing");
       return;
     }

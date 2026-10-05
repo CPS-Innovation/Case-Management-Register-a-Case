@@ -1012,7 +1012,7 @@ const resetSuspectAdditionalDetails = (
   return resetValues;
 };
 
-const applyPreChargeMonitoringIfNeeded = (
+export const applyPreChargeMonitoringIfNeeded = (
   formData: CaseRegistrationFormData,
 ): CaseRegistrationFormData => {
   const suspects = formData.suspects;
@@ -1026,7 +1026,7 @@ const applyPreChargeMonitoringIfNeeded = (
   if (!allHasCharges && formData.firstHearingRadio === "yes") {
     newFormData = {
       ...newFormData,
-      firstHearingRadio: "no",
+      firstHearingRadio: "",
       firstHearingCourtLocationText: { id: null, description: "" },
       firstHearingDateText: "",
     };

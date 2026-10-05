@@ -23,7 +23,7 @@ import SuspectSummary from "../suspect-summary/SuspectSummary";
 import { useNavigate } from "react-router";
 import PageContentWrapper from "../../common/PageContentWrapper";
 import { useIsAreaSensitive } from "../../../common/hooks/useIsAreaSensitive";
-import { PRE_CHARGE_DECISION_CODE } from "../../../common/constants/general";
+import { showFirstHearing } from "../../../common/utils/showFirstHearing";
 import styles from "./index.module.scss";
 
 const CaseSummaryPage = () => {
@@ -259,9 +259,7 @@ const CaseSummaryPage = () => {
               />
             </div>
           )}
-          {!state.formData.caseMonitoringCodesCheckboxes.includes(
-            PRE_CHARGE_DECISION_CODE,
-          ) && (
+          {showFirstHearing(state.formData.caseMonitoringCodesCheckboxes) && (
             <div data-testid="case-first-hearing-summary">
               <h2>First hearing details</h2>
               <SummaryList rows={caseFirstHearingSummaryListRows} />
