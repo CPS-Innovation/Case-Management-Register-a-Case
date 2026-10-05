@@ -6,14 +6,16 @@ export class ChargeRemoveConfirmationPage {
   constructor(page: Page) {
     this.page = page;
   }
-
-  private saveAndContinueButton() {
-    return this.page.getByRole("button", { name: "Save and continue" });
+  async verifyUrl() {
+    await expect(this.page).toHaveURL(
+      "http://localhost:5173/case-registration/charge-remove-confirmation",
+    );
   }
 
-  async verifyPageElements(
-    backRoute: string = "/case-registration/charges-summary",
-  ) {
+  async verifyPageElements(fromCaseSummaryPage: boolean) {
+    const cancelLinkHref = fromCaseSummaryPage
+      ? "/case-registration/case-summary"
+      : "/case-registration/charges-summary";
     await expect(this.page).toHaveTitle(
       /Charge Remove Confirmation - Register A Case/,
     );
@@ -27,13 +29,31 @@ export class ChargeRemoveConfirmationPage {
     await expect(paragraphs.nth(1)).toHaveText(
       "You will not be able to restore them.",
     );
-    await expect(this.saveAndContinueButton()).toBeVisible();
+    await expect(
+      this.page.getByRole("button", { name: "Save and continue" }),
+    ).toBeVisible();
     await expect(
       this.page.getByRole("link", { name: "cancel" }),
-    ).toHaveAttribute("href", backRoute);
+    ).toHaveAttribute("href", cancelLinkHref);
+  }
+
+  async verifyBackLink(url: string) {
+    await expect(this.page.getByRole("link", { name: "Back" })).toBeVisible();
+    await expect(this.page.getByRole("link", { name: "Back" })).toHaveAttribute(
+      "href",
+      url,
+    );
+  }
+
+  async backLinkClick() {
+    await this.page.getByRole("link", { name: "Back" }).click();
   }
 
   async saveAndContinue() {
-    await this.saveAndContinueButton().click();
+    await this.page.getByRole("button", { name: "Save and continue" }).click();
+  }
+
+  async cancel() {
+    await this.page.getByRole("link", { name: "cancel" }).click();
   }
 }
