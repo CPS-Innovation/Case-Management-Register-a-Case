@@ -7,9 +7,9 @@ import { useQuery } from "@tanstack/react-query";
 import { useNavigate } from "react-router";
 import { type CaseMonitoringCodes } from "../../../schemas";
 import { isMonitoringCodeOptional } from "../../../common/utils/isMonitoringCodeOptional";
-import useChargesCount from "../../../common/hooks/useChargesCount";
 import useErrorSummaryList from "../../../common/hooks/useErrorSummaryList";
 import { PRE_CHARGE_DECISION_CODE } from "../../../common/constants/general";
+import { showFirstHearing } from "../../../common/utils/showFirstHearing";
 import PageContentWrapper from "../../common/PageContentWrapper";
 import pageStyles from "./index.module.scss";
 import styles from "../index.module.scss";
@@ -26,7 +26,6 @@ const CaseMonitoringCodesPage = () => {
 
   const { state, dispatch } = useContext(CaseRegistrationFormContext);
   const navigate = useNavigate();
-  const { chargesCount } = useChargesCount(state.formData.suspects);
 
   const [formData, setFormData] = useState<{
     caseMonitoringCodesCheckboxes: string[];
@@ -81,15 +80,11 @@ const CaseMonitoringCodesPage = () => {
     if (state.formData.navigation.fromCaseSummaryPage) {
       return "/case-registration/case-summary";
     }
-    if (chargesCount) {
-      return "/case-registration/first-hearing";
-    }
     if (state.formData.suspects.length > 0) {
       return "/case-registration/want-to-add-charges";
     }
     return "/case-registration/case-details";
   }, [
-    chargesCount,
     state.formData.suspects.length,
     state.formData.navigation.fromCaseSummaryPage,
   ]);
@@ -157,11 +152,31 @@ const CaseMonitoringCodesPage = () => {
     event.preventDefault();
 
     if (!validateFormData()) return;
+
+    if (
+      formData.caseMonitoringCodesCheckboxes?.includes(
+        PRE_CHARGE_DECISION_CODE,
+      ) &&
+      state.formData.firstHearingRadio === "yes"
+    ) {
+      void navigate("/case-registration/add-pre-charge-confirmation", {
+        state: {
+          caseMonitoringCodesCheckboxes: formData.caseMonitoringCodesCheckboxes,
+        },
+      });
+
+      return;
+    }
+
     setDisableBtns(true);
     dispatch({
       type: "SET_FIELDS",
       payload: { data: { ...formData } },
     });
+    if (showFirstHearing(formData.caseMonitoringCodesCheckboxes)) {
+      navigate("/case-registration/first-hearing");
+      return;
+    }
     if (
       state.formData.navigation.fromCaseSummaryPage ||
       state.formData.navigation.changeCaseSuspects ||

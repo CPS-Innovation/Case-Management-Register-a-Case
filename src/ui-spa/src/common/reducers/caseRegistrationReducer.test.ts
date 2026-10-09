@@ -5,11 +5,13 @@ import {
   chargeInitialState,
   getResetSuspectFieldValues,
   getResetFieldValues,
+  applyPreChargeMonitoringIfNeeded,
   type CaseRegistrationActions,
   type CaseRegistrationState,
   type SuspectFormData,
 } from "./caseRegistrationReducer";
 import { offenderTypeShortCodes } from "../constants/offenderTypeShortCodes";
+import { PRE_CHARGE_DECISION_CODE } from "../../common/constants/general";
 
 vi.mock("uuid", () => ({
   v4: vi.fn(() => "test-uuid"),
@@ -1654,6 +1656,150 @@ describe("getResetFieldValues", () => {
       caseInvestigatorLastNameText: "",
       caseInvestigatorShoulderNameText: "",
       caseInvestigatorShoulderNumberText: "",
+    });
+  });
+});
+
+describe("applyPreChargeMonitoringIfNeeded", () => {
+  it("Should add PRE_CHARGE_DECISION_CODE to the monitoring codes if any of the suspect does not have charges and it is already not added in the monitoring codes and wantToAddChargesRadio is already populated", () => {
+    const formData = {
+      ...initialState.formData,
+      caseMonitoringCodesCheckboxes: ["abc"],
+      suspects: [
+        {
+          ...suspectInitialState,
+          suspectId: "suspect-1",
+          charges: [
+            {
+              ...chargeInitialState,
+              chargeId: "charge-1",
+              chargedWithAdultRadio: "yes",
+            },
+          ],
+        },
+        {
+          ...suspectInitialState,
+          suspectId: "suspect-2",
+          charges: [] as any,
+        },
+      ],
+    };
+
+    expect(
+      applyPreChargeMonitoringIfNeeded({
+        ...formData,
+        wantToAddChargesRadio: "yes",
+      }),
+    ).toEqual({
+      ...formData,
+      wantToAddChargesRadio: "yes",
+      caseMonitoringCodesCheckboxes: ["abc", PRE_CHARGE_DECISION_CODE],
+    });
+    expect(
+      applyPreChargeMonitoringIfNeeded({
+        ...formData,
+        wantToAddChargesRadio: "no",
+      }),
+    ).toEqual({
+      ...formData,
+      wantToAddChargesRadio: "no",
+      caseMonitoringCodesCheckboxes: ["abc", PRE_CHARGE_DECISION_CODE],
+    });
+  });
+
+  it("Should add PRE_CHARGE_DECISION_CODE to the monitoring codes if there are no suspects and it is already not added in the monitoring codes and wantToAddChargesRadio is already populated", () => {
+    const formData = {
+      ...initialState.formData,
+      caseMonitoringCodesCheckboxes: ["abc"],
+      suspects: [],
+    };
+
+    expect(
+      applyPreChargeMonitoringIfNeeded({
+        ...formData,
+        wantToAddChargesRadio: "yes",
+      }),
+    ).toEqual({
+      ...formData,
+      wantToAddChargesRadio: "yes",
+      caseMonitoringCodesCheckboxes: ["abc", PRE_CHARGE_DECISION_CODE],
+    });
+    expect(
+      applyPreChargeMonitoringIfNeeded({
+        ...formData,
+        wantToAddChargesRadio: "no",
+      }),
+    ).toEqual({
+      ...formData,
+      wantToAddChargesRadio: "no",
+      caseMonitoringCodesCheckboxes: ["abc", PRE_CHARGE_DECISION_CODE],
+    });
+  });
+
+  it("Should not add PRE_CHARGE_DECISION_CODE to the monitoring codes if any of the suspect does not have charges and it is already not added in the monitoring codes and wantToAddChargesRadio is not  already been populated", () => {
+    const formData = {
+      ...initialState.formData,
+      caseMonitoringCodesCheckboxes: ["abc"],
+      wantToAddChargesRadio: "" as const,
+      suspects: [
+        {
+          ...suspectInitialState,
+          suspectId: "suspect-1",
+          charges: [
+            {
+              ...chargeInitialState,
+              chargeId: "charge-1",
+              chargedWithAdultRadio: "yes",
+            },
+          ],
+        },
+        {
+          ...suspectInitialState,
+          suspectId: "suspect-2",
+          charges: [] as any,
+        },
+      ],
+    };
+
+    expect(applyPreChargeMonitoringIfNeeded(formData)).toEqual({
+      ...formData,
+      caseMonitoringCodesCheckboxes: ["abc"],
+    });
+  });
+
+  it("Should reset first hearing fields if the monitoring code has pre-charge decision", () => {
+    const formData = {
+      ...initialState.formData,
+      firstHearingRadio: "yes",
+      firstHearingCourtLocationText: { id: null, description: "Court A" },
+      firstHearingDateText: "2023-01-01",
+      caseMonitoringCodesCheckboxes: ["abc", PRE_CHARGE_DECISION_CODE],
+      wantToAddChargesRadio: "" as const,
+      suspects: [
+        {
+          ...suspectInitialState,
+          suspectId: "suspect-1",
+          charges: [
+            {
+              ...chargeInitialState,
+              chargeId: "charge-1",
+              chargedWithAdultRadio: "yes",
+            },
+          ],
+        },
+        {
+          ...suspectInitialState,
+          suspectId: "suspect-2",
+          charges: [] as any,
+        },
+      ],
+    };
+
+    expect(applyPreChargeMonitoringIfNeeded(formData)).toEqual({
+      ...formData,
+      firstHearingRadio: "",
+      firstHearingCourtLocationText: { id: null, description: "" },
+      firstHearingDateText: "",
     });
   });
 });

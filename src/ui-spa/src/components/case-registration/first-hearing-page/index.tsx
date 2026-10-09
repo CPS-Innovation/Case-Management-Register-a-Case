@@ -8,8 +8,6 @@ import { getCourtsByUnitId } from "../../../apis/gateway-api";
 import { useQuery } from "@tanstack/react-query";
 import { useNavigate } from "react-router";
 import { isOnOrAfterChargeDates } from "../../../common/utils/chargeDatesUtil";
-import { isMonitoringCodeOptional } from "../../../common/utils/isMonitoringCodeOptional";
-import { PRE_CHARGE_DECISION_CODE } from "../../../common/constants/general";
 import useErrorSummaryList from "../../../common/hooks/useErrorSummaryList";
 import PageContentWrapper from "../../common/PageContentWrapper";
 import styles from "../index.module.scss";
@@ -32,7 +30,7 @@ const FirstHearingPage = () => {
     if (state.formData.navigation.fromCaseSummaryPage) {
       return "/case-registration/case-summary";
     }
-    return "/case-registration/charges-summary";
+    return "/case-registration/case-monitoring-codes";
   }, [state.formData.navigation.fromCaseSummaryPage]);
 
   const registeringUnitId = useMemo(() => {
@@ -242,13 +240,6 @@ const FirstHearingPage = () => {
       },
     });
 
-    if (
-      state.formData.navigation.changeCaseArea ||
-      state.formData.navigation.changeCaseDetails
-    ) {
-      navigate("/case-registration/case-assignee");
-      return;
-    }
     if (state.formData.navigation.fromCaseSummaryPage) {
       dispatch({
         type: "SET_NAVIGATION_DATA",
@@ -262,15 +253,6 @@ const FirstHearingPage = () => {
       state.formData.navigation.changeCaseSuspects ||
       state.formData.navigation.changeCaseCharges
     ) {
-      if (
-        isMonitoringCodeOptional(state.formData.suspects) &&
-        state.formData.caseMonitoringCodesCheckboxes.includes(
-          PRE_CHARGE_DECISION_CODE,
-        )
-      ) {
-        navigate("/case-registration/case-monitoring-codes");
-        return;
-      }
       dispatch({
         type: "SET_NAVIGATION_DATA",
         payload: { changeCaseSuspects: false, changeCaseCharges: false },
@@ -279,7 +261,7 @@ const FirstHearingPage = () => {
       return;
     }
 
-    return navigate("/case-registration/case-monitoring-codes");
+    return navigate("/case-registration/case-assignee");
   };
 
   const handleBackLinkClick = (event: React.MouseEvent<HTMLAnchorElement>) => {

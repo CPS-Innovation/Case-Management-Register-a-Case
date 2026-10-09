@@ -540,6 +540,14 @@ test("Should successfully complete suspect journey", async ({ page }) => {
   await chargesSummaryPage.selectAddMoreChargesNo();
   await chargesSummaryPage.saveAndContinue();
 
+  const caseMonitoringPage = new CaseMonitoringPage(page);
+  await caseMonitoringPage.verifyUrl();
+  await caseMonitoringPage.verifyPageElements(45);
+  await caseMonitoringPage.verifyPreChargeCheckboxNotChecked();
+  await caseMonitoringPage.selectMonitoringCode("Asset Recovery");
+  await caseMonitoringPage.saveAndContinue();
+  await caseMonitoringPage.verifyErrorSummaryClear();
+
   const firstHearingDetailsPage = new FirstHearingDetailsPage(page);
   await firstHearingDetailsPage.verifyUrl();
   await firstHearingDetailsPage.errorValidations();
@@ -548,14 +556,6 @@ test("Should successfully complete suspect journey", async ({ page }) => {
   await firstHearingDetailsPage.enterFirstHearingCourtLocation("Court A");
   await firstHearingDetailsPage.addFirstHearingDate("2022-02-04");
   await firstHearingDetailsPage.saveAndContinue();
-
-  const caseMonitoringPage = new CaseMonitoringPage(page);
-  await caseMonitoringPage.verifyUrl();
-  await caseMonitoringPage.verifyPageElements(45);
-  await caseMonitoringPage.verifyPreChargeCheckboxNotChecked();
-  await caseMonitoringPage.selectMonitoringCode("Asset Recovery");
-  await caseMonitoringPage.saveAndContinue();
-  await caseMonitoringPage.verifyErrorSummaryClear();
 
   const caseAssigneePage = new CaseAssigneePage(page);
   await caseAssigneePage.verifyUrl();
