@@ -2,16 +2,23 @@ import LicenceLogo from "./svgs/footerlicencelogo.svg?react";
 import { useUserDetails } from "../auth";
 import styles from "./Layout.module.scss";
 
-export default function Footer() {
-  const { username } = useUserDetails();
+const FooterView = ({
+  username,
+  showUser,
+}: {
+  username?: string;
+  showUser: boolean;
+}) => {
   return (
     <footer className={`govuk-footer ${styles.footer}`}>
       <div className="govuk-width-container">
         <div className="govuk-footer__meta">
           <div className="govuk-footer__meta-item govuk-footer__meta-item--grow">
-            <div className={styles.username} data-testid="div-ad-username">
-              {username}
-            </div>
+            {showUser ? (
+              <div className={styles.username} data-testid="div-ad-username">
+                {username}
+              </div>
+            ) : null}
             <div>
               <LicenceLogo className="govuk-footer__licence-logo" />
               <span className="govuk-footer__licence-description">
@@ -39,4 +46,13 @@ export default function Footer() {
       </div>
     </footer>
   );
+};
+
+export function PublicFooter() {
+  return <FooterView showUser={false} />;
+}
+
+export default function Footer() {
+  const { username } = useUserDetails();
+  return <FooterView username={username} showUser />;
 }
