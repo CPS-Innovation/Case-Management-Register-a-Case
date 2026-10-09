@@ -14,6 +14,7 @@ import { CaseAssigneePage } from "./pages/caseAssigneePage";
 import { CaseRegistrationSummaryPage } from "./pages/caseRegistrationSummaryPage";
 import { ChargeRemoveConfirmationPage } from "./pages/chargeRemoveConfirmationPage";
 import { SuspectRemoveConfirmationPage } from "./pages/suspectRemoveConfirmationPage";
+import { AddPreChargeConfirmationPage } from "./pages/addPreChargeConfirmationPage";
 
 test("verify Pre-Charge  is added to monitoring codes when removing a suspect and removing available charge from suspect and first hearing details are removed when pre-charge monitoring code is added", async ({
   page,
@@ -371,6 +372,22 @@ test("verify Pre-Charge  is added to monitoring codes when removing a suspect an
   await caseMonitoringPage.selectMonitoringCode("Pre-Charge Decision");
   await caseMonitoringPage.saveAndContinue();
   await caseMonitoringPage.verifyErrorSummaryClear();
+  // verify pre-charge confirmation page elements
+  const addPreChargeConfirmationPage = new AddPreChargeConfirmationPage(page);
+  await addPreChargeConfirmationPage.verifyUrl();
+  await addPreChargeConfirmationPage.verifyPageElements();
+  await addPreChargeConfirmationPage.verifyBackLink();
+  await addPreChargeConfirmationPage.backLinkClick();
+  await caseMonitoringPage.verifyUrl();
+  await caseMonitoringPage.selectMonitoringCode("Pre-Charge Decision");
+  await caseMonitoringPage.saveAndContinue();
+  await addPreChargeConfirmationPage.verifyUrl();
+  await addPreChargeConfirmationPage.cancel();
+  await caseMonitoringPage.verifyUrl();
+  await caseMonitoringPage.selectMonitoringCode("Pre-Charge Decision");
+  await caseMonitoringPage.saveAndContinue();
+  await addPreChargeConfirmationPage.verifyUrl();
+  await addPreChargeConfirmationPage.saveAndContinue();
 
   await caseRegistrationSummaryPage.verifyUrl();
   await caseRegistrationSummaryPage.verifyComplexityAndMonitoringCodesElements({

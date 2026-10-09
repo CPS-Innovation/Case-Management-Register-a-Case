@@ -32,6 +32,7 @@ import ChangeAreaConfirmationPage from "./case-registration/change-area-confirma
 import ChangeRegisteringUnitConfirmationPage from "./case-registration/change-registering-unit-confirmation";
 import RemoveAllSuspectsConfirmationPage from "./case-registration/remove-all-suspects-confirmation";
 import CancelCaseRegistrationConfirmationPage from "./case-registration/cancel-case-registration-confirmation";
+import AddPreChargeConfirmationPage from "./case-registration/add-pre-charge-confirmation";
 import ProtectedRoutes from "./ProtectedRoutes";
 import UnAuthorisedPage from "./unauthorised";
 import usePageView from "../common/hooks/usePageView";
@@ -167,6 +168,10 @@ const AppRoutes = () => {
       <Route
         path="/case-registration/cancel-case-registration-confirmation"
         element={<CancelCaseRegistrationConfirmationPage />}
+      />
+      <Route
+        path="/case-registration/add-pre-charge-confirmation"
+        element={<AddPreChargeConfirmationPage />}
       />
       <Route path="/unauthorised" element={<UnAuthorisedPage />} />
       <Route path="*" element={<Navigate to="/case-registration" replace />} />

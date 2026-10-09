@@ -152,6 +152,22 @@ const CaseMonitoringCodesPage = () => {
     event.preventDefault();
 
     if (!validateFormData()) return;
+
+    if (
+      formData.caseMonitoringCodesCheckboxes?.includes(
+        PRE_CHARGE_DECISION_CODE,
+      ) &&
+      state.formData.firstHearingRadio === "yes"
+    ) {
+      void navigate("/case-registration/add-pre-charge-confirmation", {
+        state: {
+          caseMonitoringCodesCheckboxes: formData.caseMonitoringCodesCheckboxes,
+        },
+      });
+
+      return;
+    }
+
     setDisableBtns(true);
     dispatch({
       type: "SET_FIELDS",
