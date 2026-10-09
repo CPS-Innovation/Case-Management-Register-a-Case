@@ -1,5 +1,5 @@
 import { useEffect, useRef } from "react";
-import Footer from "./Footer";
+import Footer, { PublicFooter } from "./Footer";
 import Header from "./Header";
 import { useLocation } from "react-router";
 import { SkipLink } from "../components/govuk";
@@ -8,8 +8,10 @@ import styles from "./Layout.module.scss";
 
 export default function RootLayout({
   children,
+  showAuthenticatedContent = true,
 }: Readonly<{
   children: React.ReactNode;
+  showAuthenticatedContent?: boolean;
 }>) {
   const location = useLocation();
   const skipLinkSiblingRef = useRef(null);
@@ -36,7 +38,7 @@ export default function RootLayout({
       >
         {children}
       </div>
-      <Footer />
+      {showAuthenticatedContent ? <Footer /> : <PublicFooter />}
     </div>
   );
 }
