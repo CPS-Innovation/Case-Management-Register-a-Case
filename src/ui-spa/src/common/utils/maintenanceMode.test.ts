@@ -45,6 +45,15 @@ describe("maintenance messages", () => {
     );
   });
 
+  it("falls back when Azure DevOps leaves the variable token unexpanded", () => {
+    expect(getMaintenanceMessage1("$(VITE_MAINTENANCE_MODE_MESSAGE1)")).toBe(
+      DEFAULT_MAINTENANCE_MESSAGE_1,
+    );
+    expect(getMaintenanceMessage2(" $(VITE_MAINTENANCE_MODE_MESSAGE2) ")).toBe(
+      DEFAULT_MAINTENANCE_MESSAGE_2,
+    );
+  });
+
   it("falls back when a message is missing or blank", () => {
     expect(getMaintenanceMessage1(undefined)).toBe(
       DEFAULT_MAINTENANCE_MESSAGE_1,

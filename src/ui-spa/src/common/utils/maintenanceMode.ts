@@ -14,7 +14,13 @@ const readMessage = (value: unknown, fallback: string) => {
   }
 
   const trimmed = value.trim();
-  return trimmed.length > 0 ? trimmed : fallback;
+  // Azure DevOps leaves an undefined variable group value as the literal
+  // "$(VAR_NAME)" token. Treat that as unset so the page uses the fallback.
+  if (!trimmed || trimmed.startsWith("$(")) {
+    return fallback;
+  }
+
+  return trimmed;
 };
 
 export const isMaintenanceModeEnabled = (
