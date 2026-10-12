@@ -164,14 +164,14 @@ const AppRoutes = () => {
           path="/case-registration/remove-all-suspects-confirmation"
           element={<RemoveAllSuspectsConfirmationPage />}
         />
+        <Route
+          path="/case-registration/add-pre-charge-confirmation"
+          element={<AddPreChargeConfirmationPage />}
+        />
       </Route>
       <Route
         path="/case-registration/cancel-case-registration-confirmation"
         element={<CancelCaseRegistrationConfirmationPage />}
-      />
-      <Route
-        path="/case-registration/add-pre-charge-confirmation"
-        element={<AddPreChargeConfirmationPage />}
       />
       <Route path="/unauthorised" element={<UnAuthorisedPage />} />
       <Route path="*" element={<Navigate to="/case-registration" replace />} />

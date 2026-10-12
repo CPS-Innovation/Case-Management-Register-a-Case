@@ -1,4 +1,4 @@
-import { useContext } from "react";
+import { useContext, useEffect } from "react";
 import { Button, BackLink } from "../../govuk";
 import { useNavigate, useLocation, Link } from "react-router";
 import { CaseRegistrationFormContext } from "../../../common/providers/CaseRegistrationProvider";
@@ -7,11 +7,21 @@ import pageStyles from "./index.module.scss";
 
 const AddPreChargeConfirmationPage = () => {
   const navigate = useNavigate();
-  const {
-    state: { caseMonitoringCodesCheckboxes },
-  }: { state: { caseMonitoringCodesCheckboxes: string[]; backRoute: string } } =
-    useLocation();
+  const location = useLocation();
+  const locationState = location.state as {
+    caseMonitoringCodesCheckboxes?: string[];
+  } | null;
+  const caseMonitoringCodesCheckboxes =
+    locationState?.caseMonitoringCodesCheckboxes;
+
   const { state, dispatch } = useContext(CaseRegistrationFormContext);
+  useEffect(() => {
+    if (!locationState?.caseMonitoringCodesCheckboxes) {
+      void navigate("/case-registration/case-monitoring-codes", {
+        replace: true,
+      });
+    }
+  }, [locationState, navigate]);
 
   const handleSubmit = (event: React.SyntheticEvent) => {
     event.preventDefault();
@@ -49,7 +59,7 @@ const AddPreChargeConfirmationPage = () => {
   };
 
   return (
-    <div className={pageStyles.caseSuspectRemoveConfirmationPage}>
+    <div className={pageStyles.addPreChargeConfirmationPage}>
       <BackLink to="/case-registration/case-monitoring-codes">Back</BackLink>
       <PageContentWrapper>
         <form onSubmit={handleSubmit}>
@@ -60,9 +70,7 @@ const AddPreChargeConfirmationPage = () => {
             </p>
           </div>
           <div className={pageStyles.buttonWrapper}>
-            <Button type="submit" onClick={() => handleSubmit}>
-              Save and continue
-            </Button>
+            <Button type="submit">Save and continue</Button>
 
             <Link
               to={"/case-registration/case-monitoring-codes"}
