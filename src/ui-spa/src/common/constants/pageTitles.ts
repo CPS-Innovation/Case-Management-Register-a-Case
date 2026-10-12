@@ -36,4 +36,5 @@ export const pageTitles: Record<string, string> = {
   "/cancel-case-registration-confirmation":
     "Cancel Case Registration Confirmation",
   "/add-pre-charge-confirmation": "Add Pre Charge Confirmation",
+  "/maintenance": "Sorry this service is unavailable",
 };

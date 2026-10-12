@@ -42,6 +42,20 @@ test("matches full path when last segment is the page ", () => {
   expect(screen.getByTestId("hook-title").textContent).toBe(expected);
 });
 
+test("uses the maintenance heading as the document title", () => {
+  act(() =>
+    render(
+      <MemoryRouter initialEntries={["/maintenance"]}>
+        <TestHarness />
+      </MemoryRouter>,
+    ),
+  );
+
+  const expected = "Sorry this service is unavailable - Register A Case";
+  expect(document.title).toBe(expected);
+  expect(screen.getByTestId("hook-title").textContent).toBe(expected);
+});
+
 test("falls back to default title when no match", () => {
   act(() =>
     render(
