@@ -1,0 +1,59 @@
+import { type Page, expect } from "@playwright/test";
+
+export class ChargeRemoveConfirmationPage {
+  private readonly page: Page;
+
+  constructor(page: Page) {
+    this.page = page;
+  }
+  async verifyUrl() {
+    await expect(this.page).toHaveURL(
+      "http://localhost:5173/case-registration/charge-remove-confirmation",
+    );
+  }
+
+  async verifyBackLink(url: string) {
+    await expect(this.page.getByRole("link", { name: "Back" })).toBeVisible();
+    await expect(this.page.getByRole("link", { name: "Back" })).toHaveAttribute(
+      "href",
+      url,
+    );
+  }
+
+  async verifyPageElements(fromCaseSummaryPage: boolean) {
+    const cancelLinkHref = fromCaseSummaryPage
+      ? "/case-registration/case-summary"
+      : "/case-registration/charges-summary";
+    await expect(this.page).toHaveTitle(
+      /Charge Remove Confirmation - Register A Case/,
+    );
+    await expect(this.page.locator("h1")).toHaveText(
+      "Are you sure you want to remove this charge?",
+    );
+    const paragraphs = this.page.getByTestId("main-content").locator("p");
+    await expect(paragraphs.nth(0)).toHaveText(
+      "This will permanently remove all the details you've entered.",
+    );
+    await expect(paragraphs.nth(1)).toHaveText(
+      "You will not be able to restore them.",
+    );
+    await expect(
+      this.page.getByRole("button", { name: "Save and continue" }),
+    ).toBeVisible();
+    await expect(
+      this.page.getByRole("link", { name: "cancel" }),
+    ).toHaveAttribute("href", cancelLinkHref);
+  }
+
+  async saveAndContinue() {
+    await this.page.getByRole("button", { name: "Save and continue" }).click();
+  }
+
+  async cancelClick() {
+    await this.page.getByRole("link", { name: "cancel" }).click();
+  }
+
+  async backLinkClick() {
+    await this.page.getByRole("link", { name: "Back" }).click();
+  }
+}

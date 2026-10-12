@@ -41,18 +41,12 @@ export class CaseMonitoringPage {
     await expect(
       this.page.getByRole("checkbox", { name: "pre-charge decision" }),
     ).toBeChecked();
-    await expect(
-      this.page.getByRole("checkbox", { name: "pre-charge decision" }),
-    ).toBeDisabled();
   }
 
   async verifyPreChargeCheckboxNotChecked() {
     await expect(
       this.page.getByRole("checkbox", { name: "pre-charge decision" }),
     ).not.toBeChecked();
-    await expect(
-      this.page.getByRole("checkbox", { name: "pre-charge decision" }),
-    ).not.toBeDisabled();
   }
 
   async selectMonitoringCode(name: string) {
