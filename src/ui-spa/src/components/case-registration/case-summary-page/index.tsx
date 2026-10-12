@@ -15,6 +15,7 @@ import {
   getCaseComplexityAndMonitoringCodesSummaryListRows,
   getWhosIsWorkingOnTheCaseSummaryListRows,
 } from "./utils/getSummaryListRows";
+import useChargesCount from "../../../common/hooks/useChargesCount";
 import { getCaseRegistrationRequestData } from "../../../common/utils/getCaseRegistrationRequestData";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { submitCaseRegistration, validateUrn } from "../../../apis/gateway-api";
@@ -40,7 +41,7 @@ const CaseSummaryPage = () => {
   const { state, dispatch } = useContext(CaseRegistrationFormContext);
   const navigate = useNavigate();
   const isAreaSensitive = useIsAreaSensitive();
-
+  const { chargesCount } = useChargesCount(state.formData.suspects);
   const submitCaseRegistrationMutation = useMutation({
     mutationFn: submitCaseRegistration,
   });
@@ -259,12 +260,13 @@ const CaseSummaryPage = () => {
               />
             </div>
           )}
-          {showFirstHearing(state.formData.caseMonitoringCodesCheckboxes) && (
-            <div data-testid="case-first-hearing-summary">
-              <h2>First hearing details</h2>
-              <SummaryList rows={caseFirstHearingSummaryListRows} />
-            </div>
-          )}
+          {chargesCount > 0 &&
+            showFirstHearing(state.formData.caseMonitoringCodesCheckboxes) && (
+              <div data-testid="case-first-hearing-summary">
+                <h2>First hearing details</h2>
+                <SummaryList rows={caseFirstHearingSummaryListRows} />
+              </div>
+            )}
           <div data-testid="case-complexity-and-monitoring-codes-summary">
             <h2>Case complexity and monitoring codes</h2>
             <SummaryList
