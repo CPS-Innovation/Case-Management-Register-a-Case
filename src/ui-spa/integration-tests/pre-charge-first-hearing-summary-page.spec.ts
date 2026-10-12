@@ -47,6 +47,7 @@ test("verify Pre-Charge  is added to monitoring codes when removing a suspect an
   await caseMonitoringPage.verifyUrl();
 
   await caseMonitoringPage.verifyPreChargeCheckboxChecked();
+  await caseMonitoringPage.verifyPreChargeCheckboxDisabled();
   await caseMonitoringPage.saveAndContinue();
   await caseMonitoringPage.verifyErrorSummaryClear();
 
@@ -154,6 +155,7 @@ test("verify Pre-Charge  is added to monitoring codes when removing a suspect an
   await caseMonitoringPage.verifyUrl();
 
   await caseMonitoringPage.verifyPreChargeCheckboxNotDisabled();
+  await caseMonitoringPage.verifyPreChargeCheckboxChecked();
   await caseMonitoringPage.deSelectMonitoringCode("Pre-Charge Decision");
   await caseMonitoringPage.saveAndContinue();
   await caseMonitoringPage.verifyErrorSummaryClear();
@@ -246,15 +248,16 @@ test("verify Pre-Charge  is added to monitoring codes when removing a suspect an
   await caseMonitoringPage.verifyUrl();
 
   await caseMonitoringPage.verifyPreChargeCheckboxNotDisabled();
-  await caseMonitoringPage.deSelectMonitoringCode("Pre-Charge Decision");
+  await caseMonitoringPage.verifyPreChargeCheckboxNotChecked();
+  // await caseMonitoringPage.deSelectMonitoringCode("Pre-Charge Decision");
   await caseMonitoringPage.saveAndContinue();
   await caseMonitoringPage.verifyErrorSummaryClear();
 
-  await firstHearingDetailsPage.verifyUrl();
-  await firstHearingDetailsPage.selectAddFirstHearingDetailsYes();
-  await firstHearingDetailsPage.enterFirstHearingCourtLocation("Court A");
-  await firstHearingDetailsPage.addFirstHearingDate("2022-02-04");
-  await firstHearingDetailsPage.saveAndContinue();
+  // await firstHearingDetailsPage.verifyUrl();
+  // await firstHearingDetailsPage.selectAddFirstHearingDetailsYes();
+  // await firstHearingDetailsPage.enterFirstHearingCourtLocation("Court A");
+  // await firstHearingDetailsPage.addFirstHearingDate("2022-02-04");
+  // await firstHearingDetailsPage.saveAndContinue();
 
   await caseRegistrationSummaryPage.verifyUrl();
 

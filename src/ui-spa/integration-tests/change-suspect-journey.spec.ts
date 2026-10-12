@@ -266,7 +266,6 @@ test("Add a new suspect from summary page journey with charges &  change a new s
 
   // From first hearing page since monitoring code is now optional and pre-charge decision is checked  user is taken to case monitoring page
   await caseMonitoringPage.verifyUrl();
-  // monitoring code is not optional
   await caseMonitoringPage.verifyPreChargeCheckboxNotDisabled();
   await caseMonitoringPage.deSelectMonitoringCode("Pre-Charge Decision");
   await caseMonitoringPage.saveAndContinue();
@@ -358,21 +357,14 @@ test("Add a new suspect from summary page journey with charges &  change a new s
   await chargesSummaryPage.selectAddMoreChargesNo();
   await chargesSummaryPage.saveAndContinue();
 
-  // From first hearing page since monitoring code is now optional and pre-charge decision is checked  user is taken to case monitoring page
   await caseMonitoringPage.verifyUrl();
-  // monitoring code is not optional
+  await caseMonitoringPage.verifyPreChargeCheckboxNotChecked();
   await caseMonitoringPage.verifyPreChargeCheckboxNotDisabled();
-  await caseMonitoringPage.deSelectMonitoringCode("Pre-Charge Decision");
   await caseMonitoringPage.saveAndContinue();
   await caseMonitoringPage.verifyErrorSummaryClear();
 
-  // From charges Summary user is taken to first hearing details page
-  await firstHearingDetailsPage.verifyUrl();
-  await firstHearingDetailsPage.selectAddFirstHearingDetailsYes();
-  await firstHearingDetailsPage.enterFirstHearingCourtLocation("Court A");
-  await firstHearingDetailsPage.addFirstHearingDate("2022-02-04");
-  await firstHearingDetailsPage.saveAndContinue();
-  // From first hearing page since monitoring code is now optional and pre-charge decision is not checked  user is taken to case summary page
+  //since user comes form caseSummary and first hearing details are already present user is taken to case summary page
+
   await caseRegistrationSummaryPage.verifyUrl();
 });
 

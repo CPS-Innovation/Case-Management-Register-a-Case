@@ -1661,10 +1661,13 @@ describe("getResetFieldValues", () => {
 });
 
 describe("applyPreChargeMonitoringIfNeeded", () => {
-  it("Should add PRE_CHARGE_DECISION_CODE to the monitoring codes if any of the suspect does not have charges and it is already not added in the monitoring codes and wantToAddChargesRadio is already populated", () => {
+  it("Should add PRE_CHARGE_DECISION_CODE to the monitoring codes and reset the first hearing details, if any of the suspect does not have charges and it is already not added in the monitoring codes and wantToAddChargesRadio is already populated", () => {
     const formData = {
       ...initialState.formData,
       caseMonitoringCodesCheckboxes: ["abc"],
+      firstHearingRadio: "yes",
+      firstHearingCourtLocationText: { id: null, description: "Court A" },
+      firstHearingDateText: "2023-01-01",
       suspects: [
         {
           ...suspectInitialState,
@@ -1694,6 +1697,9 @@ describe("applyPreChargeMonitoringIfNeeded", () => {
       ...formData,
       wantToAddChargesRadio: "yes",
       caseMonitoringCodesCheckboxes: ["abc", PRE_CHARGE_DECISION_CODE],
+      firstHearingRadio: "",
+      firstHearingCourtLocationText: { id: null, description: "" },
+      firstHearingDateText: "",
     });
     expect(
       applyPreChargeMonitoringIfNeeded({
@@ -1704,6 +1710,9 @@ describe("applyPreChargeMonitoringIfNeeded", () => {
       ...formData,
       wantToAddChargesRadio: "no",
       caseMonitoringCodesCheckboxes: ["abc", PRE_CHARGE_DECISION_CODE],
+      firstHearingRadio: "",
+      firstHearingCourtLocationText: { id: null, description: "" },
+      firstHearingDateText: "",
     });
   });
 
@@ -1783,14 +1792,18 @@ describe("applyPreChargeMonitoringIfNeeded", () => {
             {
               ...chargeInitialState,
               chargeId: "charge-1",
-              chargedWithAdultRadio: "yes",
             },
           ],
         },
         {
           ...suspectInitialState,
           suspectId: "suspect-2",
-          charges: [] as any,
+          charges: [
+            {
+              ...chargeInitialState,
+              chargeId: "charge-2",
+            },
+          ],
         },
       ],
     };

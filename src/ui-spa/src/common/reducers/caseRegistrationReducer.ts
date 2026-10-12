@@ -1023,19 +1023,23 @@ export const applyPreChargeMonitoringIfNeeded = (
   const hasCode = current.includes(PRE_CHARGE_DECISION_CODE);
 
   let newFormData = { ...formData };
-  if (!allHasCharges && formData.firstHearingRadio === "yes") {
-    newFormData = {
-      ...newFormData,
-      firstHearingRadio: "",
-      firstHearingCourtLocationText: { id: null, description: "" },
-      firstHearingDateText: "",
-    };
-  }
   if (!allHasCharges && !hasCode && formData.wantToAddChargesRadio) {
-    return {
+    newFormData = {
       ...newFormData,
       caseMonitoringCodesCheckboxes: [...current, PRE_CHARGE_DECISION_CODE],
     };
   }
+
+  if (
+    newFormData.caseMonitoringCodesCheckboxes.includes(
+      PRE_CHARGE_DECISION_CODE,
+    ) &&
+    newFormData.firstHearingRadio
+  ) {
+    newFormData.firstHearingRadio = "";
+    newFormData.firstHearingCourtLocationText = { id: null, description: "" };
+    newFormData.firstHearingDateText = "";
+  }
+
   return newFormData;
 };

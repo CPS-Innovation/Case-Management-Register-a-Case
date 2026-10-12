@@ -80,14 +80,14 @@ const CaseMonitoringCodesPage = () => {
     if (state.formData.navigation.fromCaseSummaryPage) {
       return "/case-registration/case-summary";
     }
+    if (state.formData.suspects.some((s) => s.charges.length > 0)) {
+      return "/case-registration/charges-summary";
+    }
     if (state.formData.suspects.length > 0) {
       return "/case-registration/want-to-add-charges";
     }
     return "/case-registration/case-details";
-  }, [
-    state.formData.suspects.length,
-    state.formData.navigation.fromCaseSummaryPage,
-  ]);
+  }, [state.formData.suspects, state.formData.navigation.fromCaseSummaryPage]);
 
   useEffect(() => {
     if (caseMonitoringCodesError) throw caseMonitoringCodesError;
@@ -173,7 +173,10 @@ const CaseMonitoringCodesPage = () => {
       type: "SET_FIELDS",
       payload: { data: { ...formData } },
     });
-    if (showFirstHearing(formData.caseMonitoringCodesCheckboxes)) {
+    if (
+      showFirstHearing(formData.caseMonitoringCodesCheckboxes) &&
+      !state.formData.firstHearingRadio
+    ) {
       navigate("/case-registration/first-hearing");
       return;
     }
