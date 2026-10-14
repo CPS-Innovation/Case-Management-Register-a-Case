@@ -8,7 +8,7 @@ import { useNavigate } from "react-router";
 import useErrorSummaryList from "../../../common/hooks/useErrorSummaryList";
 import ErrorSummaryWrapper from "../../common/ErrorSummaryWrapper";
 import styles from "./index.module.scss";
-const CaseRegistrationPreConfirmationPage = () => {
+const SetManageMaterialsPage = () => {
   type ErrorText = {
     errorSummaryText: string;
     inputErrorText?: string;
@@ -88,9 +88,7 @@ const CaseRegistrationPreConfirmationPage = () => {
     setDisableBtns(true);
     dispatch({
       type: "FURTHER_JOURNEY_DATA",
-      payload: {
-        data: manageMaterialsFormData,
-      },
+      payload: manageMaterialsFormData,
     });
 
     if (manageMaterialsFormData.manageMaterialsRadio === "no") {
@@ -174,4 +172,4 @@ const CaseRegistrationPreConfirmationPage = () => {
     </PageContentWrapper>
   );
 };
-export default CaseRegistrationPreConfirmationPage;
+export default SetManageMaterialsPage;

@@ -16,6 +16,7 @@ import type {
   Offence,
 } from "../../schemas";
 import { v4 as uuidv4 } from "uuid";
+import { FeatureFlagData } from "../../schemas/featureFlagData";
 import { PRE_CHARGE_DECISION_CODE } from "../../common/constants/general";
 
 export type CaseRegistrationField =
@@ -171,6 +172,7 @@ export type CaseRegistrationState = {
   furtherJourneyData: {
     manageMaterialsRadio: GeneralRadioValue;
   };
+  featureFlags: FeatureFlagData | null;
 };
 
 export const suspectInitialState: SuspectFormData = {
@@ -275,6 +277,7 @@ export const initialState: CaseRegistrationState = {
   furtherJourneyData: {
     manageMaterialsRadio: "",
   },
+  featureFlags: null,
 };
 
 export type CaseRegistrationActions =
@@ -508,9 +511,13 @@ export type CaseRegistrationActions =
   | {
       type: "FURTHER_JOURNEY_DATA";
       payload: {
-        data: {
-          manageMaterialsRadio?: GeneralRadioValue;
-        };
+        manageMaterialsRadio?: GeneralRadioValue;
+      };
+    }
+  | {
+      type: "SET_FEATURE_FLAGS";
+      payload: {
+        featureFlags: FeatureFlagData;
       };
     };
 
@@ -928,8 +935,14 @@ export const caseRegistrationReducer = (
         ...state,
         furtherJourneyData: {
           ...state.furtherJourneyData,
-          ...action.payload.data,
+          ...action.payload,
         },
+      };
+    }
+    case "SET_FEATURE_FLAGS": {
+      return {
+        ...state,
+        featureFlags: action.payload.featureFlags,
       };
     }
     default:
