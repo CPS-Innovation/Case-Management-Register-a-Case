@@ -168,6 +168,9 @@ export type CaseRegistrationState = {
   telemetryData: {
     journeyId: string;
   };
+  furtherJourneyData: {
+    manageMaterialsRadio: GeneralRadioValue;
+  };
 };
 
 export const suspectInitialState: SuspectFormData = {
@@ -268,6 +271,9 @@ export const initialState: CaseRegistrationState = {
 
   telemetryData: {
     journeyId: "",
+  },
+  furtherJourneyData: {
+    manageMaterialsRadio: "",
   },
 };
 
@@ -497,6 +503,14 @@ export type CaseRegistrationActions =
       type: "SET_TELEMETRY_JOURNEY_ID";
       payload: {
         journeyId: string;
+      };
+    }
+  | {
+      type: "FURTHER_JOURNEY_DATA";
+      payload: {
+        data: {
+          manageMaterialsRadio?: GeneralRadioValue;
+        };
       };
     };
 
@@ -909,6 +923,15 @@ export const caseRegistrationReducer = (
       };
     }
 
+    case "FURTHER_JOURNEY_DATA": {
+      return {
+        ...state,
+        furtherJourneyData: {
+          ...state.furtherJourneyData,
+          ...action.payload.data,
+        },
+      };
+    }
     default:
       return state;
   }

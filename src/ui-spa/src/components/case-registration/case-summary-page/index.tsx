@@ -25,6 +25,7 @@ import { useNavigate } from "react-router";
 import PageContentWrapper from "../../common/PageContentWrapper";
 import { useIsAreaSensitive } from "../../../common/hooks/useIsAreaSensitive";
 import { showFirstHearing } from "../../../common/utils/showFirstHearing";
+import { useUserGroupsFeatureFlag } from "../../../common/hooks/useUserGroupsFeatureFlag";
 import styles from "./index.module.scss";
 
 const CaseSummaryPage = () => {
@@ -39,6 +40,7 @@ const CaseSummaryPage = () => {
     genericError?: ErrorText;
   };
   const { state, dispatch } = useContext(CaseRegistrationFormContext);
+  const featureFlagsData = useUserGroupsFeatureFlag();
   const navigate = useNavigate();
   const isAreaSensitive = useIsAreaSensitive();
   const { chargesCount } = useChargesCount(state.formData.suspects);
@@ -153,7 +155,11 @@ const CaseSummaryPage = () => {
     submitCaseRegistrationMutation.mutate(requestData, {
       onSuccess: (data) => {
         if (data.caseId) {
-          navigate("/case-registration/case-registration-confirmation");
+          if (featureFlagsData?.caseRegistrationV2) {
+            navigate("/case-registration/case-registration-pre-confirmation");
+          } else {
+            navigate("/case-registration/case-registration-confirmation");
+          }
           return;
         }
 

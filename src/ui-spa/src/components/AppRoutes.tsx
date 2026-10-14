@@ -8,6 +8,7 @@ import CaseMonitoringCodesPage from "./case-registration/case-monitoring-codes";
 import CaseAssigneePage from "./case-registration/case-assignee";
 import CaseSummaryPage from "./case-registration/case-summary-page";
 import CaseRegistrationConfirmationPage from "./case-registration/case-registration-confirmation";
+import CaseRegistrationConfirmationPageV2 from "./case-registration/case-registration-confirmation-v2";
 import AddSuspectPage from "./case-registration/add-suspect";
 import SuspectDOBPage from "./case-registration/suspect-dob";
 import SuspectGenderPage from "./case-registration/suspect-gender";
@@ -33,11 +34,14 @@ import ChangeRegisteringUnitConfirmationPage from "./case-registration/change-re
 import RemoveAllSuspectsConfirmationPage from "./case-registration/remove-all-suspects-confirmation";
 import CancelCaseRegistrationConfirmationPage from "./case-registration/cancel-case-registration-confirmation";
 import AddPreChargeConfirmationPage from "./case-registration/add-pre-charge-confirmation";
+import CaseRegistrationPreConfirmationPage from "./case-registration/case-registration-pre-confirmation";
 import ProtectedRoutes from "./ProtectedRoutes";
 import UnAuthorisedPage from "./unauthorised";
 import usePageView from "../common/hooks/usePageView";
+import { useUserGroupsFeatureFlag } from "../common/hooks/useUserGroupsFeatureFlag";
 
 const AppRoutes = () => {
+  const featureFlagsData = useUserGroupsFeatureFlag();
   usePageView();
   return (
     <Routes>
@@ -70,7 +74,17 @@ const AppRoutes = () => {
         />
         <Route
           path="/case-registration/case-registration-confirmation"
-          element={<CaseRegistrationConfirmationPage />}
+          element={
+            featureFlagsData?.caseRegistrationV2 ? (
+              <CaseRegistrationConfirmationPageV2 />
+            ) : (
+              <CaseRegistrationConfirmationPage />
+            )
+          }
+        />
+        <Route
+          path="/case-registration/case-registration-pre-confirmation"
+          element={<CaseRegistrationPreConfirmationPage />}
         />
         <Route
           path="/case-registration/:suspectId/add-suspect"
@@ -173,6 +187,7 @@ const AppRoutes = () => {
         path="/case-registration/cancel-case-registration-confirmation"
         element={<CancelCaseRegistrationConfirmationPage />}
       />
+
       <Route path="/unauthorised" element={<UnAuthorisedPage />} />
       <Route path="*" element={<Navigate to="/case-registration" replace />} />
     </Routes>
