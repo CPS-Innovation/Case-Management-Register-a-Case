@@ -27,6 +27,7 @@ vi.mock("react-router", () => {
 
 const mockConfig = configModule as {
   FEATURE_FLAG_CASE_REGISTRATION_V2: boolean;
+  PRIVATE_BETA_FEATURE_USER_GROUP2: string;
 };
 
 describe("useUserGroupsFeatureFlag", () => {
@@ -84,7 +85,7 @@ describe("useUserGroupsFeatureFlag", () => {
       const { result } = renderHook(() => useUserGroupsFeatureFlag());
       expect(result?.current?.caseRegistrationV2).toStrictEqual(false);
     });
-    test("Should return caseDetails feature false, if FEATURE_FLAG_CASE_DETAILS is false for automation test user ", () => {
+    test("Should return caseRegistrationV2 feature false, if FEATURE_FLAG_CASE_REGISTRATION_V2 is false for automation test user ", () => {
       (auth.useUserDetails as Mock).mockReturnValue({
         username: "dev_user@example.org",
       });
@@ -101,6 +102,57 @@ describe("useUserGroupsFeatureFlag", () => {
 
       const { result } = renderHook(() => useUserGroupsFeatureFlag());
       expect(result?.current?.caseRegistrationV2).toStrictEqual(false);
+    });
+    test("Should return caseRegistrationV2 feature false, if FEATURE_FLAG_CASE_REGISTRATION_V2 is true and the user is not added to PRIVATE_BETA_FEATURE_USER_GROUP2 for normal user", () => {
+      (msalInstanceModule.msalInstance.getAllAccounts as Mock).mockReturnValue([
+        {
+          username: "test_username",
+          name: "test_name",
+          idTokenClaims: {
+            groups: ["private_beta_feature_group1"],
+          },
+        },
+      ]);
+      mockConfig.FEATURE_FLAG_CASE_REGISTRATION_V2 = true;
+      mockConfig.PRIVATE_BETA_FEATURE_USER_GROUP2 =
+        "private_beta_feature_group2";
+      const { result } = renderHook(() => useUserGroupsFeatureFlag());
+      expect(result?.current?.caseRegistrationV2).toStrictEqual(false);
+    });
+    test("Should return caseRegistrationV2 feature true, if FEATURE_FLAG_CASE_REGISTRATION_V2 is true and the user is added to PRIVATE_BETA_FEATURE_USER_GROUP2 for normal user", () => {
+      (msalInstanceModule.msalInstance.getAllAccounts as Mock).mockReturnValue([
+        {
+          username: "test_username",
+          name: "test_name",
+          idTokenClaims: {
+            groups: ["private_beta_feature_group2"],
+          },
+        },
+      ]);
+      mockConfig.FEATURE_FLAG_CASE_REGISTRATION_V2 = true;
+      mockConfig.PRIVATE_BETA_FEATURE_USER_GROUP2 =
+        "private_beta_feature_group2";
+      const { result } = renderHook(() => useUserGroupsFeatureFlag());
+      expect(result?.current?.caseRegistrationV2).toStrictEqual(true);
+    });
+    test("Should return caseRegistrationV2 feature true, if FEATURE_FLAG_CASE_REGISTRATION_V2 is true even if the user is not added to PRIVATE_BETA_FEATURE_USER_GROUP2 for automation user", () => {
+      (auth.useUserDetails as Mock).mockReturnValue({
+        username: "dev_user@example.org",
+      });
+      (msalInstanceModule.msalInstance.getAllAccounts as Mock).mockReturnValue([
+        {
+          username: "test_username",
+          name: "test_name",
+          idTokenClaims: {
+            groups: ["private_beta_feature_group1"],
+          },
+        },
+      ]);
+      mockConfig.FEATURE_FLAG_CASE_REGISTRATION_V2 = true;
+      mockConfig.PRIVATE_BETA_FEATURE_USER_GROUP2 =
+        "private_beta_feature_group2";
+      const { result } = renderHook(() => useUserGroupsFeatureFlag());
+      expect(result?.current?.caseRegistrationV2).toStrictEqual(true);
     });
 
     test("Should return caseRegistrationV2 feature true, if it is an automation user with search param case-registration-v2=true, search param take priority for automation user", () => {

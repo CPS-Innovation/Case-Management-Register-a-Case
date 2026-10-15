@@ -19,9 +19,7 @@ const SetManageMaterialsPage = () => {
 
   const { state, dispatch } = useContext(CaseRegistrationFormContext);
   const navigate = useNavigate();
-  const {
-    state: { formData },
-  } = useContext(CaseRegistrationFormContext);
+  const { formData } = state;
   const urn = useMemo(
     () =>
       `${formData.urnPoliceForceText}${formData.urnPoliceUnitText}${formData.urnUniqueReferenceText}${formData.urnYearReferenceText}`,
@@ -61,10 +59,8 @@ const SetManageMaterialsPage = () => {
 
     if (!manageMaterialsRadio) {
       errors.manageMaterialsRadio = {
-        errorSummaryText:
-          "Select whether you like to manage materials for this case",
-        inputErrorText:
-          "Select whether you like to manage materials for this case",
+        errorSummaryText: "Select if you want to manage case materials",
+        inputErrorText: "Select if you want to manage case materials",
       };
       setManageMaterialsFormDataErrors(errors);
 
@@ -96,7 +92,12 @@ const SetManageMaterialsPage = () => {
       return;
     }
 
-    window.location.href = SET_UP_EGRESS_AND_SHARED_DRIVE_URL;
+    const destinationUrl = new URL(
+      SET_UP_EGRESS_AND_SHARED_DRIVE_URL,
+      window.location.origin,
+    );
+    destinationUrl.searchParams.set("urn", urn);
+    window.location.href = destinationUrl.toString();
   };
 
   return (
@@ -105,19 +106,17 @@ const SetManageMaterialsPage = () => {
         errorList={errorList}
         errorSummaryRef={errorSummaryRef}
         dataTestId="manage-materials-error-summary"
-        skipText="I do not have disability information"
       />
       <div className={styles.setManageMaterialsPage}>
         <h1 className="govuk-heading-xl">Case Registered</h1>
         <p>The case has been created.</p>
-
-        <p className="govuk-inset-text" data-testid="error-reference">
+        <p className="govuk-inset-text" data-testid="urn-reference">
           URN: {urn}
         </p>
 
-        <h2>Manage case materials</h2>
-        <p>You can:</p>
-        <ul>
+        <h2 className="govuk-heading-m">Manage case materials</h2>
+        <p className="govuk-body">You can:</p>
+        <ul className="govuk-list govuk-list--bullet">
           <li>create a new Egress or Shared drive folder for this case</li>
           <li>
             connect an existing Egress or Shared drive folder to this case
@@ -125,16 +124,11 @@ const SetManageMaterialsPage = () => {
         </ul>
 
         <form onSubmit={handleSubmit}>
-          <div
-            className={`${styles.inputWrapper}
-            ${styles.suspectDetails}`}
-          >
+          <div>
             <Radios
               fieldset={{
                 legend: {
-                  children: (
-                    <p>Would you like to manage materials for this case?</p>
-                  ),
+                  children: "Would you like to manage materials for this case?",
                 },
               }}
               errorMessage={
@@ -166,7 +160,7 @@ const SetManageMaterialsPage = () => {
               }}
             ></Radios>
           </div>
-          <Button>continue</Button>
+          <Button>Continue</Button>
         </form>
       </div>
     </PageContentWrapper>

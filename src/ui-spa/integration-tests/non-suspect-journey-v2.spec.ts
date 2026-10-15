@@ -133,7 +133,9 @@ test("Should successfully complete non suspect journey and extend to set manage 
   await setManageMaterialsPage.errorValidations();
   await setManageMaterialsPage.selectSetManageMaterialsYes();
   await setManageMaterialsPage.continue();
-  await expect(page).toHaveURL("https://design-system.service.gov.uk/");
+  await expect(page).toHaveURL(
+    "https://design-system.service.gov.uk/?urn=12211234526",
+  );
 });
 
 test("Should successfully complete non suspect journey and extend to set manage materials and chose not to set manage materials to the confirmation page", async ({

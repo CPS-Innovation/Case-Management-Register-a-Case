@@ -55,7 +55,7 @@ export class SetManageMaterialsPage {
     ).toBeVisible();
     await expect(
       this.page.getByTestId("manage-materials-radio-link"),
-    ).toHaveText("Select whether you like to manage materials for this case");
+    ).toHaveText("Select if you want to manage case materials");
     await this.page.getByTestId("manage-materials-radio-link").click();
     await expect(
       this.page.locator("#manage-materials-radio-yes"),

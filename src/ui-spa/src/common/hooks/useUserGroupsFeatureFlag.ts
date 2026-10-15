@@ -1,11 +1,14 @@
 import { msalInstance } from "../../auth/msal/msalInstance";
-import { FEATURE_FLAG_CASE_REGISTRATION_V2 } from "../../config";
+import {
+  FEATURE_FLAG_CASE_REGISTRATION_V2,
+  PRIVATE_BETA_FEATURE_USER_GROUP2,
+} from "../../config";
 import { useUserDetails } from "../../auth";
 import { FeatureFlagData } from "../../schemas/featureFlagData";
-import { useCallback, useMemo } from "react";
+import { useMemo } from "react";
 import { useSearchParams } from "react-router";
 
-const automationTestUsers = ["dev_user@example.org"];
+const automationTestUsers = new Set(["dev_user@example.org"]);
 
 const shouldShowFeature = (
   username: string,
@@ -13,7 +16,7 @@ const shouldShowFeature = (
   searchParam: string | null,
   groupClaims?: { groupKey: string; groups: string[] },
 ) => {
-  const isAutomationTestUser = automationTestUsers.includes(username);
+  const isAutomationTestUser = automationTestUsers.has(username);
 
   if (isAutomationTestUser) {
     return searchParam ? searchParam === "true" : isUIFeatureFlagOn;
@@ -28,8 +31,12 @@ export const useUserGroupsFeatureFlag = (): FeatureFlagData | null => {
   const [account] = msalInstance.getAllAccounts();
   const userDetails = useUserDetails();
   const [searchParams] = useSearchParams();
+  const groups = useMemo(
+    () => (account?.idTokenClaims?.groups as string[]) ?? [],
+    [account?.idTokenClaims?.groups],
+  );
 
-  const getFeatureFlags = useCallback(() => {
+  const getFeatureFlags = useMemo(() => {
     //skip the account check for automation user, ideally if the account is not available normal user shouldn't be here
     if (
       (!account && userDetails.username !== "dev_user@example.org") ||
@@ -42,9 +49,12 @@ export const useUserGroupsFeatureFlag = (): FeatureFlagData | null => {
         userDetails.username,
         FEATURE_FLAG_CASE_REGISTRATION_V2,
         searchParams?.get("case-registration-v2"),
+        {
+          groupKey: PRIVATE_BETA_FEATURE_USER_GROUP2,
+          groups,
+        },
       ),
     };
-  }, [searchParams, account, userDetails.username]);
-
-  return useMemo(() => getFeatureFlags(), [getFeatureFlags]);
+  }, [searchParams, account, userDetails.username, groups]);
+  return getFeatureFlags;
 };

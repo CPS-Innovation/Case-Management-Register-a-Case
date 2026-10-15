@@ -26,9 +26,11 @@ const CaseRegistrationConfirmationPageV2 = () => {
             <p className={styles.urnValue}>{urn}</p>
           </div>
         </Panel>
-        <p>Save the URN as you will need it to find or update the case.</p>
-        <h2>Next steps</h2>
-        <p>You can:</p>
+        <p className="govuk-body">
+          Save the URN as you will need it to find or update the case.
+        </p>
+        <h2 className="govuk-heading-m">Next steps</h2>
+        <p className="govuk-body">You can:</p>
         <ul className="govuk-list govuk-list--bullet">
           <li>
             <a
