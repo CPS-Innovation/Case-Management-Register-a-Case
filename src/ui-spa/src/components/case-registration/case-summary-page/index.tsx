@@ -153,7 +153,11 @@ const CaseSummaryPage = () => {
     submitCaseRegistrationMutation.mutate(requestData, {
       onSuccess: (data) => {
         if (data.caseId) {
-          navigate("/case-registration/case-registration-confirmation");
+          if (state.featureFlags?.caseRegistrationV2) {
+            navigate("/case-registration/set-manage-materials");
+          } else {
+            navigate("/case-registration/case-registration-confirmation");
+          }
           return;
         }
 

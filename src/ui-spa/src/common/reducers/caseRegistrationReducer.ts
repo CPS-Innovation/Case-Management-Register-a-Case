@@ -16,6 +16,7 @@ import type {
   Offence,
 } from "../../schemas";
 import { v4 as uuidv4 } from "uuid";
+import { FeatureFlagData } from "../../schemas/featureFlagData";
 import { PRE_CHARGE_DECISION_CODE } from "../../common/constants/general";
 
 export type CaseRegistrationField =
@@ -168,6 +169,10 @@ export type CaseRegistrationState = {
   telemetryData: {
     journeyId: string;
   };
+  furtherJourneyData: {
+    manageMaterialsRadio: GeneralRadioValue;
+  };
+  featureFlags: FeatureFlagData | null;
 };
 
 export const suspectInitialState: SuspectFormData = {
@@ -269,6 +274,10 @@ export const initialState: CaseRegistrationState = {
   telemetryData: {
     journeyId: "",
   },
+  furtherJourneyData: {
+    manageMaterialsRadio: "",
+  },
+  featureFlags: null,
 };
 
 export type CaseRegistrationActions =
@@ -497,6 +506,18 @@ export type CaseRegistrationActions =
       type: "SET_TELEMETRY_JOURNEY_ID";
       payload: {
         journeyId: string;
+      };
+    }
+  | {
+      type: "FURTHER_JOURNEY_DATA";
+      payload: {
+        manageMaterialsRadio?: GeneralRadioValue;
+      };
+    }
+  | {
+      type: "SET_FEATURE_FLAGS";
+      payload: {
+        featureFlags: FeatureFlagData;
       };
     };
 
@@ -909,6 +930,21 @@ export const caseRegistrationReducer = (
       };
     }
 
+    case "FURTHER_JOURNEY_DATA": {
+      return {
+        ...state,
+        furtherJourneyData: {
+          ...state.furtherJourneyData,
+          ...action.payload,
+        },
+      };
+    }
+    case "SET_FEATURE_FLAGS": {
+      return {
+        ...state,
+        featureFlags: action.payload.featureFlags,
+      };
+    }
     default:
       return state;
   }

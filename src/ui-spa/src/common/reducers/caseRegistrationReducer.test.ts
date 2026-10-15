@@ -146,6 +146,10 @@ describe("caseRegistrationReducer", () => {
       telemetryData: {
         journeyId: "",
       },
+      furtherJourneyData: {
+        manageMaterialsRadio: "",
+      },
+      featureFlags: null,
     };
     const action: CaseRegistrationActions = { type: "RESET_FORM_DATA" };
     const state = caseRegistrationReducer(modifiedState, action);
@@ -1610,6 +1614,40 @@ describe("caseRegistrationReducer", () => {
 
     expect(next.telemetryData.journeyId).toBe("J1");
     expect(next.apiData).toEqual(startState.apiData);
+  });
+
+  it("FURTHER_JOURNEY_DATA should set the furtherJourneyData", () => {
+    const startState = {
+      ...initialState,
+      formData: {
+        ...initialState.formData,
+      },
+    };
+
+    const action = {
+      type: "FURTHER_JOURNEY_DATA" as const,
+      payload: { manageMaterialsRadio: "yes" as const },
+    };
+
+    const next = caseRegistrationReducer(startState, action);
+
+    expect(next.furtherJourneyData.manageMaterialsRadio).toBe("yes");
+  });
+
+  it("SET_FEATURE_FLAGS should update the state correctly", () => {
+    const featureFlagData = {
+      caseRegistrationV2: true,
+    };
+
+    const newState = caseRegistrationReducer(initialState, {
+      type: "SET_FEATURE_FLAGS",
+      payload: { featureFlags: featureFlagData },
+    });
+
+    expect(newState).toStrictEqual({
+      ...initialState,
+      featureFlags: { ...featureFlagData },
+    });
   });
 });
 describe("getResetFieldValues", () => {
