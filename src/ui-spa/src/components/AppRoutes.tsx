@@ -90,7 +90,7 @@ const AppRoutes = () => {
         <Route
           path="/case-registration/case-registration-confirmation"
           element={
-            featureFlagsData?.caseRegistrationV2 ? (
+            featureFlags?.caseRegistrationV2 ? (
               <CaseRegistrationConfirmationPageV2 />
             ) : (
               <CaseRegistrationConfirmationPage />
