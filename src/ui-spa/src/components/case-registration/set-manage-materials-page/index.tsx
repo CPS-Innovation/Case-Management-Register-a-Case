@@ -107,7 +107,7 @@ const SetManageMaterialsPage = () => {
         dataTestId="manage-materials-error-summary"
         skipText="I do not have disability information"
       />
-      <div className={styles.caseRegistrationConfirmationPage}>
+      <div className={styles.setManageMaterialsPage}>
         <h1 className="govuk-heading-xl">Case Registered</h1>
         <p>The case has been created.</p>
 

@@ -1,21 +1,15 @@
-import { delay, HttpResponse, http } from "msw";
 import { expect, test } from "./utils/test";
+import { type Page } from "@playwright/test";
 import { CaseRegistrationHomePage } from "./pages/caseRegistrationHomePage";
 import { CaseAreasPage } from "./pages/caseAreasPage";
 import { CaseDetailsPage } from "./pages/caseDetailsPage";
 import { CaseMonitoringPage } from "./pages/caseMonitoringPage";
 import { CaseAssigneePage } from "./pages/caseAssigneePage";
 import { CaseRegistrationSummaryPage } from "./pages/caseRegistrationSummaryPage";
-import { CaseComplexityPage } from "./pages/caseComplexityPage";
-import { ChangeAreaConfirmationPage } from "./pages/changeAreaConfirmation";
-import { ChangeRegisteringUnitConfirmationPage } from "./pages/changeRegisteringUnitConfirmation";
-// import { CaseRegistrationConfirmationPage } from "../pages/caseRegistrationConfirmationPage";
+import { CaseRegistrationConfirmationPageV2 } from "./pages/caseRegistrationConfirmationPageV2";
 import { SetManageMaterialsPage } from "./pages/setManageMaterialsPage";
 
-test("Should successfully complete non suspect journey and extend to set manage materials", async ({
-  page,
-  worker,
-}) => {
+const nonSuspectRegisterJourney = async (page: Page) => {
   await page.goto(
     "http://localhost:5173/case-registration?case-registration-v2=true",
   );
@@ -124,186 +118,29 @@ test("Should successfully complete non suspect journey and extend to set manage 
     shoulderNumber: "12345",
     policeUnit: "Not entered",
   });
-
-  await caseRegistrationSummaryPage.changeOperationNameLinkClick();
-  await caseRegistrationHomePage.verifyUrl();
-  await caseRegistrationHomePage.saveAndContinue();
-  await caseRegistrationSummaryPage.verifyUrl();
-
-  await caseRegistrationSummaryPage.changeAreaLinkClick();
-  await caseAreasPage.verifyUrl();
-  await caseAreasPage.verifyBackLink("/case-registration/case-summary");
-  await caseAreasPage.saveAndContinue();
-  await caseRegistrationSummaryPage.verifyUrl();
-
-  await caseRegistrationSummaryPage.changeUrnLinkClick();
-  await caseDetailsPage.verifyUrl();
-  await caseDetailsPage.verifyBackLink("/case-registration/case-summary");
-  await caseDetailsPage.saveAndContinue();
-  await caseRegistrationSummaryPage.verifyUrl();
-
-  await caseRegistrationSummaryPage.changeRegisteringUnitLinkClick();
-  await caseDetailsPage.verifyUrl();
-  await caseDetailsPage.verifyBackLink("/case-registration/case-summary");
-  await caseDetailsPage.saveAndContinue();
-  await caseRegistrationSummaryPage.verifyUrl();
-
-  await caseRegistrationSummaryPage.changeWcuLinkClick();
-  await caseDetailsPage.verifyUrl();
-  await caseDetailsPage.verifyBackLink("/case-registration/case-summary");
-  await caseDetailsPage.saveAndContinue();
-  await caseRegistrationSummaryPage.verifyUrl();
-
-  await caseRegistrationSummaryPage.changeMonitoringCodesLinkClick();
-  await caseMonitoringPage.verifyUrl();
-  await caseMonitoringPage.verifyBackLink("/case-registration/case-summary");
-  await caseMonitoringPage.saveAndContinue();
-  await caseRegistrationSummaryPage.verifyUrl();
-
-  const caseComplexityPage = new CaseComplexityPage(page);
-  await caseRegistrationSummaryPage.changeCaseComplexityLinkClick();
-  await caseComplexityPage.verifyUrl();
-  await caseComplexityPage.verifyBackLink("/case-registration/case-summary");
-  await caseComplexityPage.saveAndContinue();
-  await caseRegistrationSummaryPage.verifyUrl();
-
-  await caseRegistrationSummaryPage.changeCaseInvestigatorLinkClick();
-  await caseAssigneePage.verifyUrl();
-  await caseAssigneePage.verifyBackLink("/case-registration/case-summary");
-  await caseAssigneePage.saveAndContinue();
-  await caseRegistrationSummaryPage.verifyUrl();
-
-  await caseRegistrationSummaryPage.changeShoulderNumberLinkClick();
-  await caseAssigneePage.verifyUrl();
-  await caseAssigneePage.verifyBackLink("/case-registration/case-summary");
-  await caseAssigneePage.saveAndContinue();
-  await caseRegistrationSummaryPage.verifyUrl();
-
-  await caseRegistrationSummaryPage.changeProsecutorLinkClick();
-  await caseAssigneePage.verifyUrl();
-  await caseAssigneePage.verifyBackLink("/case-registration/case-summary");
-  await caseAssigneePage.saveAndContinue();
-  await caseRegistrationSummaryPage.verifyUrl();
-
-  await caseRegistrationSummaryPage.changeCaseworkerLinkClick();
-  await caseAssigneePage.verifyUrl();
-  await caseAssigneePage.verifyBackLink("/case-registration/case-summary");
-  await caseAssigneePage.saveAndContinue();
-  await caseRegistrationSummaryPage.verifyUrl();
-
-  await caseRegistrationSummaryPage.changeAreaLinkClick();
-  await caseAreasPage.verifyUrl();
-  await caseAreasPage.verifyBackLink("/case-registration/case-summary");
-  await caseAreasPage.enterAreaOrDivision("Cheshire");
-  await caseAreasPage.saveAndContinue();
-  const changeAreaConfirmationPage = new ChangeAreaConfirmationPage(page);
-  await changeAreaConfirmationPage.verifyUrl();
-  await changeAreaConfirmationPage.verifyPageElements(false);
-  await changeAreaConfirmationPage.verifyBackLink("/case-registration/areas");
-  await changeAreaConfirmationPage.backLinkClick();
-  await caseAreasPage.verifyUrl();
-  await caseAreasPage.verifyBackLink("/case-registration/case-summary");
-  await caseAreasPage.enterAreaOrDivision("Cheshire");
-  await caseAreasPage.saveAndContinue();
-  await changeAreaConfirmationPage.verifyUrl();
-  await changeAreaConfirmationPage.saveAndContinue();
-  await caseDetailsPage.verifyUrl();
-  await caseDetailsPage.verifyNoBackLink();
-  await caseDetailsPage.enterRegisteringUnit("Chester MCU");
-  await caseDetailsPage.enterWitnessCareUnit("Chester Business WCU");
-  await caseDetailsPage.saveAndContinue();
-  await caseAssigneePage.verifyUrl();
-  await caseAssigneePage.verifyNoBackLink();
-  await caseAssigneePage.verifyPageElements();
-  await caseAssigneePage.addProsecutorYes();
-  await caseAssigneePage.addInvestigatorYes();
-  await caseAssigneePage.enterProsecutorName("Prosecutor B");
-  await caseAssigneePage.enterCaseworkerName("Caseworker B");
-  await caseAssigneePage.addInvestigatorFirstName("Investigator A");
-  await caseAssigneePage.addInvestigatorLastName("Investigator B");
-  await caseAssigneePage.addInvestigatorShoulderNumber("123456");
-  await caseAssigneePage.saveAndContinue();
-  await caseRegistrationSummaryPage.verifyUrl();
-  await caseRegistrationSummaryPage.verifyCaseDetailsElements({
-    area: "Cheshire",
-    urn: "12211234526",
-    registeringUnit: "Chester MCU",
-    wcu: "Chester Business WCU",
-    operationName: "thunderstruck",
-  });
-  await caseRegistrationSummaryPage.verifyWorkingOnTheCaseElements({
-    prosecutor: "Prosecutor B",
-    caseworker: "Caseworker B",
-    investigator: "InvestigatorB, InvestigatorA",
-    shoulderNumber: "123456",
-    policeUnit: "Not entered",
-  });
-  await caseRegistrationSummaryPage.verifyNoSuspectElements();
-  await caseRegistrationSummaryPage.verifyAddNewSuspectElements(0);
-  await caseRegistrationSummaryPage.changeRegisteringUnitLinkClick();
-  await caseDetailsPage.verifyUrl();
-  await caseDetailsPage.verifyBackLink("/case-registration/case-summary");
-  await caseDetailsPage.enterRegisteringUnit("Warrington CCU");
-  await caseDetailsPage.enterWitnessCareUnit("Chester Business WCU");
-  await caseDetailsPage.saveAndContinue();
-  const changeRegisteringUnitConfirmationPage =
-    new ChangeRegisteringUnitConfirmationPage(page);
-  await changeRegisteringUnitConfirmationPage.verifyUrl();
-  await changeRegisteringUnitConfirmationPage.verifyPageElements(false);
-  await changeRegisteringUnitConfirmationPage.verifyBackLink(
-    "/case-registration/case-details",
-  );
-  await changeRegisteringUnitConfirmationPage.backLinkClick();
-  await caseDetailsPage.verifyUrl();
-  await caseDetailsPage.verifyBackLink("/case-registration/case-summary");
-  await caseDetailsPage.enterRegisteringUnit("Warrington CCU");
-  await caseDetailsPage.enterWitnessCareUnit("Chester Business WCU");
-  await caseDetailsPage.saveAndContinue();
-  await changeRegisteringUnitConfirmationPage.verifyUrl();
-  await changeRegisteringUnitConfirmationPage.saveAndContinue();
-  await caseAssigneePage.verifyUrl();
-  await caseAssigneePage.verifyNoBackLink();
-  await caseAssigneePage.verifyPageElements();
-  await caseAssigneePage.addProsecutorYes();
-  await caseAssigneePage.addInvestigatorYes();
-  await caseAssigneePage.enterProsecutorName("Prosecutor A");
-  await caseAssigneePage.enterCaseworkerName("Caseworker A");
-  await caseAssigneePage.addInvestigatorFirstName("Investigator A");
-  await caseAssigneePage.addInvestigatorLastName("Investigator B");
-  await caseAssigneePage.addInvestigatorShoulderNumber("1234567");
-  await caseAssigneePage.saveAndContinue();
-  await caseRegistrationSummaryPage.verifyUrl();
-  await caseRegistrationSummaryPage.verifyCaseDetailsElements({
-    area: "Cheshire",
-    urn: "12211234526",
-    registeringUnit: "Warrington CCU",
-    wcu: "Chester Business WCU",
-    operationName: "thunderstruck",
-  });
-  await caseRegistrationSummaryPage.verifyWorkingOnTheCaseElements({
-    prosecutor: "Prosecutor A",
-    caseworker: "Caseworker A",
-    investigator: "InvestigatorB, InvestigatorA",
-    shoulderNumber: "1234567",
-    policeUnit: "Not entered",
-  });
-  await worker.use(
-    http.get("https://mocked-out-api/api/v1/urns/:urn/exists", async () => {
-      await delay(2000);
-      return HttpResponse.json(true);
-    }),
-  );
+};
+test("Should successfully complete non suspect journey and extend to set manage materials and navigate to set manage materials", async ({
+  page,
+}) => {
+  await nonSuspectRegisterJourney(page);
+  const caseRegistrationSummaryPage = new CaseRegistrationSummaryPage(page);
   await caseRegistrationSummaryPage.clickCreateCaseButton();
-  await caseRegistrationSummaryPage.verifyFormSubmittingStatus();
-  await caseRegistrationSummaryPage.verifyUrl();
-  await caseRegistrationSummaryPage.errorValidations();
-  await caseRegistrationSummaryPage.verifyFormNonSubmittingStatus();
-  await worker.use(
-    http.get("https://mocked-out-api/api/v1/urns/:urn/exists", async () => {
-      await delay(100);
-      return HttpResponse.json(false);
-    }),
-  );
+  await caseRegistrationSummaryPage.verifyErrorSummaryCleared();
+
+  const setManageMaterialsPage = new SetManageMaterialsPage(page);
+  await setManageMaterialsPage.verifyUrl();
+  await setManageMaterialsPage.verifyPageElements();
+  await setManageMaterialsPage.errorValidations();
+  await setManageMaterialsPage.selectSetManageMaterialsYes();
+  await setManageMaterialsPage.continue();
+  await expect(page).toHaveURL("https://design-system.service.gov.uk/");
+});
+
+test("Should successfully complete non suspect journey and extend to set manage materials and chose not to set manage materials to the confirmation page", async ({
+  page,
+}) => {
+  await nonSuspectRegisterJourney(page);
+  const caseRegistrationSummaryPage = new CaseRegistrationSummaryPage(page);
   await caseRegistrationSummaryPage.clickCreateCaseButton();
   await caseRegistrationSummaryPage.verifyErrorSummaryCleared();
 
@@ -313,4 +150,8 @@ test("Should successfully complete non suspect journey and extend to set manage 
   await setManageMaterialsPage.errorValidations();
   await setManageMaterialsPage.selectSetManageMaterialsNo();
   await setManageMaterialsPage.continue();
+  const caseRegistrationConfirmationPageV2 =
+    new CaseRegistrationConfirmationPageV2(page);
+  await caseRegistrationConfirmationPageV2.verifyUrl();
+  await caseRegistrationConfirmationPageV2.verifyPageElements("12211234526");
 });
