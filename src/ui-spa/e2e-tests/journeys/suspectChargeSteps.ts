@@ -14,12 +14,18 @@ import { ChargesOffenceSearchPagePage } from "../../integration-tests/pages/char
 import { AddChargeDetailsPage } from "../../integration-tests/pages/addChargeDetailsPage";
 import { AddChargeVictimPage } from "../../integration-tests/pages/addChargeVictimPage";
 import { FirstHearingDetailsPage } from "../../integration-tests/pages/firstHearingDetailsPage";
+import { CaseMonitoringPage } from "../../integration-tests/pages/caseMonitoringPage";
 import { SuspectSummaryPage } from "../../integration-tests/pages/suspectSummaryPage";
 import { WantToAddChargesPage } from "../../integration-tests/pages/wantToAddChargesPage";
 import { formatNameUtil } from "../../src/common/utils/formatNameUtil";
 import { expectStep } from "../utils/expectStep";
 import { type UrnParts } from "../utils/generateUrn";
-import { startAtHomePage, enterAreasAndCaseDetails } from "./steps";
+import {
+  startAtHomePage,
+  enterAreasAndCaseDetails,
+  watchAssigneeLookups,
+  fillAssignee,
+} from "./steps";
 
 export interface PersonName {
   first: string;
@@ -220,10 +226,15 @@ export async function addCharge(
   await addChargeVictimPage.saveAndContinue();
 }
 
+export interface FirstHearingDetails {
+  courtName: string;
+  hearingDate: Date;
+}
+
 export async function completeFirstHearing(
   page: Page,
   navigateToFirstHearing: () => Promise<void>,
-): Promise<void> {
+): Promise<FirstHearingDetails> {
   const courtsResponse = page.waitForResponse(
     (r) => /\/api\/v1\/courts\//.test(r.url()) && r.ok(),
     { timeout: 30_000 },
@@ -245,4 +256,20 @@ export async function completeFirstHearing(
   await firstHearingDetailsPage.enterFirstHearingCourtLocation(courtName);
   await firstHearingDetailsPage.addFirstHearingDate(isoDate(hearingDate));
   await firstHearingDetailsPage.saveAndContinue();
+  return { courtName, hearingDate };
+}
+
+export async function completeMonitoringFirstHearingAndAssignee(
+  page: Page,
+): Promise<FirstHearingDetails> {
+  const monitoringPage = new CaseMonitoringPage(page);
+  await expectStep(page, "/case-registration/case-monitoring-codes");
+  await monitoringPage.verifyPreChargeCheckboxNotDisabled();
+  await monitoringPage.verifyPreChargeCheckboxNotChecked();
+  const lookups = watchAssigneeLookups(page);
+  const firstHearing = await completeFirstHearing(page, () =>
+    monitoringPage.saveAndContinue(),
+  );
+  await fillAssignee(page, lookups);
+  return firstHearing;
 }
