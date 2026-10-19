@@ -11,7 +11,6 @@ import {
   WITNESS_CARE_UNIT,
   startAtHomePage,
   enterAreasAndCaseDetails,
-  completeMonitoringAndAssignee,
   verifySummaryAndSubmit,
 } from "./steps";
 import {
@@ -19,7 +18,7 @@ import {
   chargeDates,
   addPersonSuspectWithAllDetails,
   addCharge,
-  completeFirstHearing,
+  completeMonitoringFirstHearingAndAssignee,
 } from "./suspectChargeSteps";
 
 const OFFENCE_CODE = process.env.E2E_OFFENCE_CODE ?? "TH68040";
@@ -136,9 +135,8 @@ export async function completeLongPathMultiSuspectCharge(
   await expect(suspect1Group.getByTestId("charge-1-data")).toHaveCount(0);
 
   await chargesSummaryPage.selectAddMoreChargesNo();
-  await completeFirstHearing(page, () => chargesSummaryPage.saveAndContinue());
-
-  await completeMonitoringAndAssignee(page, { preChargeChecked: false });
+  await chargesSummaryPage.saveAndContinue();
+  await completeMonitoringFirstHearingAndAssignee(page);
 
   await verifySummaryAndSubmit(page, urn, {
     area: AREA,
