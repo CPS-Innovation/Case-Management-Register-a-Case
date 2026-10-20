@@ -522,6 +522,18 @@ test("Should successfully verify cancel case registration journey for all pages"
   await chargesSummaryPage.selectAddMoreChargesNo();
   await chargesSummaryPage.saveAndContinue();
 
+  const caseMonitoringPage = new CaseMonitoringPage(page);
+  await caseMonitoringPage.verifyUrl();
+  await caseMonitoringPage.cancelCaseRegistration();
+  await cancelCaseRegistrationConfirmationPage.verifyUrl();
+  await cancelCaseRegistrationConfirmationPage.errorValidations();
+  await cancelCaseRegistrationConfirmationPage.verifyPageElements();
+  await cancelCaseRegistrationConfirmationPage.selectCancelCaseRegistrationNo();
+  await cancelCaseRegistrationConfirmationPage.continue();
+  await caseMonitoringPage.verifyUrl();
+  await caseMonitoringPage.selectMonitoringCode("Asset Recovery");
+  await caseMonitoringPage.saveAndContinue();
+
   const firstHearingDetailsPage = new FirstHearingDetailsPage(page);
   await firstHearingDetailsPage.verifyUrl();
   await firstHearingDetailsPage.cancelCaseRegistration();
@@ -536,18 +548,6 @@ test("Should successfully verify cancel case registration journey for all pages"
   await firstHearingDetailsPage.enterFirstHearingCourtLocation("Court A");
   await firstHearingDetailsPage.addFirstHearingDate("2022-02-04");
   await firstHearingDetailsPage.saveAndContinue();
-
-  const caseMonitoringPage = new CaseMonitoringPage(page);
-  await caseMonitoringPage.verifyUrl();
-  await caseMonitoringPage.cancelCaseRegistration();
-  await cancelCaseRegistrationConfirmationPage.verifyUrl();
-  await cancelCaseRegistrationConfirmationPage.errorValidations();
-  await cancelCaseRegistrationConfirmationPage.verifyPageElements();
-  await cancelCaseRegistrationConfirmationPage.selectCancelCaseRegistrationNo();
-  await cancelCaseRegistrationConfirmationPage.continue();
-  await caseMonitoringPage.verifyUrl();
-  await caseMonitoringPage.selectMonitoringCode("Asset Recovery");
-  await caseMonitoringPage.saveAndContinue();
 
   const caseAssigneePage = new CaseAssigneePage(page);
   await caseAssigneePage.verifyUrl();

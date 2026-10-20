@@ -6,7 +6,6 @@ import {
   AREA,
   REGISTERING_UNIT,
   WITNESS_CARE_UNIT,
-  completeMonitoringAndAssignee,
   verifySummaryAndSubmit,
 } from "./steps";
 import {
@@ -14,7 +13,7 @@ import {
   chargeDates,
   startSingleSuspectUpToCharges,
   addCharge,
-  completeFirstHearing,
+  completeMonitoringFirstHearingAndAssignee,
 } from "./suspectChargeSteps";
 
 const OFFENCE_CODE = process.env.E2E_OFFENCE_CODE ?? "TH68040";
@@ -45,9 +44,8 @@ export async function completeLongPathSuspectCharge(
   const chargesSummaryPage = new ChargesSummaryPage(page);
   await expectStep(page, "/case-registration/charges-summary");
   await chargesSummaryPage.selectAddMoreChargesNo();
-  await completeFirstHearing(page, () => chargesSummaryPage.saveAndContinue());
-
-  await completeMonitoringAndAssignee(page, { preChargeChecked: false });
+  await chargesSummaryPage.saveAndContinue();
+  await completeMonitoringFirstHearingAndAssignee(page);
 
   await verifySummaryAndSubmit(page, urn, {
     area: AREA,

@@ -11,6 +11,7 @@ import { validateUrn } from "../../../apis/gateway-api";
 import useErrorSummaryList from "../../../common/hooks/useErrorSummaryList";
 import { useNavigate } from "react-router";
 import PageContentWrapper from "../../common/PageContentWrapper";
+import { showFirstHearing } from "../../../common/utils/showFirstHearing";
 import styles from "../index.module.scss";
 import pageStyles from "./index.module.scss";
 
@@ -425,7 +426,7 @@ const CaseDetailsPage = () => {
       return;
     }
     if (state.formData.navigation.changeCaseArea) {
-      if (state.formData.firstHearingRadio) {
+      if (showFirstHearing(state.formData.caseMonitoringCodesCheckboxes)) {
         navigate("/case-registration/first-hearing");
         return;
       }

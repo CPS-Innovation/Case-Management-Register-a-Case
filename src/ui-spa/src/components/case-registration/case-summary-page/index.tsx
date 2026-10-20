@@ -24,6 +24,7 @@ import SuspectSummary from "../suspect-summary/SuspectSummary";
 import { useNavigate } from "react-router";
 import PageContentWrapper from "../../common/PageContentWrapper";
 import { useIsAreaSensitive } from "../../../common/hooks/useIsAreaSensitive";
+import { showFirstHearing } from "../../../common/utils/showFirstHearing";
 import styles from "./index.module.scss";
 
 const CaseSummaryPage = () => {
@@ -39,9 +40,8 @@ const CaseSummaryPage = () => {
   };
   const { state, dispatch } = useContext(CaseRegistrationFormContext);
   const navigate = useNavigate();
-  const { chargesCount } = useChargesCount(state.formData.suspects);
   const isAreaSensitive = useIsAreaSensitive();
-
+  const { chargesCount } = useChargesCount(state.formData.suspects);
   const submitCaseRegistrationMutation = useMutation({
     mutationFn: submitCaseRegistration,
   });
@@ -153,7 +153,11 @@ const CaseSummaryPage = () => {
     submitCaseRegistrationMutation.mutate(requestData, {
       onSuccess: (data) => {
         if (data.caseId) {
-          navigate("/case-registration/case-registration-confirmation");
+          if (state.featureFlags?.caseRegistrationV2) {
+            navigate("/case-registration/set-manage-materials");
+          } else {
+            navigate("/case-registration/case-registration-confirmation");
+          }
           return;
         }
 
@@ -260,12 +264,13 @@ const CaseSummaryPage = () => {
               />
             </div>
           )}
-          {!!chargesCount && (
-            <div data-testid="case-first-hearing-summary">
-              <h2>First hearing details</h2>
-              <SummaryList rows={caseFirstHearingSummaryListRows} />
-            </div>
-          )}
+          {chargesCount > 0 &&
+            showFirstHearing(state.formData.caseMonitoringCodesCheckboxes) && (
+              <div data-testid="case-first-hearing-summary">
+                <h2>First hearing details</h2>
+                <SummaryList rows={caseFirstHearingSummaryListRows} />
+              </div>
+            )}
           <div data-testid="case-complexity-and-monitoring-codes-summary">
             <h2>Case complexity and monitoring codes</h2>
             <SummaryList

@@ -364,6 +364,13 @@ export class CaseRegistrationSummaryPage {
     );
   }
 
+  async verifyNoFirstHearingElements() {
+    const caseFirstHearingWrapperElement = this.page.getByTestId(
+      "case-first-hearing-summary",
+    );
+    await expect(caseFirstHearingWrapperElement).not.toBeVisible();
+  }
+
   async verifySuspectSummaryRows(values: string[]) {
     const suspectList = this.page.locator('div[data-testid^="suspect-key-"]');
 
@@ -620,6 +627,24 @@ export class CaseRegistrationSummaryPage {
     const suspectRow = this.page.getByTestId(`suspect-row-${index}`);
 
     await suspectRow
+      .locator("dd")
+      .nth(1)
+      .getByRole("link", { name: "Remove" })
+      .click();
+  }
+  async removeSuspectCharge(suspectIndex: number, chargeIndex: number) {
+    const suspectChargesDetails = this.page
+      .getByTestId(`suspect-details-${suspectIndex}`)
+      .getByTestId(`suspect-charges`);
+
+    await this.page
+      .getByTestId(`suspect-details-${suspectIndex}`)
+      .locator("summary")
+      .click();
+
+    await suspectChargesDetails
+      .locator(".govuk-summary-list__row")
+      .nth(chargeIndex)
       .locator("dd")
       .nth(1)
       .getByRole("link", { name: "Remove" })

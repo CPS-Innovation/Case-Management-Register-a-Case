@@ -1,3 +1,4 @@
+import { useEffect, useContext } from "react";
 import { Routes, Route, Navigate } from "react-router";
 import CaseRegistrationPage from "./case-registration";
 import CaseAreasPage from "./case-registration/case-areas-page";
@@ -8,6 +9,7 @@ import CaseMonitoringCodesPage from "./case-registration/case-monitoring-codes";
 import CaseAssigneePage from "./case-registration/case-assignee";
 import CaseSummaryPage from "./case-registration/case-summary-page";
 import CaseRegistrationConfirmationPage from "./case-registration/case-registration-confirmation";
+import CaseRegistrationConfirmationPageV2 from "./case-registration/case-registration-confirmation-v2";
 import AddSuspectPage from "./case-registration/add-suspect";
 import SuspectDOBPage from "./case-registration/suspect-dob";
 import SuspectGenderPage from "./case-registration/suspect-gender";
@@ -32,11 +34,29 @@ import ChangeAreaConfirmationPage from "./case-registration/change-area-confirma
 import ChangeRegisteringUnitConfirmationPage from "./case-registration/change-registering-unit-confirmation";
 import RemoveAllSuspectsConfirmationPage from "./case-registration/remove-all-suspects-confirmation";
 import CancelCaseRegistrationConfirmationPage from "./case-registration/cancel-case-registration-confirmation";
+import AddPreChargeConfirmationPage from "./case-registration/add-pre-charge-confirmation";
+import SetManageMaterialsPage from "./case-registration/set-manage-materials-page";
 import ProtectedRoutes from "./ProtectedRoutes";
 import UnAuthorisedPage from "./unauthorised";
 import usePageView from "../common/hooks/usePageView";
+import { CaseRegistrationFormContext } from "../common/providers/CaseRegistrationProvider";
+import { useUserGroupsFeatureFlag } from "../common/hooks/useUserGroupsFeatureFlag";
 
 const AppRoutes = () => {
+  const { state, dispatch } = useContext(CaseRegistrationFormContext);
+  const { featureFlags } = state;
+  const featureFlagsData = useUserGroupsFeatureFlag();
+  useEffect(() => {
+    //set feature flag data, when there is a valid value and  when the featureFlags are not set.
+    if (featureFlagsData && !featureFlags) {
+      dispatch({
+        type: "SET_FEATURE_FLAGS",
+        payload: {
+          featureFlags: featureFlagsData,
+        },
+      });
+    }
+  }, [featureFlagsData, featureFlags, dispatch]);
   usePageView();
   return (
     <Routes>
@@ -69,7 +89,17 @@ const AppRoutes = () => {
         />
         <Route
           path="/case-registration/case-registration-confirmation"
-          element={<CaseRegistrationConfirmationPage />}
+          element={
+            featureFlags?.caseRegistrationV2 ? (
+              <CaseRegistrationConfirmationPageV2 />
+            ) : (
+              <CaseRegistrationConfirmationPage />
+            )
+          }
+        />
+        <Route
+          path="/case-registration/set-manage-materials"
+          element={<SetManageMaterialsPage />}
         />
         <Route
           path="/case-registration/:suspectId/add-suspect"
@@ -163,11 +193,16 @@ const AppRoutes = () => {
           path="/case-registration/remove-all-suspects-confirmation"
           element={<RemoveAllSuspectsConfirmationPage />}
         />
+        <Route
+          path="/case-registration/add-pre-charge-confirmation"
+          element={<AddPreChargeConfirmationPage />}
+        />
       </Route>
       <Route
         path="/case-registration/cancel-case-registration-confirmation"
         element={<CancelCaseRegistrationConfirmationPage />}
       />
+
       <Route path="/unauthorised" element={<UnAuthorisedPage />} />
       <Route path="*" element={<Navigate to="/case-registration" replace />} />
     </Routes>

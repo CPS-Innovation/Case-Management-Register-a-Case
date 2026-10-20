@@ -445,13 +445,18 @@ export async function completeLongPathValidation(
     ],
   );
   await chargesSummaryPage.selectAddMoreChargesNo();
+  await chargesSummaryPage.saveAndContinue();
+
+  const caseMonitoringPage = new CaseMonitoringPage(page);
+  await expectStep(page, "/case-registration/case-monitoring-codes");
+  await caseMonitoringPage.verifyPreChargeCheckboxNotDisabled();
+  await caseMonitoringPage.verifyPreChargeCheckboxNotChecked();
   const courtsResponse = page.waitForResponse(
     (r) => /\/api\/v1\/courts\//.test(r.url()) && r.ok(),
     { timeout: 30_000 },
   );
-  await chargesSummaryPage.saveAndContinue();
+  await caseMonitoringPage.saveAndContinue();
 
-  // First hearing: validate, then add real court + date.
   const firstHearingDetailsPage = new FirstHearingDetailsPage(page);
   await expectStep(page, "/case-registration/first-hearing");
   await submitEmptyAndAssertErrors(
@@ -476,16 +481,9 @@ export async function completeLongPathValidation(
   hearingDate.setDate(hearingDate.getDate() + 14);
   await firstHearingDetailsPage.selectAddFirstHearingDetailsYes();
   await firstHearingDetailsPage.enterFirstHearingCourtLocation(courtName);
+  const lookups = watchAssigneeLookups(page);
   await firstHearingDetailsPage.addFirstHearingDate(isoDate(hearingDate));
   await firstHearingDetailsPage.saveAndContinue();
-
-  // Monitoring codes (optional step, no required validation). Charges exist, so
-  // the pre-charge box is unchecked. Watch the assignee lookups before leaving.
-  const caseMonitoringPage = new CaseMonitoringPage(page);
-  await expectStep(page, "/case-registration/case-monitoring-codes");
-  await caseMonitoringPage.verifyPreChargeCheckboxNotChecked();
-  const lookups = watchAssigneeLookups(page);
-  await caseMonitoringPage.saveAndContinue();
 
   // Assignee: validate, then fill real prosecutor/caseworker/investigator.
   const caseAssigneePage = new CaseAssigneePage(page);

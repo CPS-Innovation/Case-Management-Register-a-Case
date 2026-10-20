@@ -191,13 +191,6 @@ test("Monitoring code is optional if all the suspects have charges", async ({
   await chargesSummaryPage.selectAddMoreChargesNo();
   await chargesSummaryPage.saveAndContinue();
 
-  const firstHearingDetailsPage = new FirstHearingDetailsPage(page);
-  await firstHearingDetailsPage.verifyUrl();
-  await firstHearingDetailsPage.selectAddFirstHearingDetailsYes();
-  await firstHearingDetailsPage.enterFirstHearingCourtLocation("Court A");
-  await firstHearingDetailsPage.addFirstHearingDate("2022-02-04");
-  await firstHearingDetailsPage.saveAndContinue();
-
   const caseMonitoringPage = new CaseMonitoringPage(page);
   await caseMonitoringPage.verifyUrl();
   await caseMonitoringPage.verifyPageElements(45);
@@ -205,6 +198,13 @@ test("Monitoring code is optional if all the suspects have charges", async ({
   await caseMonitoringPage.verifyPreChargeCheckboxNotChecked();
   await caseMonitoringPage.saveAndContinue();
   await caseMonitoringPage.verifyErrorSummaryClear();
+
+  const firstHearingDetailsPage = new FirstHearingDetailsPage(page);
+  await firstHearingDetailsPage.verifyUrl();
+  await firstHearingDetailsPage.selectAddFirstHearingDetailsYes();
+  await firstHearingDetailsPage.enterFirstHearingCourtLocation("Court A");
+  await firstHearingDetailsPage.addFirstHearingDate("2022-02-04");
+  await firstHearingDetailsPage.saveAndContinue();
 
   const caseAssigneePage = new CaseAssigneePage(page);
   await caseAssigneePage.verifyUrl();
@@ -353,13 +353,6 @@ test("Monitoring code is not optional if at least one of the suspects has no cha
   //charge added only for one suspect
   await chargesSummaryPage.selectAddMoreChargesNo();
   await chargesSummaryPage.saveAndContinue();
-
-  const firstHearingDetailsPage = new FirstHearingDetailsPage(page);
-  await firstHearingDetailsPage.verifyUrl();
-  await firstHearingDetailsPage.selectAddFirstHearingDetailsYes();
-  await firstHearingDetailsPage.enterFirstHearingCourtLocation("Court A");
-  await firstHearingDetailsPage.addFirstHearingDate("2022-02-04");
-  await firstHearingDetailsPage.saveAndContinue();
 
   const caseMonitoringPage = new CaseMonitoringPage(page);
   await caseMonitoringPage.verifyUrl();

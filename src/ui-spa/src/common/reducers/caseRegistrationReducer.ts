@@ -16,6 +16,8 @@ import type {
   Offence,
 } from "../../schemas";
 import { v4 as uuidv4 } from "uuid";
+import { FeatureFlagData } from "../../schemas/featureFlagData";
+import { PRE_CHARGE_DECISION_CODE } from "../../common/constants/general";
 
 export type CaseRegistrationField =
   | "operationNameRadio"
@@ -167,6 +169,10 @@ export type CaseRegistrationState = {
   telemetryData: {
     journeyId: string;
   };
+  furtherJourneyData: {
+    manageMaterialsRadio: GeneralRadioValue;
+  };
+  featureFlags: FeatureFlagData | null;
 };
 
 export const suspectInitialState: SuspectFormData = {
@@ -268,6 +274,10 @@ export const initialState: CaseRegistrationState = {
   telemetryData: {
     journeyId: "",
   },
+  furtherJourneyData: {
+    manageMaterialsRadio: "",
+  },
+  featureFlags: null,
 };
 
 export type CaseRegistrationActions =
@@ -497,6 +507,18 @@ export type CaseRegistrationActions =
       payload: {
         journeyId: string;
       };
+    }
+  | {
+      type: "FURTHER_JOURNEY_DATA";
+      payload: {
+        manageMaterialsRadio?: GeneralRadioValue;
+      };
+    }
+  | {
+      type: "SET_FEATURE_FLAGS";
+      payload: {
+        featureFlags: FeatureFlagData;
+      };
     };
 
 export type DispatchType = React.Dispatch<CaseRegistrationActions>;
@@ -641,12 +663,14 @@ export const caseRegistrationReducer = (
       const suspects = state.formData.suspects.filter(
         (suspect) => suspect.suspectId !== suspectId,
       );
+      const mergedFormData = {
+        ...state.formData,
+        suspects,
+      };
+      const finalFormData = applyPreChargeMonitoringIfNeeded(mergedFormData);
       return {
         ...state,
-        formData: {
-          ...state.formData,
-          suspects,
-        },
+        formData: finalFormData,
       };
     }
 
@@ -666,12 +690,14 @@ export const caseRegistrationReducer = (
         ...suspect,
         charges: newCharges,
       };
+      const mergedFormData = {
+        ...state.formData,
+        suspects,
+      };
+      const finalFormData = applyPreChargeMonitoringIfNeeded(mergedFormData);
       return {
         ...state,
-        formData: {
-          ...state.formData,
-          suspects,
-        },
+        formData: finalFormData,
       };
     }
 
@@ -699,12 +725,14 @@ export const caseRegistrationReducer = (
         ...suspect,
         charges: filteredCharges,
       };
+      const mergedFormData = {
+        ...state.formData,
+        suspects,
+      };
+      const finalFormData = applyPreChargeMonitoringIfNeeded(mergedFormData);
       return {
         ...state,
-        formData: {
-          ...state.formData,
-          suspects,
-        },
+        formData: finalFormData,
       };
     }
 
@@ -902,6 +930,21 @@ export const caseRegistrationReducer = (
       };
     }
 
+    case "FURTHER_JOURNEY_DATA": {
+      return {
+        ...state,
+        furtherJourneyData: {
+          ...state.furtherJourneyData,
+          ...action.payload,
+        },
+      };
+    }
+    case "SET_FEATURE_FLAGS": {
+      return {
+        ...state,
+        featureFlags: action.payload.featureFlags,
+      };
+    }
     default:
       return state;
   }
@@ -1003,4 +1046,36 @@ const resetSuspectAdditionalDetails = (
   }
 
   return resetValues;
+};
+
+export const applyPreChargeMonitoringIfNeeded = (
+  formData: CaseRegistrationFormData,
+): CaseRegistrationFormData => {
+  const suspects = formData.suspects;
+  const allHasCharges = suspects.length
+    ? suspects.every((s) => s.charges.length)
+    : false;
+  const current = formData.caseMonitoringCodesCheckboxes ?? [];
+  const hasCode = current.includes(PRE_CHARGE_DECISION_CODE);
+
+  let newFormData = { ...formData };
+  if (!allHasCharges && !hasCode && formData.wantToAddChargesRadio) {
+    newFormData = {
+      ...newFormData,
+      caseMonitoringCodesCheckboxes: [...current, PRE_CHARGE_DECISION_CODE],
+    };
+  }
+
+  if (
+    newFormData.caseMonitoringCodesCheckboxes.includes(
+      PRE_CHARGE_DECISION_CODE,
+    ) &&
+    newFormData.firstHearingRadio
+  ) {
+    newFormData.firstHearingRadio = "";
+    newFormData.firstHearingCourtLocationText = { id: null, description: "" };
+    newFormData.firstHearingDateText = "";
+  }
+
+  return newFormData;
 };
